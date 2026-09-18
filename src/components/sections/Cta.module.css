@@ -1,0 +1,80 @@
+.section {
+  overflow: hidden;
+}
+
+.starburst {
+  position: absolute;
+  inset-block-start: 8%;
+  inset-inline-end: 6%;
+  inline-size: clamp(48px, 7vw, 108px);
+  color: var(--linen-100);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.bubbles {
+  position: absolute;
+  inset-block-end: -6%;
+  inset-inline-start: 4%;
+  inline-size: clamp(44px, 6vw, 84px);
+  color: var(--linen-100);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heading {
+  max-inline-size: 15ch;
+  font-size: var(--fs-section-title);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: var(--tracking-display);
+}
+
+.body {
+  max-inline-size: 46ch;
+  font-size: var(--fs-lead);
+  /* Fully opaque: this block is Scarlet by default, where a translucent linen
+     would fall below the AA contrast threshold. */
+  color: var(--text-on-scarlet);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-3);
+}
+
+.secondaryOnScarlet {
+  --button-fg: var(--linen-100);
+  --button-border: var(--linen-100);
+}
+
+.secondaryOnScarlet:hover {
+  --button-bg: var(--linen-100);
+  --button-fg: var(--scarlet-ink);
+}
+
+.section:not([data-on-scarlet]):not([data-on-dark]) .body {
+  color: var(--navy-700);
+}
+
+.section:not([data-on-scarlet]):not([data-on-dark]) .starburst,
+.section:not([data-on-scarlet]):not([data-on-dark]) .bubbles {
+  color: var(--aegean);
+  opacity: 0.3;
+}
+
+@media (min-width: 768px) {
+  .heading {
+    max-inline-size: 16ch;
+  }
+}

@@ -1,0 +1,124 @@
+.sheet {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-3);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-md);
+  background: var(--linen-100);
+  /* Fine ruled paper, as in a specimen journal. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 31px,
+    var(--navy-100) 31px 32px
+  );
+}
+
+.mainFigure {
+  margin: 0;
+}
+
+.mainImage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--linen-400);
+}
+
+.measurement {
+  margin-block-start: var(--space-1);
+  color: var(--navy-300);
+}
+
+.measurementCaption {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.stamp {
+  align-self: flex-start;
+}
+
+.crops {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.crop {
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--linen-400);
+}
+
+.crop > :global(img) {
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.cropCaption {
+  padding-block-start: 0.35rem;
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+}
+
+.record {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  border-block-start: 1px solid var(--rule);
+}
+
+.recordRow {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  gap: var(--space-2);
+  padding-block: 0.65rem;
+  border-block-end: 1px solid var(--rule);
+}
+
+.recordLabel {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.recordValue {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.note {
+  padding: var(--space-2);
+  border-inline-start: 3px solid var(--aegean);
+  background: var(--aegean-50);
+  font-size: var(--fs-small);
+  color: var(--navy-700);
+}
+
+@media (min-width: 1024px) {
+  .sheet {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+  }
+
+  .mainImage {
+    aspect-ratio: 5 / 4;
+  }
+}

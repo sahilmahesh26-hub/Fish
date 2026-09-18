@@ -1,0 +1,80 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  border-block-start: 1px solid var(--rule);
+}
+
+.item {
+  border-block-end: 1px solid var(--rule);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  /* Comfortably above the 44px touch-target minimum. */
+  min-block-size: 64px;
+  padding-block: var(--space-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.question {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+
+/* The indicator is a plus that becomes a minus — shape, not colour alone. */
+.indicator {
+  position: relative;
+  inline-size: 24px;
+  block-size: 24px;
+  flex: none;
+}
+
+.indicator::before,
+.indicator::after {
+  content: '';
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  background: var(--scarlet);
+  transform: translate(-50%, -50%);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.indicator::before {
+  inline-size: 18px;
+  block-size: 2.5px;
+}
+
+.indicator::after {
+  inline-size: 2.5px;
+  block-size: 18px;
+}
+
+.item[open] .indicator::after {
+  transform: translate(-50%, -50%) scaleY(0);
+}
+
+.answer {
+  padding-block-end: var(--space-3);
+}
+
+[data-on-dark] .indicator::before,
+[data-on-dark] .indicator::after {
+  background: var(--linen-100);
+}
+
+[data-on-dark] .list,
+[data-on-dark] .item {
+  border-color: rgb(253 251 247 / 22%);
+}

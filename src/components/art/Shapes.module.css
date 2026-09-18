@@ -1,0 +1,73 @@
+.starburst,
+.ripple,
+.bubbles,
+.current,
+.currentVertical,
+.arrow,
+.measure,
+.divider,
+.blob {
+  display: block;
+  pointer-events: none;
+}
+
+.starburst {
+  inline-size: 100%;
+  block-size: auto;
+  animation: spin 42s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+.ripple,
+.bubbles,
+.blob {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.current {
+  inline-size: 100%;
+  block-size: 60px;
+}
+
+.currentVertical {
+  inline-size: 60px;
+  block-size: 100%;
+}
+
+.arrow {
+  inline-size: 40px;
+  block-size: 24px;
+}
+
+.measure {
+  inline-size: 100%;
+  block-size: 24px;
+}
+
+.divider {
+  inline-size: 100%;
+  block-size: clamp(48px, 7vw, 120px);
+}
+
+.dividerFlip {
+  transform: scaleY(-1);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The starburst is the only continuously animating element on the page, so it
+   is the one that most needs to stop when motion is not wanted. */
+@media (prefers-reduced-motion: reduce) {
+  .starburst {
+    animation: none;
+  }
+}

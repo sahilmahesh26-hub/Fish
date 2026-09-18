@@ -1,0 +1,20 @@
+node_modules
+.next
+.env
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+
+# build + test output
+/dist
+/coverage
+/playwright-report
+/test-results
+/qa/screenshots
+
+# local uploads
+/public/media
+/private-uploads
+
+.DS_Store

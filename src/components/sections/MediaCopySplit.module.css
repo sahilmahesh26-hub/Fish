@@ -1,0 +1,66 @@
+.layout {
+  display: grid;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.media {
+  overflow: hidden;
+  background: var(--linen-400);
+}
+
+.pool {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-pool);
+}
+
+.oval {
+  aspect-ratio: 4 / 5;
+  border-radius: 50%;
+}
+
+.rect {
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heading {
+  font-size: var(--fs-subsection);
+  font-weight: 700;
+  line-height: var(--lh-title);
+  letter-spacing: var(--tracking-title);
+  max-inline-size: 20ch;
+}
+
+.cta {
+  align-self: flex-start;
+  margin-block-start: var(--space-2);
+}
+
+/* The DOM order is heading-then-media, so screen readers and keyboard users
+   always reach the heading first. `order` only changes the visual arrangement. */
+
+/* Below the split point the image leads, matching how the page reads on a
+   phone: picture, then the words about it. */
+@media (max-width: 899px) {
+  .media {
+    order: -1;
+  }
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .mediaStart .media {
+    order: -1;
+  }
+}

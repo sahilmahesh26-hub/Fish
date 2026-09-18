@@ -1,0 +1,29 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0.65rem var(--gutter);
+  background: var(--scarlet);
+  color: var(--text-on-scarlet);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-align: center;
+}
+
+.exit {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  padding-inline: var(--space-2);
+  border: 2px solid var(--linen-100);
+  border-radius: var(--radius-pill);
+  color: var(--linen-100);
+  text-decoration: none;
+}
+
+.exit:hover {
+  background: var(--linen-100);
+  color: var(--scarlet-ink);
+}

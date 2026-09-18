@@ -1,0 +1,194 @@
+/* ==========================================================================
+   Finquiry design tokens
+   --------------------------------------------------------------------------
+   Four locked foundation colours plus documented tints/shades. Every tint and
+   shade below is derived from one of the four foundations — no fifth hue is
+   introduced. Contrast ratios against Sandy Linen are noted where a value is
+   approved for text.
+   ========================================================================== */
+
+:root {
+  /* --- Foundation colours ------------------------------------------------ */
+  --linen: #f5f0e8; /* Sandy Linen  — 58–62% of the surface */
+  --scarlet: #d91a2a; /* Scarlet      — 18–22%, strongest accent */
+  --aegean: #1a6fbf; /* Aegean Sky   — 6–10%, aquatic support only */
+  --navy: #081f33; /* Deep Navy    — 10–14%, text/borders/footer */
+
+  /* --- Sandy Linen tints & shades --------------------------------------- */
+  --linen-100: #fdfbf7; /* lightest: text on Scarlet (4.92:1) */
+  --linen-200: #faf6f0;
+  --linen-300: var(--linen);
+  --linen-400: #ebe3d6; /* hairlines, inset panels */
+  --linen-500: #ddd2c0; /* borders on linen */
+  --linen-600: #c4b59d; /* disabled text on linen — decorative only */
+
+  /* --- Scarlet tints & shades ------------------------------------------- */
+  --scarlet-50: rgb(217 26 42 / 6%);
+  --scarlet-100: rgb(217 26 42 / 12%);
+  --scarlet-200: rgb(217 26 42 / 24%);
+  --scarlet-400: #e84351; /* hover on dark surfaces */
+  --scarlet-500: var(--scarlet); /* large text only on linen (4.48:1) */
+  --scarlet-600: #c21524; /* CTA hover */
+  --scarlet-ink: #b01522; /* body-size text on linen (6.22:1) */
+
+  /* --- Aegean Sky tints & shades ---------------------------------------- */
+  --aegean-50: rgb(26 111 191 / 6%);
+  --aegean-100: rgb(26 111 191 / 12%);
+  --aegean-200: rgb(26 111 191 / 22%);
+  --aegean-400: #4a92d6;
+  --aegean-500: var(--aegean); /* large text only on linen (4.55:1) */
+  --aegean-ink: #155a9b; /* links and body-size text on linen (6.24:1) */
+
+  /* --- Deep Navy tints & shades ----------------------------------------- */
+  --navy-900: var(--navy); /* primary text — 14.76:1 on linen */
+  --navy-700: #12354f;
+  --navy-500: #2b5573; /* secondary text — 7.2:1 on linen */
+  --navy-300: rgb(8 31 51 / 32%);
+  --navy-200: rgb(8 31 51 / 16%); /* hairline rules */
+  --navy-100: rgb(8 31 51 / 8%);
+
+  /* --- Semantic assignments --------------------------------------------- */
+  --surface: var(--linen);
+  --surface-raised: var(--linen-200);
+  --surface-inset: var(--linen-400);
+  --surface-ink: var(--navy-900);
+  --surface-accent: var(--scarlet);
+
+  --text: var(--navy-900);
+  --text-muted: var(--navy-500);
+  --text-on-dark: var(--linen-100);
+  /* Safe on Deep Navy only (11.2:1). Scarlet is far lighter, so a translucent
+     linen drops to 4.05:1 there — below AA. Body text on Scarlet must stay
+     fully opaque, which is 4.92:1. */
+  --text-on-dark-muted: rgb(253 251 247 / 84%);
+  --text-on-scarlet: var(--linen-100);
+  --text-link: var(--aegean-ink);
+
+  --rule: var(--navy-200);
+  --rule-strong: var(--navy-300);
+
+  --focus-ring: var(--aegean-ink);
+  --focus-ring-on-dark: var(--linen-100);
+
+  /* --- Atmospheric glow (hero frame) ------------------------------------ */
+  --glow-scarlet: rgb(217 26 42 / 14%);
+  --glow-aegean: rgb(26 111 191 / 16%);
+  --glow-navy: rgb(8 31 51 / 10%);
+
+  /* --- Spacing: 8px base ------------------------------------------------- */
+  --space-1: 0.5rem; /*  8px */
+  --space-2: 1rem; /* 16px */
+  --space-3: 1.5rem; /* 24px */
+  --space-4: 2rem; /* 32px */
+  --space-5: 2.5rem; /* 40px */
+  --space-6: 3rem; /* 48px */
+  --space-8: 4rem; /* 64px */
+  --space-10: 5rem; /* 80px */
+  --space-12: 6rem; /* 96px */
+  --space-16: 8rem; /* 128px */
+
+  /* Fluid section rhythm — never a fixed oversized gap */
+  --section-y: clamp(4rem, 8vw, 7.5rem);
+  --section-y-tight: clamp(2.5rem, 5vw, 4.5rem);
+  --section-y-loose: clamp(5rem, 10vw, 9.5rem);
+
+  /* --- Layout ------------------------------------------------------------ */
+  --content-max: 1320px;
+  --content-narrow: 72ch;
+  --measure: 62ch;
+  --gutter: 20px; /* base 0–479 */
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-display:
+    var(--font-bricolage), 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-manrope), 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* The vw coefficient is tuned so the hero headline wraps to three lines and
+     keeps both CTAs above the fold on 1280×800, 1366×768 and 1440×900 — the
+     laptop sizes this audience actually uses. It still reaches a full 6rem on
+     wide displays. */
+  --fs-hero: clamp(3.25rem, 5.4vw, 6rem);
+  --fs-page-title: clamp(3rem, 6vw, 6rem);
+  --fs-section-title: clamp(2.25rem, 4.5vw, 4.5rem);
+  --fs-subsection: clamp(1.75rem, 3vw, 2.75rem);
+  --fs-card-title: clamp(1.25rem, 2vw, 2rem);
+  --fs-lead: clamp(1.0625rem, 1.4vw, 1.3125rem);
+  --fs-body: 1rem;
+  --fs-small: 0.9375rem;
+  --fs-label: 0.8125rem;
+  --fs-numeral: clamp(3.5rem, 9vw, 8rem); /* large editorial section numbers */
+
+  --lh-display: 0.94;
+  --lh-title: 1.02;
+  --lh-body: 1.6;
+  --lh-tight: 1.25;
+
+  --tracking-display: -0.035em;
+  --tracking-title: -0.02em;
+  --tracking-body: 0;
+  --tracking-label: 0.09em;
+
+  /* --- Radii: deliberately varied, never one 16px everywhere ------------- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --radius-pool: 58% 42% 47% 53% / 42% 48% 52% 58%; /* organic pool mask */
+  --radius-pool-alt: 44% 56% 62% 38% / 55% 38% 62% 45%;
+
+  /* --- Elevation: soft, paper-like, never glassmorphism ------------------ */
+  --shadow-sm: 0 1px 2px rgb(8 31 51 / 6%);
+  --shadow-md: 0 8px 24px -12px rgb(8 31 51 / 22%);
+  --shadow-lg: 0 24px 64px -32px rgb(8 31 51 / 34%);
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-base: 280ms;
+  --dur-slow: 620ms;
+
+  /* --- Z-index scale ----------------------------------------------------- */
+  --z-base: 0;
+  --z-art: 1;
+  --z-content: 2;
+  --z-sticky: 40;
+  --z-header: 50;
+  --z-menu: 60;
+  --z-skip: 70;
+}
+
+/* Below the tablet breakpoint, secondary content text steps up to a full
+   16px. `--fs-label` stays smaller: it is reserved for uppercase microcopy
+   (eyebrows, field hints, metadata), not for anything anyone has to read at
+   length. */
+@media (max-width: 767px) {
+  :root {
+    --fs-small: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 48px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --gutter: 64px;
+  }
+}
+
+@media (min-width: 1536px) {
+  :root {
+    --gutter: 96px;
+  }
+}

@@ -1,0 +1,17 @@
+.section {
+  overflow: hidden;
+}
+
+.heading {
+  margin-block-end: var(--space-3);
+}
+
+.heading :global(h2) {
+  font-size: var(--fs-section-title);
+}
+
+.current {
+  inline-size: 100%;
+  color: var(--aegean);
+  opacity: 0.4;
+}

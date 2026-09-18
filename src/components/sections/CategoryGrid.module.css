@@ -1,0 +1,146 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  position: relative;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  /* Varied radii, not one 16px value repeated everywhere. */
+  border-radius: var(--radius-md);
+  background: var(--linen-100);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+
+.cardLink:hover {
+  transform: translateY(-4px);
+  border-color: var(--scarlet);
+  box-shadow: var(--shadow-md);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--linen-400);
+}
+
+.media :global(img) {
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.cardLink:hover .media :global(img) {
+  transform: scale(1.04);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: var(--space-3);
+  flex: 1;
+}
+
+.availability {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--aegean-ink);
+  border-radius: var(--radius-pill);
+  color: var(--aegean-ink);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.cardTitle {
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.cardCopy {
+  color: var(--navy-700);
+  font-size: var(--fs-small);
+}
+
+.cardAction {
+  margin-block-start: auto;
+  padding-block-start: var(--space-2);
+  color: var(--scarlet-ink);
+  font-size: var(--fs-small);
+  font-weight: 700;
+}
+
+.cardAction::after {
+  content: ' →';
+}
+
+.cta {
+  margin-block-start: var(--space-6);
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  /* Varied card sizes across a 6-column editorial grid. */
+  .card[data-size='lg'] {
+    grid-column: span 3;
+  }
+
+  .card[data-size='md'] {
+    grid-column: span 3;
+  }
+
+  .card[data-size='sm'] {
+    grid-column: span 2;
+  }
+
+  .card[data-size='lg'] .media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .card[data-size='lg'] .cardTitle {
+    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  }
+
+  .card[data-size='sm'] .media {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Controlled overlap: every third card lifts out of the grid rhythm. */
+  .card[data-size='sm']:nth-of-type(3n) {
+    margin-block-start: var(--space-6);
+  }
+
+  .card[data-size='lg'] .cardLink {
+    border-radius: var(--radius-lg);
+  }
+}

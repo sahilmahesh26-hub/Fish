@@ -1,0 +1,134 @@
+.section {
+  overflow: hidden;
+}
+
+.ripples {
+  position: absolute;
+  inset-block-start: -12%;
+  inset-inline-end: -8%;
+  inline-size: min(48vw, 520px);
+  color: var(--aegean-400);
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.header {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-end: var(--space-8);
+}
+
+.heading {
+  /* `ch` belongs on the heading, whose own display font it measures. */
+  max-inline-size: 15ch;
+  font-size: var(--fs-section-title);
+  font-weight: 700;
+  line-height: var(--lh-title);
+  letter-spacing: var(--tracking-title);
+}
+
+.statements {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.statement {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-block-start: var(--space-2);
+  border-block-start: 2px solid currentColor;
+}
+
+.numeral {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--scarlet-400);
+}
+
+.statementHeading {
+  font-size: clamp(1.5rem, 2.6vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.statementCopy {
+  max-inline-size: 38ch;
+  color: var(--text-on-dark-muted);
+}
+
+[data-on-scarlet] .statementCopy {
+  color: var(--text-on-scarlet);
+}
+
+.proofPoints {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: var(--space-8) 0 0;
+  padding: var(--space-4) 0 0;
+  border-block-start: 1px solid rgb(253 251 247 / 20%);
+  list-style: none;
+}
+
+.proofPoint {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgb(253 251 247 / 34%);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+/* On a Sandy Linen background the statements need the darker text colours. */
+.section:not([data-on-dark]):not([data-on-scarlet]) .statementCopy {
+  color: var(--navy-700);
+}
+
+.section:not([data-on-dark]):not([data-on-scarlet]) .numeral {
+  color: var(--scarlet-ink);
+}
+
+.section:not([data-on-dark]):not([data-on-scarlet]) .proofPoints {
+  border-block-start-color: var(--rule);
+}
+
+.section:not([data-on-dark]):not([data-on-scarlet]) .proofPoint {
+  border-color: var(--rule-strong);
+}
+
+@media (min-width: 768px) {
+  .statements {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  /* Each statement takes a slightly different vertical offset so the row never
+     reads as three identical cards. */
+  .statement:nth-child(2) {
+    margin-block-start: var(--space-5);
+  }
+
+  .statement:nth-child(3) {
+    margin-block-start: var(--space-10);
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading {
+    max-inline-size: 17ch;
+  }
+}

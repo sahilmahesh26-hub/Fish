@@ -1,0 +1,199 @@
+.route {
+  position: relative;
+  padding-block: var(--space-2);
+}
+
+.currentLine,
+.currentLineVertical {
+  position: absolute;
+  color: var(--aegean);
+  opacity: 0.45;
+  z-index: var(--z-base);
+}
+
+/* Horizontal current appears only once the route runs left-to-right. */
+.currentLine {
+  display: none;
+  inset-block-start: 50%;
+  inset-inline: -2%;
+  transform: translateY(-50%);
+}
+
+.currentLineVertical {
+  inset-block: 0;
+  inset-inline-start: 22px;
+  block-size: 100%;
+}
+
+.bubbles {
+  position: absolute;
+  inset-block-start: -4%;
+  inset-inline-end: 2%;
+  inline-size: 44px;
+  color: var(--aegean-ink);
+  opacity: 0.35;
+  z-index: var(--z-base);
+}
+
+.steps {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: var(--space-2);
+  align-items: start;
+}
+
+.marker {
+  display: grid;
+  place-items: center;
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: var(--radius-pool);
+  background: var(--linen-100);
+  border: 2px solid var(--navy-900);
+  flex: none;
+}
+
+.number {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--scarlet-ink);
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-block-start: 0.35rem;
+}
+
+.stepTitle {
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.stepCopy {
+  max-inline-size: 42ch;
+  color: var(--navy-700);
+}
+
+.arrow {
+  display: none;
+  color: var(--scarlet);
+}
+
+.cta {
+  margin-block-start: var(--space-6);
+}
+
+[data-on-dark] .marker {
+  background: transparent;
+  border-color: var(--linen-100);
+}
+
+[data-on-dark] .number {
+  color: var(--linen-100);
+}
+
+[data-on-dark] .stepCopy {
+  color: var(--text-on-dark-muted);
+}
+
+[data-on-scarlet] .stepCopy {
+  color: var(--text-on-scarlet);
+}
+
+/* --- Tablet: two columns, still a route ---------------------------------- */
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-4);
+  }
+
+  .currentLineVertical {
+    display: none;
+  }
+}
+
+/* --- Desktop: the alternating horizontal route --------------------------- */
+
+@media (min-width: 1200px) {
+  .currentLineVertical {
+    display: none;
+  }
+
+  /* The current weaves through the band the markers sit in, above all the
+     text. Running it down the middle would draw dashes straight through the
+     step copy. */
+  .currentLine {
+    display: block;
+    inset-block-start: 8px;
+    inset-inline: -3%;
+    block-size: 96px;
+    transform: none;
+  }
+
+  .steps {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-4);
+    padding-block-start: var(--space-2);
+  }
+
+  .step {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  /* Alternating offset and scale, so the row reads as a route with movement
+     rather than five identical cards — while every marker stays inside the
+     band the current runs through. */
+  .step[data-position='low'] {
+    padding-block-start: 52px;
+  }
+
+  .step[data-position='high'] .marker {
+    inline-size: 64px;
+    block-size: 64px;
+  }
+
+  .step[data-position='high'] .number {
+    font-size: 1.5rem;
+  }
+
+  .step[data-position='low'] .stepTitle {
+    font-size: 1.25rem;
+  }
+
+  .arrow {
+    display: block;
+    position: absolute;
+    inset-block-start: 22px;
+    inset-inline-end: calc(var(--space-4) * -0.8);
+    inline-size: 30px;
+  }
+
+  .step[data-position='low'] .arrow {
+    inset-block-start: 74px;
+  }
+}

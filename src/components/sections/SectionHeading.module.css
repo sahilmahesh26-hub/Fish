@@ -1,0 +1,42 @@
+/* No `ch` measure on this container: `ch` resolves against the container's own
+   16px body font, which would wrap the much larger display heading inside it to
+   a fraction of its intended width. Each child sets its own measure instead. */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-end: var(--space-6);
+}
+
+.center {
+  align-items: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.center .heading,
+.center .body {
+  margin-inline: auto;
+}
+
+.heading {
+  max-inline-size: 18ch;
+  font-size: var(--fs-section-title);
+  font-weight: 700;
+  line-height: var(--lh-title);
+  letter-spacing: var(--tracking-title);
+}
+
+.body {
+  max-inline-size: 52ch;
+  font-size: var(--fs-lead);
+  color: var(--navy-700);
+}
+
+[data-on-dark] .body {
+  color: var(--text-on-dark-muted);
+}
+
+[data-on-scarlet] .body {
+  color: var(--text-on-scarlet);
+}

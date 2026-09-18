@@ -1,0 +1,87 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.required {
+  color: var(--scarlet-ink);
+}
+
+.optional {
+  font-size: var(--fs-label);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+.hint {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+.input {
+  inline-size: 100%;
+  /* Comfortably above the 44px touch-target minimum. */
+  min-block-size: 48px;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  background: var(--linen-100);
+  color: var(--navy-900);
+  /* 16px minimum stops iOS Safari zooming the page on focus. */
+  font-size: 1rem;
+  font-family: var(--font-body);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.input::placeholder {
+  color: var(--linen-600);
+}
+
+.input:hover {
+  border-color: var(--navy-500);
+}
+
+.input:focus-visible {
+  border-color: var(--aegean-ink);
+  outline: 3px solid var(--aegean-ink);
+  outline-offset: 1px;
+}
+
+.textarea {
+  min-block-size: 120px;
+  line-height: var(--lh-body);
+}
+
+.select {
+  /* Room for the native arrow. */
+  padding-inline-end: 2.25rem;
+}
+
+/* The error state is signalled by a thicker border, an icon and a message —
+   never by colour on its own. */
+.hasError .input {
+  border-width: 2.5px;
+  border-color: var(--scarlet-ink);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--scarlet-ink);
+}

@@ -1,0 +1,7 @@
+.narrow {
+  max-inline-size: var(--measure);
+}
+
+.wide {
+  max-inline-size: 80ch;
+}

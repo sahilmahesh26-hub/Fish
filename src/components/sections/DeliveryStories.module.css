@@ -1,0 +1,146 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  position: relative;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--linen-100);
+  color: var(--text);
+  text-decoration: none;
+  /* Postcard tilt, corrected on hover. */
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.cardLink:hover {
+  transform: translateY(-5px) rotate(-0.5deg);
+  box-shadow: var(--shadow-lg);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--linen-400);
+}
+
+.stamp {
+  position: absolute;
+  inset-block-end: var(--space-1);
+  inset-inline-end: var(--space-1);
+  background: rgb(253 251 247 / 92%);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1.12;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--aegean-ink);
+}
+
+.arrow {
+  inline-size: 28px;
+  color: var(--scarlet);
+  flex: none;
+}
+
+.meta {
+  display: grid;
+  gap: 0.5rem;
+  margin: auto 0 0;
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid var(--rule);
+}
+
+.meta div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  gap: var(--space-1);
+}
+
+.meta dt {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.meta dd {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 56ch;
+  padding: var(--space-5);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius-md);
+  background: var(--linen-200);
+}
+
+.emptyHeading {
+  font-family: var(--font-display);
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.emptyBody {
+  color: var(--navy-700);
+}
+
+.cta {
+  margin-block-start: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Gentle stagger so the row of postcards is not perfectly level. */
+  .card:nth-child(even) {
+    margin-block-start: var(--space-5);
+  }
+}

@@ -1,0 +1,122 @@
+.announcement {
+  padding: 0.5rem var(--gutter);
+  background: var(--navy-900);
+  color: var(--text-on-dark);
+  font-size: var(--fs-label);
+  text-align: center;
+}
+
+.announcement a {
+  color: var(--linen-100);
+}
+
+.header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--z-header);
+  background: rgb(245 240 232 / 88%);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--rule);
+  /* Respect notches on landscape phones. */
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  /*
+   * A fixed row height, so the header cannot change size when the webfonts
+   * swap in. Without it the brand and nav reflow on font load, the header
+   * grows by a few pixels and the whole page below it shifts — the single
+   * largest contributor to CLS on a slow connection.
+   */
+  min-block-size: 72px;
+  inline-size: 100%;
+  max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding: 0.75rem var(--gutter);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-block-size: 44px;
+  color: var(--navy-900);
+  text-decoration: none;
+  flex: none;
+}
+
+.brandMark {
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: var(--radius-pool);
+  background: var(--scarlet);
+  flex: none;
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.nav {
+  display: none;
+  margin-inline-start: auto;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.6vw, 1.75rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--navy-900);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  text-decoration: none;
+  /* A permanent transparent underline means the hover state adds no layout shift. */
+  border-block-end: 2px solid transparent;
+}
+
+.navLink:hover {
+  border-block-end-color: var(--scarlet);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-inline-start: auto;
+}
+
+.cta {
+  display: none;
+}
+
+/* Desktop navigation only appears once there is genuinely room for it, so the
+   bar never squeezes on tablets. */
+@media (min-width: 1024px) {
+  .nav {
+    display: block;
+  }
+
+  .actions {
+    margin-inline-start: var(--space-3);
+  }
+
+  .cta {
+    display: inline-flex;
+  }
+}

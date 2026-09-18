@@ -1,0 +1,85 @@
+.section {
+  overflow: hidden;
+}
+
+.ripples {
+  position: absolute;
+  inset-block-start: -10%;
+  inset-inline-end: -6%;
+  inline-size: min(44vw, 460px);
+  color: var(--aegean);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.card {
+  position: relative;
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  max-inline-size: 64ch;
+  padding: var(--space-5);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-lg);
+  background: var(--linen-100);
+}
+
+.label {
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stamp {
+  margin-block: 0.25rem var(--space-1);
+}
+
+.note {
+  font-size: var(--fs-small);
+  color: var(--navy-700);
+}
+
+.rule {
+  inline-size: 100%;
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+  margin-block: var(--space-2);
+}
+
+.heading {
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  color: var(--navy-700);
+}
+
+.steps li::marker {
+  color: var(--scarlet-ink);
+  font-weight: 700;
+}
+
+.caveat {
+  padding: var(--space-2);
+  border-inline-start: 3px solid var(--aegean);
+  background: var(--aegean-50);
+  font-size: var(--fs-small);
+  color: var(--navy-700);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
+}

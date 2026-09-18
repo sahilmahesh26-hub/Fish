@@ -1,0 +1,36 @@
+.heading {
+  margin-block-end: var(--space-4);
+  font-size: var(--fs-subsection);
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--navy-900);
+}
+
+.embed,
+.video {
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+.transcript {
+  margin-block-start: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--linen-200);
+}
+
+.transcriptSummary {
+  min-block-size: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -1,0 +1,69 @@
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.loading {
+  color: var(--text-muted);
+}
+
+.aside {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--linen-200);
+}
+
+.asideHeading {
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.asideBody {
+  font-size: var(--fs-small);
+  color: var(--navy-700);
+}
+
+.asideRule {
+  inline-size: 100%;
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+  margin-block: var(--space-2);
+}
+
+.asideSubheading {
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.asideList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  font-size: var(--fs-small);
+  color: var(--navy-700);
+}
+
+.asideList li::marker {
+  color: var(--scarlet-ink);
+  font-weight: 700;
+}
+
+@media (min-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-8);
+    align-items: start;
+  }
+}

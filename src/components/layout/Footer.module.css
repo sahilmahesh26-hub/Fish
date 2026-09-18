@@ -1,0 +1,150 @@
+.footer {
+  margin-block-start: var(--section-y);
+  background: var(--navy-900);
+  color: var(--text-on-dark);
+}
+
+.inner {
+  display: grid;
+  gap: var(--space-6);
+  inline-size: 100%;
+  max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding: var(--section-y-tight) var(--gutter);
+}
+
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-inline-size: 42ch;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.brandMark {
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: var(--radius-pool);
+  background: var(--scarlet);
+  flex: none;
+}
+
+.statement {
+  color: rgb(253 251 247 / 78%);
+  font-size: var(--fs-small);
+}
+
+.columns {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+.columnTitle {
+  margin-block-end: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: rgb(253 251 247 / 62%);
+}
+
+.columnList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  color: var(--linen-100);
+  font-size: var(--fs-small);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.address {
+  padding-block: var(--space-1);
+}
+
+.address address {
+  font-style: normal;
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  color: rgb(253 251 247 / 78%);
+}
+
+.smallPrint {
+  border-block-start: 1px solid rgb(253 251 247 / 16%);
+}
+
+.smallPrintInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  inline-size: 100%;
+  max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding: var(--space-2) var(--gutter) calc(var(--space-2) + env(safe-area-inset-bottom));
+}
+
+.copyright {
+  /* `--fs-small`, not `--fs-label`: the label size is for uppercase microcopy,
+     and this is a sentence. It reaches a full 16px on phones. */
+  font-size: var(--fs-small);
+  color: rgb(253 251 247 / 72%);
+}
+
+.policyList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.policyList .link {
+  font-size: var(--fs-small);
+  color: rgb(253 251 247 / 78%);
+}
+
+@media (min-width: 640px) {
+  .columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
+    align-items: start;
+    gap: var(--space-8);
+  }
+
+  .columns {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

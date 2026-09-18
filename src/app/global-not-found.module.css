@@ -1,0 +1,136 @@
+.wrapper {
+  display: grid;
+  place-items: center;
+  min-block-size: 100svh;
+  padding: var(--section-y) var(--gutter);
+  background: var(--linen);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  inline-size: 100%;
+  max-inline-size: 60ch;
+}
+
+.code {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 18vw, 13rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--navy-300);
+}
+
+@supports not (-webkit-text-stroke: 1px black) {
+  .code {
+    color: var(--navy-200);
+  }
+}
+
+.heading {
+  font-size: var(--fs-section-title);
+  font-weight: 800;
+  line-height: var(--lh-title);
+  letter-spacing: var(--tracking-display);
+}
+
+.body {
+  font-size: var(--fs-lead);
+  color: var(--navy-700);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block: var(--space-2);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 56px;
+  padding-inline: var(--space-4);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--scarlet);
+  color: var(--linen-100);
+}
+
+.primary:hover {
+  background: var(--scarlet-600);
+}
+
+.secondary {
+  border-color: var(--navy-900);
+  color: var(--navy-900);
+}
+
+.secondary:hover {
+  background: var(--navy-900);
+  color: var(--linen-100);
+}
+
+.links {
+  inline-size: 100%;
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--rule);
+}
+
+.linksHeading {
+  margin-block-end: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.linkList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linkList a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-weight: 600;
+}
+
+/* The boundary version cannot use the global `.u-eyebrow` helper class, because
+   CSS Modules scope the class names it applies. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--scarlet-ink);
+}
+
+.eyebrow::before {
+  content: '';
+  inline-size: 28px;
+  block-size: 2px;
+  background: currentColor;
+  flex: none;
+}

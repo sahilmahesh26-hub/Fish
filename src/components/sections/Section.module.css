@@ -1,0 +1,35 @@
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+}
+
+.flush {
+  padding-block: 0;
+}
+
+.inner {
+  inline-size: 100%;
+  max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.linen {
+  background: var(--linen);
+  color: var(--text);
+}
+
+.linenRaised {
+  background: var(--linen-200);
+  color: var(--text);
+}
+
+.navy {
+  background: var(--navy-900);
+  color: var(--text-on-dark);
+}
+
+.scarlet {
+  background: var(--scarlet);
+  color: var(--text-on-scarlet);
+}
