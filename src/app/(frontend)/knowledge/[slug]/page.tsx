@@ -9,6 +9,8 @@ import { Section } from '@/components/sections/Section'
 import { RichText } from '@/components/ui/RichText'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { JsonLd } from '@/components/ui/JsonLd'
+import { TrackView } from '@/components/layout/TrackView'
+import { ANALYTICS_EVENTS } from '@/lib/analytics'
 import { DraftBanner } from '@/components/ui/DraftBanner'
 import { Cta } from '@/components/sections/Cta'
 import type { Post } from '@/payload-types'
@@ -168,6 +170,8 @@ const ArticlePage = async ({ params }: Props) => {
         }}
         settings={settings}
       />
+
+      <TrackView event={ANALYTICS_EVENTS.articleViewed} label={post.slug ?? undefined} />
 
       <JsonLd data={articleSchema(post, settings)} />
       <JsonLd data={breadcrumbSchema(trail)} />

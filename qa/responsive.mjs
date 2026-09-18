@@ -3,30 +3,55 @@ import { mkdirSync } from 'fs'
 
 const base = process.env.BASE_URL ?? 'http://localhost:3100'
 
-/** Every width the brief requires a visual review at. */
+/** Every viewport the brief requires a visual review at. */
 const VIEWPORTS = [
   { w: 320, h: 568, label: '320x568' },
   { w: 360, h: 800, label: '360x800' },
+  { w: 375, h: 812, label: '375x812' },
   { w: 390, h: 844, label: '390x844' },
+  { w: 393, h: 873, label: '393x873' },
   { w: 414, h: 896, label: '414x896' },
+  { w: 430, h: 932, label: '430x932' },
   { w: 667, h: 375, label: '667x375-landscape' },
   { w: 768, h: 1024, label: '768x1024' },
+  { w: 820, h: 1180, label: '820x1180' },
   { w: 834, h: 1194, label: '834x1194' },
   { w: 1024, h: 768, label: '1024x768' },
+  { w: 1024, h: 1366, label: '1024x1366' },
+  { w: 1280, h: 720, label: '1280x720' },
   { w: 1280, h: 800, label: '1280x800' },
   { w: 1366, h: 768, label: '1366x768' },
   { w: 1440, h: 900, label: '1440x900' },
+  { w: 1536, h: 864, label: '1536x864' },
   { w: 1920, h: 1080, label: '1920x1080' },
+  { w: 2560, h: 1440, label: '2560x1440' },
+  { w: 3440, h: 1440, label: '3440x1440-ultrawide' },
 ]
 
+/**
+ * Every distinct template.
+ *
+ * The two detail routes need content to exist; `pnpm qa:fixtures apply` puts a
+ * local database into the state a launched site would be in. Without it they
+ * 404 and the run says so rather than quietly skipping them.
+ */
 const ROUTES = [
   { path: '/', name: 'home' },
   { path: '/source-a-fish', name: 'source' },
   { path: '/how-it-works', name: 'how-it-works' },
   { path: '/deliveries', name: 'deliveries' },
+  { path: '/deliveries/qa-fixture-super-red-arowana-to-bengaluru', name: 'delivery-detail' },
   { path: '/custom-aquariums', name: 'aquariums' },
   { path: '/knowledge', name: 'knowledge' },
+  { path: '/knowledge/how-to-evaluate-a-fish-through-photos-and-video', name: 'article-detail' },
   { path: '/about', name: 'about' },
+  { path: '/contact', name: 'contact' },
+  { path: '/privacy-policy', name: 'privacy' },
+  { path: '/terms-and-conditions', name: 'terms' },
+  { path: '/cookie-policy', name: 'cookie-policy' },
+  { path: '/sourcing-and-delivery-policy', name: 'sourcing-policy' },
+  { path: '/restricted-species-policy', name: 'restricted-policy' },
+  { path: '/thank-you?request=FQ-1234-5678&fish=Super+red+arowana', name: 'confirmation' },
   { path: '/no-such-page', name: '404' },
 ]
 
@@ -64,12 +89,24 @@ for (const vp of VIEWPORTS) {
       const doc = document.documentElement
 
       // 1. Horizontal overflow.
+      //    An element is only named as a culprit when nothing between it and
+      //    the root clips it — `getBoundingClientRect` reports the unclipped
+      //    box, so a decorative glow that deliberately bleeds out of a hero
+      //    with `overflow: hidden` would otherwise be blamed for every failure.
+      const isClipped = (el) => {
+        for (let parent = el.parentElement; parent && parent !== doc; parent = parent.parentElement) {
+          const overflowX = getComputedStyle(parent).overflowX
+          if (['hidden', 'clip', 'auto', 'scroll'].includes(overflowX)) return true
+        }
+        return false
+      }
+
       const overflow = doc.scrollWidth - doc.clientWidth
       if (overflow > 1) {
         const culprits = Array.from(document.querySelectorAll('body *'))
           .filter((el) => {
             const r = el.getBoundingClientRect()
-            return r.right > doc.clientWidth + 1 && r.width > 0 && r.height > 0
+            return r.right > doc.clientWidth + 1 && r.width > 0 && r.height > 0 && !isClipped(el)
           })
           .slice(0, 3)
           .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]}`)
@@ -122,7 +159,35 @@ for (const vp of VIEWPORTS) {
         .map((el) => `${el.tagName.toLowerCase()}"${(el.textContent ?? '').trim().slice(0, 20)}"`)
       if (clipped.length > 0) issues.push(`clipped text: ${clipped.join(', ')}`)
 
-      // 5. Broken images.
+      // 5. Line length on a large monitor. Prose that runs the full width of a
+      //    1920px screen is unreadable however well it is set.
+      if (window.innerWidth >= 1440) {
+        const tooWide = Array.from(document.querySelectorAll('main p'))
+          .filter((el) => {
+            const text = (el.textContent ?? '').trim()
+            if (text.length < 120) return false
+            const size = parseFloat(getComputedStyle(el).fontSize)
+            // ~0.5em per character is a reasonable average for these faces.
+            return el.getBoundingClientRect().width / (size * 0.5) > 95
+          })
+          .slice(0, 2)
+          .map((el) => `"${(el.textContent ?? '').trim().slice(0, 24)}…" ${Math.round(el.getBoundingClientRect().width)}px`)
+        if (tooWide.length > 0) issues.push(`line length over ~95 characters: ${tooWide.join(', ')}`)
+      }
+
+      // 6. A fixed height cutting off content an editor added.
+      const cutOff = Array.from(document.querySelectorAll('main *'))
+        .filter((el) => {
+          const style = getComputedStyle(el)
+          if (style.overflowY !== 'hidden') return false
+          if (style.height === 'auto') return false
+          return el.scrollHeight > el.clientHeight + 4 && el.clientHeight > 0
+        })
+        .slice(0, 2)
+        .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]} ${el.clientHeight}px holds ${el.scrollHeight}px`)
+      if (cutOff.length > 0) issues.push(`fixed height clipping content: ${cutOff.join(', ')}`)
+
+      // 7. Broken images.
       const broken = Array.from(document.images)
         .filter((img) => img.complete && img.naturalWidth === 0)
         .slice(0, 3)

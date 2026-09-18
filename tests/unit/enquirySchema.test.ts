@@ -123,3 +123,90 @@ describe('upload limits', () => {
     expect(UPLOAD_LIMITS.accept).not.toContain('image/svg+xml')
   })
 })
+
+describe('Indian phone and PIN handling', () => {
+  /*
+   * Rejecting a real number loses an enquiry, so the accepted list is
+   * deliberately broad. The rejected list is what genuinely is not an Indian
+   * mobile number.
+   */
+  const accepted = [
+    ['9876543210', 'ten digits'],
+    ['98765 43210', 'grouped with a space'],
+    ['+919876543210', 'country code'],
+    ['+91 98765 43210', 'country code, spaced'],
+    ['+91-9876543210', 'country code, hyphenated'],
+    ['919876543210', 'country code without the plus'],
+    ['09876543210', 'domestic trunk prefix'],
+    ['(0) 9876543210', 'trunk prefix in brackets'],
+    ['6123456789', 'starts with 6'],
+  ] as const
+
+  const rejected = [
+    ['5876543210', 'landline range, not a mobile'],
+    ['987654321', 'nine digits'],
+    ['98765432100', 'eleven digits'],
+    ['not a number', 'letters'],
+    ['+1 415 555 0123', 'not an Indian number'],
+  ] as const
+
+  for (const [number, label] of accepted) {
+    it(`accepts a number written as ${label}`, () => {
+      expect(enquirySchema.safeParse({ ...valid, whatsapp: number }).success).toBe(true)
+    })
+  }
+
+  for (const [number, label] of rejected) {
+    it(`rejects ${label}`, () => {
+      expect(enquirySchema.safeParse({ ...valid, whatsapp: number }).success).toBe(false)
+    })
+  }
+
+  it('accepts a six-digit PIN code and rejects anything else', () => {
+    expect(enquirySchema.safeParse({ ...valid, pincode: '411001' }).success).toBe(true)
+    for (const pincode of ['41100', '4110011', '011001', 'ABC123', '']) {
+      expect(enquirySchema.safeParse({ ...valid, pincode }).success, pincode).toBe(false)
+    }
+  })
+})
+
+describe('submission token', () => {
+  it('accepts a UUID and is optional', () => {
+    expect(enquirySchema.safeParse(valid).success).toBe(true)
+    const withToken = enquirySchema.safeParse({
+      ...valid,
+      submissionToken: '3f2504e0-4f89-41d3-9a0c-0305e82c3301',
+    })
+    expect(withToken.success).toBe(true)
+  })
+
+  it('rejects anything that is not a UUID, since it reaches a database query', () => {
+    for (const token of ['../../etc/passwd', "' OR 1=1 --", 'short', 'x'.repeat(200)]) {
+      expect(enquirySchema.safeParse({ ...valid, submissionToken: token }).success, token).toBe(
+        false,
+      )
+    }
+  })
+})
+
+describe('consent messaging', () => {
+  /*
+   * An unticked checkbox is not submitted at all, so this is the missing-value
+   * path — the one a real person hits, and the one that used to report Zod's
+   * default "Invalid input".
+   */
+  it('explains itself when the box was never ticked', () => {
+    const { consent: _omitted, ...withoutConsent } = valid
+    const result = enquirySchema.safeParse(withoutConsent)
+    expect(result.success).toBe(false)
+    if (result.success) return
+
+    const issue = result.error.issues.find((candidate) => candidate.path[0] === 'consent')
+    expect(issue?.message).toBe('Please confirm you are happy for us to contact you.')
+  })
+
+  it('still rejects a value that is not a ticked box', () => {
+    expect(enquirySchema.safeParse({ ...valid, consent: 'off' }).success).toBe(false)
+    expect(enquirySchema.safeParse({ ...valid, consent: 'on' }).success).toBe(true)
+  })
+})

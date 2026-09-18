@@ -20,6 +20,18 @@ const buckets = new Map<string, Entry>()
 const WINDOW_MS = Number(process.env.ENQUIRY_RATE_LIMIT_WINDOW_MINUTES ?? 10) * 60 * 1000
 const MAX_PER_WINDOW = Number(process.env.ENQUIRY_RATE_LIMIT_MAX ?? 5)
 
+/**
+ * The looser ceiling on attempts, as opposed to completed enquiries.
+ *
+ * Counting every attempt against the strict limit meant that someone who
+ * mistyped their phone number twice had spent three of their five chances
+ * before sending anything — the protection was punishing the people it was
+ * meant to serve. So attempts get their own, much larger budget: enough that a
+ * person correcting mistakes never notices it, low enough that a script cannot
+ * sit on the endpoint.
+ */
+export const MAX_ATTEMPTS_PER_WINDOW = MAX_PER_WINDOW * 8
+
 /** Drops expired buckets so the map cannot grow without bound. */
 const sweep = (now: number) => {
   for (const [key, entry] of buckets) {

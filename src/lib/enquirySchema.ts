@@ -28,15 +28,28 @@ const optionalEnum = <const T extends readonly [string, ...string[]]>(values: T)
       value === '' || value === undefined ? undefined : value,
     )
 
-/** Indian mobile numbers, accepting the common ways people type them. */
-const WHATSAPP_RE = /^(?:\+?91[-\s]?)?[6-9]\d{9}$/
+/*
+ * Indian mobile numbers, in the shapes people actually type.
+ *
+ * Accepts an optional `+91`/`91` country code or a single leading `0` (the
+ * domestic trunk prefix, which plenty of people still include), then a
+ * ten-digit number starting 6–9. Separators are stripped before the test, so
+ * spaces, hyphens and brackets are all fine. Rejecting a real number is a lost
+ * enquiry, so this errs towards accepting.
+ */
+const WHATSAPP_RE = /^(?:\+?91|0)?[6-9]\d{9}$/
+
+/** Everything a person might use to group digits. */
+const PHONE_SEPARATORS = /[\s\-().]/g
+
+/** Six digits, first one non-zero — no Indian PIN code starts with 0. */
 const PINCODE_RE = /^[1-9]\d{5}$/
 
 export const enquirySchema = z.object({
   // --- Step 1: about you ---------------------------------------------------
   fullName: required(120, 'Enter your name.'),
   whatsapp: required(20, 'Enter your WhatsApp number.').refine(
-    (value) => WHATSAPP_RE.test(value.replace(/[\s-]/g, '')),
+    (value) => WHATSAPP_RE.test(value.replace(PHONE_SEPARATORS, '')),
     'Enter a valid Indian mobile number, for example 98765 43210.',
   ),
   email: z
@@ -79,16 +92,37 @@ export const enquirySchema = z.object({
   // --- Step 5: reference and contact --------------------------------------
   additionalRequirements: trimmed(1200).optional(),
   preferredContactTime: trimmed(80).optional(),
-  consent: z
-    .union([z.literal('on'), z.literal('true'), z.boolean()])
-    .refine((value) => value === true || value === 'on' || value === 'true', {
-      message: 'Please confirm you are happy for us to contact you.',
-    }),
+  /*
+   * An unticked checkbox is absent from FormData entirely, so the union below
+   * fails on the missing value and never reaches a `.refine`. The message has
+   * to sit on the union itself, or the most important field on the form
+   * reports Zod's default "Invalid input" — which tells the customer nothing.
+   */
+  consent: z.union([z.literal('on'), z.literal('true'), z.literal(true)], {
+    message: 'Please confirm you are happy for us to contact you.',
+  }),
 
   // --- Anti-spam. Not shown to people; a filled value means a bot. ---------
   website: z.string().max(0).optional(),
   // Milliseconds since the form was rendered, used to reject instant submits.
   elapsed: z.coerce.number().optional(),
+  /*
+   * Idempotency key for one filled-in form, minted in the browser.
+   *
+   * Bounded and character-restricted because it is used in a database query: a
+   * `crypto.randomUUID()` is 36 characters, and anything that is not one is
+   * rejected rather than trusted.
+   *
+   * An empty value is accepted and treated as absent. The token is a
+   * convenience — it turns a duplicate into a repeat of the original
+   * confirmation — so a browser that somehow submits without one must still be
+   * able to send its enquiry. Failing the whole form over a missing idempotency
+   * key would be a worse outcome than the duplicate it prevents.
+   */
+  submissionToken: z
+    .union([z.literal(''), z.string().regex(/^[0-9a-fA-F-]{36}$/)])
+    .optional()
+    .transform((value) => (value === '' ? undefined : value)),
 
   // --- Attribution ---------------------------------------------------------
   sourcePage: trimmed(200).optional(),

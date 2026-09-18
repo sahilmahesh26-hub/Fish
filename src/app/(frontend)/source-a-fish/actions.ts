@@ -4,8 +4,8 @@ import { headers } from 'next/headers'
 import { getPayloadClient } from '@/lib/payload'
 import { enquirySchema, CONSENT_TEXT, UPLOAD_LIMITS } from '@/lib/enquirySchema'
 import { reserveRequestId } from '@/lib/requestId'
-import { checkRateLimit } from '@/lib/rateLimit'
-import { hasSmtp } from '@/lib/env'
+import { checkRateLimit, MAX_ATTEMPTS_PER_WINDOW } from '@/lib/rateLimit'
+import { hasSmtp, siteUrl } from '@/lib/env'
 
 export type EnquiryState = {
   status: 'idle' | 'success' | 'error'
@@ -17,6 +17,14 @@ export type EnquiryState = {
   fishRequired?: string
 }
 
+/** The one message both rate-limit tiers return, so neither reveals which it was. */
+const tooManyRequests = (retryAfterSeconds: number): EnquiryState => ({
+  status: 'error',
+  message: `That is a lot of requests in a short time. Please try again in about ${Math.ceil(
+    retryAfterSeconds / 60,
+  )} minutes, or message us on WhatsApp.`,
+})
+
 /** Faster than any person could complete and submit the form. */
 const MIN_ELAPSED_MS = 2500
 
@@ -25,6 +33,38 @@ const clientKey = async (): Promise<string> => {
   // `x-forwarded-for` is set by the proxy; the first entry is the client.
   const forwarded = headerList.get('x-forwarded-for')?.split(',')[0]?.trim()
   return forwarded || headerList.get('x-real-ip') || 'unknown'
+}
+
+/**
+ * Server-side origin check.
+ *
+ * Next already compares `Origin` against `Host` for Server Actions, so this is
+ * a second, explicit layer rather than the only one — and it is the layer an
+ * auditor can read. A request with no `Origin` at all is allowed through: some
+ * privacy tooling strips the header, and refusing those would break real
+ * submissions to stop an attack the header does not prevent anyway.
+ */
+const originIsTrusted = async (): Promise<boolean> => {
+  const headerList = await headers()
+  const origin = headerList.get('origin')
+  if (!origin) return true
+
+  const expected = new Set<string>()
+  const configured = siteUrl()
+  if (configured) expected.add(configured.replace(/\/$/, ''))
+
+  // The host this request actually arrived on, so a deployment behind a proxy
+  // or on a preview domain is not locked out of its own form.
+  const forwardedHost = headerList.get('x-forwarded-host')?.split(',')[0]?.trim()
+  const host = forwardedHost || headerList.get('host')
+  if (host) {
+    const proto = headerList.get('x-forwarded-proto')?.split(',')[0]?.trim() ?? 'https'
+    expected.add(`${proto}://${host}`)
+    expected.add(`http://${host}`)
+    expected.add(`https://${host}`)
+  }
+
+  return expected.has(origin.replace(/\/$/, ''))
 }
 
 const str = (value: FormDataEntryValue | null): string | undefined => {
@@ -45,17 +85,27 @@ export const submitEnquiry = async (
   _previous: EnquiryState,
   formData: FormData,
 ): Promise<EnquiryState> => {
-  // --- Rate limit ----------------------------------------------------------
-  const key = await clientKey()
-  const limit = checkRateLimit(`enquiry:${key}`)
-  if (!limit.allowed) {
+  // --- Origin --------------------------------------------------------------
+  if (!(await originIsTrusted())) {
     return {
       status: 'error',
-      message: `That is a lot of requests in a short time. Please try again in about ${Math.ceil(
-        limit.retryAfterSeconds / 60,
-      )} minutes, or message us on WhatsApp.`,
+      message:
+        'This request did not come from the Finquiry site. Please reload the page and try again, or message us on WhatsApp.',
     }
   }
+
+  /*
+   * Rate limit, in two tiers.
+   *
+   * The attempt budget is checked here, before anything else, and is generous:
+   * a person who mistypes their number twice is not an abuser, and a strict
+   * limit at this point would spend their allowance on their own corrections.
+   * The strict budget is only charged further down, once a submission is about
+   * to become a real enquiry.
+   */
+  const key = await clientKey()
+  const attempts = checkRateLimit(`enquiry-attempt:${key}`, { max: MAX_ATTEMPTS_PER_WINDOW })
+  if (!attempts.allowed) return tooManyRequests(attempts.retryAfterSeconds)
 
   // --- Spam checks ---------------------------------------------------------
   // A filled honeypot means a bot: return the generic success shape without
@@ -104,6 +154,44 @@ export const submitEnquiry = async (
   const payload = await getPayloadClient()
 
   try {
+    /*
+     * Duplicate submission guard.
+     *
+     * The browser mints one token per filled-in form, so a double click, an
+     * impatient retry or a resubmitted navigation all carry the same value.
+     * The lookup is against the database rather than an in-memory set on
+     * purpose: a retry can land on a different instance, and an in-memory
+     * guard would let the duplicate straight through.
+     *
+     * The original request ID is returned, so the second attempt shows the
+     * same confirmation the first one did instead of an error the customer
+     * cannot act on.
+     */
+    if (data.submissionToken) {
+      const existing = await payload.find({
+        collection: 'enquiries',
+        where: { 'meta.submissionToken': { equals: data.submissionToken } },
+        limit: 1,
+        overrideAccess: true,
+      })
+      const already = existing.docs[0]
+      if (already) {
+        return {
+          status: 'success',
+          requestId: already.requestId as string,
+          fishRequired: (already.fishRequired as string) ?? data.fishRequired,
+        }
+      }
+    }
+
+    /*
+     * The strict budget, charged here and nowhere else — so it counts enquiries
+     * actually created. A typo costs the visitor nothing, and a replayed
+     * submission that was recognised above has already returned.
+     */
+    const creations = checkRateLimit(`enquiry:${key}`)
+    if (!creations.allowed) return tooManyRequests(creations.retryAfterSeconds)
+
     // --- Reference image -------------------------------------------------
     // Stored in the private collection so it can never appear in the public
     // media library or be listed by the public API.
@@ -179,6 +267,7 @@ export const submitEnquiry = async (
         referenceImage: referenceImageId,
         meta: {
           sourcePage: data.sourcePage,
+          submissionToken: data.submissionToken,
           consentAt: new Date().toISOString(),
           consentText: CONSENT_TEXT,
           utm: {

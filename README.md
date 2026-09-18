@@ -89,14 +89,17 @@ the frontend is typed against its output.
 The scripts in `qa/` run against a running site (`BASE_URL`, default
 `http://localhost:3000`):
 
-| Script                                        | What it checks                                                                               |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `node qa/routes.mjs`                          | Every route returns the expected status with exactly one H1, and logs console errors         |
-| `node qa/a11y.mjs`                            | axe-core, WCAG 2.2 AA, 11 routes × mobile and desktop                                        |
-| `node qa/responsive.mjs`                      | Overflow, text size, touch targets, clipped text and broken images at all 12 required widths |
-| `node qa/responsive.mjs --shots`              | The above, plus full-page screenshots into `qa/screenshots/`                                 |
-| `node qa/perf.mjs`                            | LCP, CLS and transfer weight under 4× CPU and Fast-3G throttling                             |
-| `node qa/shot.mjs <url> <out> [w] [h] [full]` | One screenshot                                                                               |
+| Script                                        | What it checks                                                                                                                                                          |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `node qa/routes.mjs`                          | Every route returns the expected status with exactly one H1, and logs console errors                                                                                    |
+| `node qa/a11y.mjs`                            | axe-core, WCAG 2.2 AA, 11 routes × mobile and desktop                                                                                                                   |
+| `pnpm qa:responsive`                          | Overflow, text size, touch targets, clipped text, line length and broken images across all 21 required viewports and every template                                     |
+| `pnpm qa:responsive -- --shots`               | The above, plus full-page screenshots into `qa/screenshots/`                                                                                                            |
+| `pnpm qa:overflow`                            | Horizontal page scroll only, at ten widths, naming the element responsible                                                                                              |
+| `pnpm qa:links`                               | Crawls every internal link, and checks a missing URL returns a real 404                                                                                                 |
+| `pnpm qa:fixtures <apply\|reset>`             | Puts a local database into the state a launched site would be in, so the article and delivery templates can be tested. Never run against anything but a local database. |
+| `node qa/perf.mjs`                            | LCP, CLS and transfer weight under 4× CPU and Fast-3G throttling                                                                                                        |
+| `node qa/shot.mjs <url> <out> [w] [h] [full]` | One screenshot                                                                                                                                                          |
 
 ---
 
@@ -128,11 +131,83 @@ with no analytics ID no third-party script is loaded at all.
 3. Configure S3 if the host has an ephemeral filesystem. Without it, uploads are
    written to `public/media` and `private-uploads`, which most container hosts
    discard on redeploy.
-4. Run migrations, then `pnpm build` and `pnpm start`.
-5. Run `pnpm seed` once against the new database.
-6. Sign in at `/admin`, change the seeded password, and fill in Site Settings —
-   particularly the WhatsApp number, which every WhatsApp CTA depends on. Until
-   it is set, those buttons are hidden rather than rendered as dead links.
+4. Set `SEED_ADMIN_PASSWORD`. There is no default, and the seed refuses to create
+   the first admin account in production without one.
+5. Run `pnpm db:migrate`, then `pnpm build` and `pnpm start`. In production the
+   Postgres adapter does **not** push schema changes, so a deploy without
+   migrations meets an empty database. `pnpm start:prod` does the wait, migrate
+   and start in one step.
+6. Run `pnpm seed` once against the new database.
+7. Sign in at `/admin` and fill in Site Settings — particularly the WhatsApp
+   number, which every WhatsApp CTA depends on. Until it is set, those buttons
+   are hidden rather than rendered as dead links.
+
+### After a schema change
+
+Any change to a collection or global needs a migration, or production will fail
+at runtime on a missing column:
+
+```bash
+pnpm generate:types        # keep payload-types.ts in step
+pnpm db:migrate:create     # generate the migration from the current config
+pnpm db:migrate            # apply it
+```
+
+Development pushes schema automatically, which is why a missing migration is
+invisible until deployment.
+
+---
+
+## Production checklist
+
+Run through this before pointing a domain at it. Each item is verifiable, and
+most are covered by a command.
+
+**Configuration**
+
+- [ ] `NEXT_PUBLIC_SITE_URL` is the real HTTPS origin, with no trailing slash.
+      Canonical URLs, the sitemap, social-image URLs and the HSTS decision all
+      read it.
+- [ ] `PAYLOAD_SECRET`, `PREVIEW_SECRET` and `REVALIDATION_SECRET` are long
+      random values, different from any other environment.
+- [ ] `SEED_ADMIN_PASSWORD` was set, used once, and the account's password is
+      known to whoever needs it.
+- [ ] S3 is configured, or the host has persistent disk.
+- [ ] No `.env` file is committed. Only `.env.example` should be tracked.
+
+**Content the owner must supply**
+
+- [ ] Site Settings: WhatsApp number, contact email, brand details.
+- [ ] Every placeholder image replaced. They are tagged `placeholder` in the
+      media library — filter on it.
+- [ ] Privacy, Terms, Sourcing and Delivery, Restricted Species and Cookie
+      Policy reviewed by a lawyer, and **Requires legal review** unticked on
+      each. Until that is done they are `noindex` and stay out of the sitemap.
+- [ ] The starter articles rewritten and published, or left as drafts. They
+      ship unpublished on purpose.
+
+**Verification**
+
+- [ ] `pnpm check` passes (format, lint, types, unit tests).
+- [ ] `pnpm build` succeeds and `pnpm start` serves.
+- [ ] `pnpm test:e2e` passes against the production server.
+- [ ] `pnpm qa:links` reports no broken internal links and a real 404.
+- [ ] `pnpm qa:overflow` and `pnpm qa:responsive` pass.
+- [ ] `/sitemap.xml` lists the pages you expect and no drafts.
+- [ ] `/robots.txt` allows crawling — if it says `Disallow: /`, the site URL is
+      still pointing at localhost.
+- [ ] A shared link renders a social card. Check one page and one article.
+- [ ] `https://` is served and plain HTTP redirects to it.
+- [ ] The cookie banner appears, and no analytics request is made before you
+      accept.
+- [ ] A test enquiry arrives in Payload with a request ID, and the notification
+      email lands.
+
+**Only after HTTPS is confirmed working**
+
+- [ ] Consider `HSTS_PRELOAD=true`. Submission to the preload list is
+      effectively irreversible for months and covers every subdomain. Do not set
+      it until the apex and every subdomain serve HTTPS.
 
 ### Cache invalidation
 
@@ -228,9 +303,13 @@ src/
 
 ## Further reading
 
-| Document                   | Contents                                                                                 |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| [DESIGN.md](./DESIGN.md)   | The visual system: colour, type, shape, motion, and the contrast maths behind the tokens |
-| [CONTENT.md](./CONTENT.md) | Which CMS field drives which part of which page                                          |
-| [PAYLOAD.md](./PAYLOAD.md) | Collections, globals, roles, preview and publishing — written for editors                |
-| [QA.md](./QA.md)           | What was tested, the measured results, and the known limitations                         |
+| Document                                                           | Contents                                                                                 |
+| ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| [DESIGN.md](./DESIGN.md)                                           | The visual system: colour, type, shape, motion, and the contrast maths behind the tokens |
+| [CONTENT.md](./CONTENT.md)                                         | Which CMS field drives which part of which page                                          |
+| [PAYLOAD.md](./PAYLOAD.md)                                         | Collections, globals, roles, preview and publishing — written for editors                |
+| [QA.md](./QA.md)                                                   | What was tested, the measured results, and the known limitations                         |
+| [docs/SEO.md](./docs/SEO.md)                                       | Sitemap and robots logic, metadata fallbacks, social cards, structured data              |
+| [docs/SECURITY.md](./docs/SECURITY.md)                             | CSP strategy, headers, HTTPS, secrets, and the form and consent controls                 |
+| [docs/TOOLING-AUDIT.md](./docs/TOOLING-AUDIT.md)                   | Every external tool considered, what it was used for, and what could not be installed    |
+| [docs/DESIGN-REFERENCE-AUDIT.md](./docs/DESIGN-REFERENCE-AUDIT.md) | The design references reviewed and what was taken from each                              |

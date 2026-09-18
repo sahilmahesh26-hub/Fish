@@ -2,10 +2,36 @@
 
 import Script from 'next/script'
 import { useEffect } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams, type ReadonlyURLSearchParams } from 'next/navigation'
 import { useConsent } from '@/components/consent/ConsentProvider'
 import { ANALYTICS_EVENTS, setAnalyticsEnabled, trackEvent } from '@/lib/analytics'
 import { AnalyticsClicks } from './AnalyticsClicks'
+
+/**
+ * Query parameters that may be sent to an analytics provider.
+ *
+ * An allowlist, not a denylist. The confirmation page is reached as
+ * `/thank-you?request=FQ-1234-5678&fish=<what the customer typed>`, so sending
+ * the whole query string would hand a provider a request ID tied to a named
+ * person and the full text of their requirement — two of the things this
+ * project promises never to send. Only parameters that are known to be
+ * navigational survive.
+ */
+const SAFE_QUERY_PARAMS = new Set(['category', 'origin', 'destination', 'page'])
+
+/** The page path as an analytics label: pathname plus navigational params only. */
+export const analyticsPath = (
+  pathname: string,
+  searchParams: URLSearchParams | ReadonlyURLSearchParams,
+): string => {
+  const safe = new URLSearchParams()
+  for (const key of SAFE_QUERY_PARAMS) {
+    const value = searchParams.get(key)
+    if (value) safe.set(key, value)
+  }
+  const query = safe.toString()
+  return query ? `${pathname}?${query}` : pathname
+}
 
 type Props = {
   provider?: string | null
@@ -41,13 +67,11 @@ export const Analytics = ({ provider, measurementId, scriptUrl }: Props) => {
   /*
    * Client-side navigation does not reload the page, so each provider's own
    * automatic page view fires once and then never again. This sends one per
-   * route change — including the query string, which distinguishes the
-   * filtered listing views.
+   * route change.
    */
   useEffect(() => {
     if (!allowed) return
-    const query = searchParams.toString()
-    trackEvent(ANALYTICS_EVENTS.pageView, { label: query ? `${pathname}?${query}` : pathname })
+    trackEvent(ANALYTICS_EVENTS.pageView, { label: analyticsPath(pathname, searchParams) })
   }, [allowed, pathname, searchParams])
 
   if (!allowed) return null

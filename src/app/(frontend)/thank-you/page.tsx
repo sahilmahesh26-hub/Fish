@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/Button'
 import { SpecimenStamp } from '@/components/art/SpecimenStamp'
 import { RippleRings } from '@/components/art/Shapes'
 import { whatsappLink, enquiryWhatsappMessage } from '@/lib/whatsapp'
+import { TrackView } from '@/components/layout/TrackView'
+import { ANALYTICS_EVENTS } from '@/lib/analytics'
 import styles from './thank-you.module.css'
 
 type Props = { searchParams: Promise<{ request?: string; fish?: string }> }
@@ -42,6 +44,10 @@ const ThankYouPage = async ({ searchParams }: Props) => {
 
   return (
     <>
+      {/* No label: the request ID identifies a named person, and the fish
+          description is what they typed. Neither may reach a provider. */}
+      {hasRequest ? <TrackView event={ANALYTICS_EVENTS.requestConfirmationViewed} /> : null}
+
       <PageHero
         eyebrow="Request received"
         heading={hasRequest ? 'Your search has started.' : 'Start your search'}

@@ -115,8 +115,30 @@ const ADMIN_CSP = [
   `upgrade-insecure-requests`,
 ].join('; ')
 
+/**
+ * The host the visitor actually typed.
+ *
+ * `request.nextUrl.host` is the address the server was reached on, which behind
+ * a load balancer is an internal one — using it made the HTTPS redirect below
+ * silently never fire, because every real request looked like it came from
+ * localhost. The forwarded headers carry the external host; `nextUrl` is only
+ * the last resort.
+ *
+ * `x-forwarded-host` can hold a comma-separated list when a request crossed
+ * several proxies; the first entry is the original client-facing host.
+ */
+const externalHost = (request: NextRequest): string => {
+  const forwarded = request.headers.get('x-forwarded-host')
+  if (forwarded) return forwarded.split(',')[0].trim()
+  return request.headers.get('host') ?? request.nextUrl.host
+}
+
+const isLocalHost = (host: string) =>
+  host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]')
+
 export const proxy = (request: NextRequest) => {
-  const { pathname, host } = request.nextUrl
+  const { pathname } = request.nextUrl
+  const host = externalHost(request)
 
   /*
    * Force HTTPS in production.
@@ -128,11 +150,13 @@ export const proxy = (request: NextRequest) => {
    * development or on a local host.
    */
   const forwardedProto = request.headers.get('x-forwarded-proto')
-  const isLocal = host.startsWith('localhost') || host.startsWith('127.0.0.1')
 
-  if (!isDev && !isLocal && forwardedProto === 'http') {
+  if (!isDev && !isLocalHost(host) && forwardedProto === 'http') {
     const target = request.nextUrl.clone()
     target.protocol = 'https:'
+    // Redirect to the host the visitor used, not the internal one Next saw.
+    target.host = host
+    target.port = ''
     return NextResponse.redirect(target, 308)
   }
 

@@ -1448,6 +1448,10 @@ export interface Enquiry {
   internalNotes?: string | null;
   meta?: {
     sourcePage?: string | null;
+    /**
+     * Idempotency key minted by the browser for one filled-in form. A retry or a double click carries the same value, so the second arrival is recognised instead of creating a duplicate enquiry.
+     */
+    submissionToken?: string | null;
     consentAt?: string | null;
     /**
      * The exact wording the customer agreed to.
@@ -2435,6 +2439,7 @@ export interface EnquiriesSelect<T extends boolean = true> {
     | T
     | {
         sourcePage?: T;
+        submissionToken?: T;
         consentAt?: T;
         consentText?: T;
         utm?:

@@ -33,7 +33,9 @@
     "icons": "node scripts/generate-icons.mjs",
     "start:prod": "node scripts/wait-for-db.mjs && payload migrate && next start",
     "qa:fixtures": "tsx qa/fixtures.ts",
-    "qa:overflow": "node qa/overflow.mjs"
+    "qa:overflow": "node qa/overflow.mjs",
+    "qa:links": "node qa/links.mjs",
+    "qa:responsive": "node qa/responsive.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",

@@ -1,6 +1,14 @@
 'use client'
 
-import { useActionState, useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { submitEnquiry, type EnquiryState } from '@/app/(frontend)/source-a-fish/actions'
@@ -70,6 +78,8 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
   const errorSummaryRef = useRef<HTMLDivElement>(null)
   const startedAt = useRef<number>(0)
   const hasStarted = useRef(false)
+  /** What the visitor had typed when they last pressed submit. See below. */
+  const submittedValues = useRef<Record<string, string>>({})
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -121,11 +131,59 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
     writeDraft(values)
   }, [])
 
+  /*
+   * Keep what the visitor typed, so a rejected submission does not wipe it.
+   *
+   * React 19 resets the fields of an uncontrolled form once its action settles.
+   * That is the right default for a form that succeeded, and completely wrong
+   * for one that came back with errors: somebody who mistyped a PIN code lost
+   * their name, their number and everything else along with it.
+   *
+   * These values are held in a ref for the lifetime of the page and never
+   * written to storage or sent anywhere — the draft autosave deliberately
+   * excludes identity fields, and that stays true.
+   */
+  const captureSubmittedValues = useCallback(() => {
+    const form = formRef.current
+    if (!form) return
+    const values: Record<string, string> = {}
+    for (const [key, value] of new FormData(form).entries()) {
+      if (typeof value === 'string') values[key] = value
+    }
+    submittedValues.current = values
+  }, [])
+
+  useEffect(() => {
+    if (state.status !== 'error') return
+    const form = formRef.current
+    if (!form) return
+
+    for (const [name, value] of Object.entries(submittedValues.current)) {
+      const control = form.elements.namedItem(name)
+      if (
+        control instanceof HTMLInputElement ||
+        control instanceof HTMLTextAreaElement ||
+        control instanceof HTMLSelectElement
+      ) {
+        // A file input's value cannot be set programmatically, and the browser
+        // keeps the chosen file anyway.
+        if (control instanceof HTMLInputElement && control.type === 'file') continue
+        if (control instanceof HTMLInputElement && control.type === 'checkbox') {
+          control.checked = value === 'on' || value === 'true'
+          continue
+        }
+        if (!control.value) control.value = value
+      }
+    }
+  }, [state])
+
   // On success: clear the draft and hand off to the confirmation page, which
   // receives only the request ID and the fish description — never the rest.
   useEffect(() => {
     if (state.status !== 'success' || !state.requestId) return
     clearDraft()
+    // The enquiry landed, so the next one is a new enquiry, not a retry.
+    resetSubmissionToken()
     trackEvent(ANALYTICS_EVENTS.enquirySubmitted)
     const params = new URLSearchParams({ request: state.requestId })
     if (state.fishRequired) params.set('fish', state.fishRequired)
@@ -255,6 +313,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
       noValidate
       onInput={onFirstInput}
       onChange={saveDraft}
+      onSubmit={captureSubmittedValues}
     >
       {/* Anti-spam. Hidden from people and from assistive technology; only a
           script filling every input would complete it. */}
@@ -270,6 +329,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
       <input type="hidden" name="utmTerm" value={utm.term} />
       <input type="hidden" name="utmContent" value={utm.content} />
       <ElapsedField startedAt={startedAt} />
+      <SubmissionToken />
 
       {/* Step indicator. A list, so its length and position are announced. */}
       <nav aria-label="Form progress" className={styles.progress}>
@@ -626,6 +686,52 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
       </div>
     </form>
   )
+}
+
+/**
+ * One idempotency key per filled-in form.
+ *
+ * Read through `useSyncExternalStore` rather than held in an effect's state.
+ * The server snapshot is an empty string and the client snapshot is a UUID, so
+ * the markup matches on hydration and React swaps the real value in
+ * afterwards — no hydration mismatch, and no `setState` inside an effect.
+ *
+ * Two earlier shapes did not survive: writing the value into the DOM by hand
+ * meant React blanked it on the next re-render, which happens as soon as the
+ * visitor types, and a `defaultValue` cannot be trusted on an element React
+ * keeps re-rendering. Controlled is the only reliable form.
+ *
+ * The token deliberately survives a failed submit — a retry of the same enquiry
+ * must carry the same value, or the duplicate guard has nothing to match — and
+ * is reset only once a submission has actually succeeded.
+ */
+let currentToken: string | null = null
+const tokenListeners = new Set<() => void>()
+
+const subscribeToken = (listener: () => void) => {
+  tokenListeners.add(listener)
+  return () => {
+    tokenListeners.delete(listener)
+  }
+}
+
+const getTokenSnapshot = () => (currentToken ??= crypto.randomUUID())
+
+/** The server has no `crypto.randomUUID` guarantee and needs a stable value. */
+const getTokenServerSnapshot = () => ''
+
+/**
+ * Starts a new token, so the next enquiry is not mistaken for a repeat of the
+ * one just sent. Called only after a submission has been accepted.
+ */
+const resetSubmissionToken = () => {
+  currentToken = null
+  tokenListeners.forEach((listener) => listener())
+}
+
+const SubmissionToken = () => {
+  const token = useSyncExternalStore(subscribeToken, getTokenSnapshot, getTokenServerSnapshot)
+  return <input type="hidden" name="submissionToken" value={token} readOnly />
 }
 
 /** Records how long the form was open, used to reject instant bot submissions. */

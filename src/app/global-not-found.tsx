@@ -6,7 +6,7 @@ import styles from './global-not-found.module.css'
 
 export const metadata: Metadata = {
   title: 'Page not found — Finquiry',
-  description: 'The page you were looking for does not exist, or it has moved.',
+  description: 'The page you are looking for may have moved, changed or never existed.',
   robots: { index: false, follow: false },
 }
 
@@ -27,17 +27,19 @@ const GlobalNotFound = () => (
           <p className={styles.code} aria-hidden="true">
             404
           </p>
-          <h1 className={styles.heading}>This one got away.</h1>
+          <h1 className={styles.heading}>This one slipped out of the net.</h1>
           <p className={styles.body}>
-            The page you were looking for does not exist, or it has moved.
+            The page you are looking for may have moved, changed or never existed.
           </p>
 
+          {/* Home is the primary action here, not the enquiry form. Someone who
+              landed on a dead URL is lost, not ready to describe a fish. */}
           <div className={styles.actions}>
-            <Link className={styles.primary} href="/source-a-fish">
-              Start Your Search
+            <Link className={styles.primary} href="/">
+              Return Home
             </Link>
-            <Link className={styles.secondary} href="/">
-              Back to home
+            <Link className={styles.secondary} href="/source-a-fish">
+              Start Your Search
             </Link>
           </div>
 

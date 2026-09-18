@@ -180,6 +180,17 @@ export const Enquiries: CollectionConfig = {
               fields: [
                 { name: 'sourcePage', type: 'text' },
                 {
+                  name: 'submissionToken',
+                  type: 'text',
+                  index: true,
+                  admin: {
+                    description:
+                      'Idempotency key minted by the browser for one filled-in form. ' +
+                      'A retry or a double click carries the same value, so the second ' +
+                      'arrival is recognised instead of creating a duplicate enquiry.',
+                  },
+                },
+                {
                   name: 'consentAt',
                   type: 'date',
                   admin: { date: { pickerAppearance: 'dayAndTime' } },

@@ -235,3 +235,51 @@ describe('env', () => {
     }
   })
 })
+
+describe('analytics', () => {
+  it('sends only the agreed event names', async () => {
+    const { ANALYTICS_EVENTS } = await import('@/lib/analytics')
+    expect(Object.values(ANALYTICS_EVENTS).sort()).toEqual(
+      [
+        'article_viewed',
+        'custom_aquarium_cta_clicked',
+        'delivery_story_viewed',
+        'enquiry_form_started',
+        'enquiry_step_completed',
+        'enquiry_submitted',
+        'page_view',
+        'request_confirmation_viewed',
+        'start_search_click',
+        'whatsapp_click',
+      ].sort(),
+    )
+  })
+
+  it('never puts a request ID or requirement text in a page path', async () => {
+    const { analyticsPath } = await import('@/components/layout/Analytics')
+
+    // Exactly how the confirmation page is reached after a submission.
+    const confirmation = new URLSearchParams({
+      request: 'FQ-1234-5678',
+      fish: 'Super red arowana, 14-16 inches, even gill plate colour',
+    })
+    const path = analyticsPath('/thank-you', confirmation)
+
+    expect(path).toBe('/thank-you')
+    expect(path).not.toContain('FQ-1234-5678')
+    expect(path).not.toContain('arowana')
+  })
+
+  it('keeps the navigational parameters that distinguish a listing view', async () => {
+    const { analyticsPath } = await import('@/components/layout/Analytics')
+    const filtered = new URLSearchParams({ category: 'monster-fish', page: '2' })
+    expect(analyticsPath('/knowledge', filtered)).toBe('/knowledge?category=monster-fish&page=2')
+    expect(analyticsPath('/knowledge', new URLSearchParams())).toBe('/knowledge')
+  })
+
+  it('drops an unexpected parameter rather than forwarding it', async () => {
+    const { analyticsPath } = await import('@/components/layout/Analytics')
+    const sneaky = new URLSearchParams({ email: 'someone@example.com', phone: '9876543210' })
+    expect(analyticsPath('/', sneaky)).toBe('/')
+  })
+})

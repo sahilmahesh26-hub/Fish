@@ -6,95 +6,162 @@ Everything below was measured against the production build (`pnpm build` +
 
 ---
 
-## Automated checks
+## Running it
 
-| Check               | Command             | Result                                      |
-| ------------------- | ------------------- | ------------------------------------------- |
-| Formatting          | `pnpm format:check` | Pass                                        |
-| Linting             | `pnpm lint`         | Pass — 0 errors, 0 warnings                 |
-| Type checking       | `pnpm typecheck`    | Pass                                        |
-| Unit + schema tests | `pnpm test`         | **49 passed**                               |
-| End-to-end          | `pnpm test:e2e`     | **45 passed**, 5 skipped (project-specific) |
-| Production build    | `pnpm build`        | Pass — 24 static pages, no warnings         |
+Everything below assumes a **production** server. Several behaviours only exist
+there: `dynamicParams = false`, the static/ISR routes, the HTTPS redirect, the
+production CSP, and analytics being disabled in development.
 
-### Unit coverage (49 tests)
+```bash
+pnpm build
+pnpm start -p 3100            # or any free port
+BASE_URL=http://127.0.0.1:3100 pnpm test:e2e
+BASE_URL=http://127.0.0.1:3100 pnpm qa:overflow
+BASE_URL=http://127.0.0.1:3100 pnpm qa:responsive
+BASE_URL=http://127.0.0.1:3100 pnpm qa:links
+```
 
-`tests/unit/enquirySchema.test.ts` — required fields, consent, Indian mobile and
-PIN formats, untouched optional selects, honeypot rejection, quantity coercion,
-whitespace trimming, step coverage, upload allowlist.
+`pnpm check` runs format, lint, typecheck and the unit suite, and is what to run
+before every commit.
 
-`tests/unit/lib.test.ts` — WhatsApp link building and the guarantee that the
-handover message carries no phone number, link resolution, slugify, rich-text
-extraction, headline emphasis parsing, rate-limit windows, and media URL/alt-text
-handling.
+### Two things that will otherwise waste an afternoon
 
-### End-to-end coverage (45 tests, desktop + mobile)
+**Start each verification on a fresh port.** A stale `next start` from an
+earlier build answers on the old port and serves the old bundle. Chasing a
+"bug" that is really a three-builds-ago server is the single most expensive
+mistake available here.
 
-- Desktop navigation reaches every primary page; header CTA routes correctly.
-- Exactly one H1 per page.
-- Skip link is the first tab stop and moves focus to the content.
-- Mobile menu: opens, locks body scroll, traps focus, closes on Escape, restores
-  focus to the trigger, and closes on navigation.
-- Enquiry form: field errors with focus moved to the error summary; values
-  preserved across steps; completable by keyboard alone; creates a record;
-  displays the Request ID; offers a WhatsApp handover; rejects an SVG upload.
-- Autosave: restores the requirement, never stores the name or phone number,
-  persists only allowlisted fields, discards a draft older than 24 hours, and
-  clears on submit.
-- Knowledge Hub listing, filters and RSS feed.
-- Deliveries empty state shows no invented content.
-- Policy pages resolve and declare that they await legal review; they stay out
-  of the sitemap.
-- Draft posts are invisible to the public API; preview requires a secret;
-  enquiries and enquiry uploads return 403.
-- 404 returns a 404 status with a branded page.
+**Raise the rate limit for suites that submit the form.** The limiter reads its
+configuration at module load in the _server_ process, so it must be set when the
+server starts, not on the test command:
+
+```bash
+ENQUIRY_RATE_LIMIT_MAX=200 pnpm start -p 3100
+```
 
 ---
 
-## Responsive review
+---
 
-`node qa/responsive.mjs` — **12 widths × 8 routes, 0 issues.**
+## Content fixtures
 
-Widths: 320×568 · 360×800 · 390×844 · 414×896 · 667×375 (landscape) · 768×1024 ·
-834×1194 · 1024×768 · 1280×800 · 1366×768 · 1440×900 · 1920×1080.
+The seed deliberately ships **no delivery records** and leaves the starter
+articles **unpublished**, because inventing a customer delivery or an article
+nobody wrote would be a false claim on a live site. That default is correct and
+stays.
 
-Each combination is checked for horizontal overflow, content text under 16px,
-touch targets under 44px, clipped text, and broken images. Full-page screenshots
-for all 96 combinations are produced by `node qa/responsive.mjs --shots`.
+It also means several templates have no route to render. `qa/fixtures.ts` puts a
+local database into the state a launched site would be in:
 
-### Issues found and fixed during this review
+```bash
+pnpm qa:fixtures apply     # publish the starter articles, clear the legal-review
+                           # flag, add one marked delivery record
+pnpm qa:fixtures reset     # back to the honest shipped state
+```
 
-| Issue                                                                                                                 | Fix                                                                                                                                                      |
-| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Hero CTAs fell below the fold at 1280×800, 1366×768 and 1440×900; the headline wrapped to 5 lines with "for" orphaned | Retuned `--fs-hero` to `clamp(3.25rem, 5.4vw, 6rem)` and widened the measure. Now 3 balanced lines with both CTAs visible at every laptop size           |
-| Section headings wrapped to a fraction of their width                                                                 | `max-inline-size` in `ch` was on the wrapper, where it resolved against 16px body text instead of the display font. Moved onto the headings              |
-| Pool-masked images rendered as flat blobs                                                                             | An 8-value percentage radius with `overflow: hidden` stopped Chromium painting the child image. `CmsImage` now inherits the radius onto the image itself |
-| The process route's current line ran through the step copy                                                            | Constrained the weave to the band the markers occupy                                                                                                     |
-| Hero annotation overflowed the frame on mobile and sat over the Scarlet shape                                         | Given a reserved band on plain linen below the artwork                                                                                                   |
-| Skip link was 42px tall                                                                                               | Raised to the 44px minimum                                                                                                                               |
-| Breadcrumb links were 18px tall                                                                                       | Made genuinely 44px                                                                                                                                      |
-| Field hints, card excerpts and the copyright line were 13px on phones                                                 | `--fs-small` steps up to 16px below 768px                                                                                                                |
+Every record it writes is marked `[QA FIXTURE]` in its title, and it refuses to
+run against a non-local database.
+
+**Run the end-to-end suite without fixtures and the visual QA with them.** Two
+content tests assert the shipped behaviour — that an unreviewed policy page
+stays out of the sitemap and says it is awaiting review — and the fixtures
+deliberately violate those preconditions.
+
+The fixtures earn their keep: the first run with a delivery record present
+exposed a horizontal-scroll bug on every screen under 430px that the empty
+listing had been hiding.
 
 ---
 
-## Accessibility
+---
 
-`node qa/a11y.mjs` — axe-core against WCAG 2.0/2.1/2.2 A and AA plus best
-practice, across 11 routes at 390×844 and 1440×900.
+## Automated suites
 
-**Result: 0 violations at moderate severity or above.**
+### Unit — `pnpm test`
 
-Manual keyboard verification is covered by the e2e suite: tab order, the skip
-link, the mobile menu focus trap, Escape handling, focus restoration, and
-completing the enquiry form without a mouse.
+73 tests. The enquiry schema (required fields, consent, Indian phone formats,
+PIN codes, optional selects, upload limits, the submission token), rich-text
+helpers, WhatsApp link building, rate limiting, media helpers and link
+resolution.
 
-### Issues found and fixed
+Two of them exist to hold a security invariant rather than a behaviour:
 
-| Issue                                                    | Fix                                                                                                                                          |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Body text on Scarlet panels was 4.05:1 — below AA        | Translucent light text is safe on Navy but not on Scarlet. Split into `--text-on-dark-muted` and a fully opaque `--text-on-scarlet` (4.92:1) |
-| The 404 page had no `lang`, no `main` landmark and no H1 | See "Known limitations" below                                                                                                                |
-| Enquiry step buttons had no accessible name on mobile    | The step label was `display: none`, which removes it from the accessibility tree. Switched to a clip-based visually-hidden pattern           |
+- **No helper in `src/lib/env.ts` may return a credential's value.** That module
+  cannot carry a `server-only` guard — it is on the CLI scripts' import path,
+  where that package throws — so the test is the guard. It was verified to fail
+  when a leaking helper was added, and to pass once removed.
+- **No request ID or requirement text may reach an analytics page path.** The
+  confirmation page is reached as `/thank-you?request=…&fish=…`, so the
+  allowlist that strips those is pinned by a test.
+
+### End-to-end — `pnpm test:e2e`
+
+Playwright, Chromium, desktop (1440×900) and mobile (Pixel 5) projects.
+
+| Spec         | Covers                                                                                                                                                                                                                                                      |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigation` | Header, mobile menu, skip link, footer, keyboard traversal                                                                                                                                                                                                  |
+| `content`    | Listings and their empty states, draft protection, policy-page notices, sitemap exclusion while unreviewed                                                                                                                                                  |
+| `enquiry`    | Step navigation and value preservation, keyboard-only completion, field errors and focus, server-side phone and PIN rejection, accepted number formats, duplicate submission, cross-origin refusal, upload type rejection, request ID and WhatsApp handover |
+| `consent`    | Accept, reject, the preferences modal and its focus trap, reopening from the footer, the cookie policy page                                                                                                                                                 |
+| `autosave`   | Draft restore, and the fields that are deliberately never saved                                                                                                                                                                                             |
+| `security`   | CSP contents, baseline headers, admin policy, HTTPS redirect in three configurations, no server-only variable in served HTML                                                                                                                                |
+
+### Horizontal overflow — `pnpm qa:overflow`
+
+Measures `scrollWidth` against `clientWidth` at ten widths across every route,
+and names the element responsible. It only blames an element when nothing
+between it and the root clips it — `getBoundingClientRect` reports the unclipped
+box, so a decorative glow bleeding out of a hero with `overflow: hidden` would
+otherwise be blamed for every failure. That false positive cost real time before
+the check was written properly.
+
+### Responsive — `pnpm qa:responsive`
+
+The full 21-viewport matrix against every distinct template, checking horizontal
+overflow, body text under 16px on small screens, touch targets under 44px,
+clipped text, line length over ~95 characters on large monitors, fixed heights
+cutting off content, and broken images. `--shots` writes full-page screenshots
+to `qa/screenshots/`.
+
+### Links — `pnpm qa:links`
+
+Crawls every internal link reachable from the homepage and the confirmation
+page, and checks that a nonexistent URL returns a real 404 rather than a 200
+with apologetic content. External destinations are reported but never fail the
+run: a third-party site being down or blocking a headless request is not this
+site's defect, and a crawl that fails on it is a crawl nobody trusts.
+
+### Accessibility — `qa/a11y.mjs`
+
+axe-core via `@axe-core/playwright` across the public routes.
+
+### Performance — `qa/perf.mjs`
+
+Core Web Vitals with CDP throttling.
+
+---
+
+---
+
+## Viewports
+
+All 21 from the brief:
+
+320×568 · 360×800 · 375×812 · 390×844 · 393×873 · 414×896 · 430×932 ·
+667×375 landscape · 768×1024 · 820×1180 · 834×1194 · 1024×768 · 1024×1366 ·
+1280×720 · 1280×800 · 1366×768 · 1440×900 · 1536×864 · 1920×1080 · 2560×1440 ·
+3440×1440 ultrawide
+
+## Routes
+
+Home · Source a Fish · How It Works · Deliveries listing · Delivery detail ·
+Custom Aquariums · Knowledge listing · Article detail · About · Contact ·
+Privacy · Terms · Cookie Policy · Sourcing and Delivery Policy ·
+Restricted-Species Policy · Request confirmation · 404 · filtered listing view
+
+Plus the interactive states: cookie banner, cookie preferences modal, mobile
+menu, and the form's error and success states.
 
 ---
 
@@ -216,6 +283,26 @@ Verified by construction and by the empty states rendered in the current build:
 
 ---
 
+## Bugs this QA found
+
+Recorded because each one is a reason a particular check exists.
+
+| Found by                       | Bug                                                                                                                                 |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Production build, not dev      | A nonce-based CSP refused every script on every prerendered page. Dev looked perfect.                                               |
+| Responsive sweep with fixtures | `1fr` grid tracks are `minmax(auto, 1fr)`; an image's intrinsic width blew single-column card grids out to 630px on a 320px screen. |
+| Consent e2e on mobile          | Two 200px-wide buttons could not both fit a 360px phone.                                                                            |
+| Metadata audit                 | Explicit SEO titles were being wrapped by the title template, printing the brand twice.                                             |
+| Metadata audit                 | Removing the placeholder default social image revealed that Next's `opengraph-image` convention only applied to the homepage.       |
+| JSON-LD validation             | Delivery records emitted `Article` with no `author`.                                                                                |
+| Header inspection              | The HTTPS redirect read the internal host, so it never fired on a real request.                                                     |
+| Analytics review               | `page_view` was sending the request ID and the customer's requirement text.                                                         |
+| Empty-form submit              | The consent checkbox reported Zod's default "Invalid input".                                                                        |
+| Enquiry e2e                    | React 19 resets uncontrolled fields when a form action settles, emptying an imperatively assigned token.                            |
+| Enquiry e2e                    | There were **no** database migrations, so a production deploy would have started against an empty schema.                           |
+
+---
+
 ## Reproducing this QA
 
 ```bash
@@ -224,9 +311,15 @@ export BASE_URL=http://localhost:3000
 
 pnpm check                          # format, lint, types, unit tests
 pnpm test:e2e                       # Playwright, desktop + mobile
+pnpm qa:overflow                    # horizontal scroll, 10 widths x every route
+pnpm qa:responsive                  # the 21-viewport matrix, every template
+pnpm qa:responsive -- --shots       # …and write screenshots to qa/screenshots/
+pnpm qa:links                       # internal link crawl + a real 404 check
 node qa/routes.mjs                  # status codes, H1 count, console errors
 node qa/a11y.mjs                    # axe, WCAG 2.2 AA
-node qa/responsive.mjs              # 12 widths × 8 routes
-node qa/responsive.mjs --shots      # …and write screenshots to qa/screenshots/
 node qa/perf.mjs                    # LCP / CLS under throttling
 ```
+
+Run `pnpm qa:fixtures apply` before the visual sweeps so the article and
+delivery templates have something to render, and `pnpm qa:fixtures reset`
+before `pnpm test:e2e` so the content specs see the honest shipped state.
