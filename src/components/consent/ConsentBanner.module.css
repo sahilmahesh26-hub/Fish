@@ -63,8 +63,12 @@
   min-block-size: 48px;
   /* Wide enough that both labels hit the floor, so Accept and Reject render at
      literally identical size. Equal prominence should not depend on two words
-     happening to be the same length. */
-  min-inline-size: 200px;
+     happening to be the same length.
+     `min()` keeps that from becoming an overflow on a narrow phone: below about
+     420px the two buttons cannot both be 200px, so each takes the full row
+     instead — still identical to each other, which is the point. */
+  min-inline-size: min(200px, 100%);
+  flex: 1 1 200px;
   padding-inline: var(--space-3);
   border: 2px solid var(--linen-100);
   border-radius: var(--radius-pill);
@@ -271,5 +275,10 @@
 
   .actions {
     flex: none;
+  }
+
+  /* Back to content width once there is room; the row no longer needs to grow. */
+  .primary {
+    flex: 0 0 auto;
   }
 }

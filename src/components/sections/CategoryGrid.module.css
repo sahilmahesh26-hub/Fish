@@ -1,6 +1,10 @@
 .grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* `1fr` is `minmax(auto, 1fr)`, and a track's `auto` minimum is its item's
+     min-content — which for an image is its intrinsic width, not the column
+     width. A single-column grid then widens to the image and scrolls the page
+     sideways. `minmax(0, …)` lets the track shrink. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   margin: 0;
   padding: 0;

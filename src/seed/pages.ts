@@ -1,6 +1,12 @@
 import type { Payload } from 'payload'
 import { upsertBySlug, log } from './helpers'
-import { POLICY_PAGES, ABOUT_CONTENT, HOW_IT_WORKS_PHASES, AQUARIUM_SERVICES } from './content'
+import {
+  POLICY_PAGES,
+  ABOUT_CONTENT,
+  HOW_IT_WORKS_PHASES,
+  AQUARIUM_SERVICES,
+  PAGE_SEO,
+} from './content'
 
 type SeedContext = { media: Record<string, number> }
 
@@ -270,30 +276,83 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
     })
     const stillDraftWording = existing.docs[0]?.legalReviewRequired !== false
 
-    await upsertBySlug(payload, 'pages', policy.slug, {
-      title: policy.title,
-      pageType: 'policy',
-      legalReviewRequired: true,
-      hero: { eyebrow: 'Policy', heading: policy.title, intro: policy.intro },
-      layout: [
-        {
-          blockType: 'richText',
-          background: 'linen',
-          width: 'narrow',
-          content: policy.content,
-        },
-      ],
-      /*
-       * Published, but flagged. These routes have to resolve — the footer and
-       * the enquiry form's consent checkbox both link to them, and a 404 there
-       * would be worse than a page that states its own status. The
-       * `legalReviewRequired` flag renders a prominent notice on the page,
-       * forces `noindex`, and keeps the page out of the sitemap until someone
-       * unticks it in Payload.
-       */
-      _status: 'published',
-    }, { updateExisting: stillDraftWording })
+    await upsertBySlug(
+      payload,
+      'pages',
+      policy.slug,
+      {
+        title: policy.title,
+        pageType: 'policy',
+        legalReviewRequired: true,
+        hero: { eyebrow: 'Policy', heading: policy.title, intro: policy.intro },
+        layout: [
+          {
+            blockType: 'richText',
+            background: 'linen',
+            width: 'narrow',
+            content: policy.content,
+          },
+        ],
+        /*
+         * Published, but flagged. These routes have to resolve — the footer and
+         * the enquiry form's consent checkbox both link to them, and a 404 there
+         * would be worse than a page that states its own status. The
+         * `legalReviewRequired` flag renders a prominent notice on the page,
+         * forces `noindex`, and keeps the page out of the sitemap until someone
+         * unticks it in Payload.
+         */
+        _status: 'published',
+      },
+      { updateExisting: stillDraftWording },
+    )
   }
 
   log(`pages: ${pages.length} content pages, ${POLICY_PAGES.length} policy drafts`)
+
+  await seedPageSeo(payload)
+}
+
+/**
+ * Starting meta titles and descriptions for the pages that have one.
+ *
+ * Write-once per field: a page whose SEO title is already set keeps it, even on
+ * a page the policy loop above otherwise refreshes. These are a starting point
+ * an editor is meant to rewrite, so the seed must never win an argument with
+ * one — which also makes re-running this a no-op.
+ */
+const seedPageSeo = async (payload: Payload) => {
+  let filled = 0
+
+  for (const [slug, seo] of Object.entries(PAGE_SEO)) {
+    // `home` lives on the Homepage global, not in Pages; it is seeded there.
+    if (slug === 'home') continue
+
+    const found = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      draft: true,
+      overrideAccess: true,
+    })
+    const page = found.docs[0]
+    if (!page) continue
+
+    const patch: Record<string, unknown> = {}
+    if (!page.meta?.title) patch.title = seo.title
+    if (!page.meta?.description) patch.description = seo.description
+    if (Object.keys(patch).length === 0) continue
+
+    await payload.update({
+      collection: 'pages',
+      id: page.id,
+      // Spread the existing group: Payload replaces a group wholesale, so
+      // patching only the empty fields would drop a sibling image override.
+      data: { meta: { ...(page.meta ?? {}), ...patch } } as never,
+      overrideAccess: true,
+      context: { skipRevalidate: true },
+    })
+    filled += 1
+  }
+
+  log(`page SEO: ${filled} filled, ${Object.keys(PAGE_SEO).length - 1 - filled} already set`)
 }

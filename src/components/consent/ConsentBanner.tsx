@@ -25,8 +25,15 @@ const FOCUSABLE =
  * properly.
  */
 export const ConsentBanner = () => {
-  const { needsDecision, preferencesOpen, acceptAll, rejectAll, save, openPreferences, closePreferences } =
-    useConsent()
+  const {
+    needsDecision,
+    preferencesOpen,
+    acceptAll,
+    rejectAll,
+    save,
+    openPreferences,
+    closePreferences,
+  } = useConsent()
 
   if (!needsDecision && !preferencesOpen) return null
 
@@ -167,9 +174,7 @@ const PreferencesDialog = ({
                   />
                   <label htmlFor={inputId} className={styles.categoryLabel}>
                     {category.label}
-                    {category.required ? (
-                      <span className={styles.always}>Always on</span>
-                    ) : null}
+                    {category.required ? <span className={styles.always}>Always on</span> : null}
                   </label>
                 </div>
                 <p id={`${inputId}-description`} className={styles.categoryBody}>

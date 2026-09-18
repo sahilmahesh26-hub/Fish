@@ -87,9 +87,7 @@ export const serialiseConsent = (state: ConsentState): string =>
 /** Reads consent in the browser. */
 export const readConsentCookie = (): ConsentState | null => {
   if (typeof document === 'undefined') return null
-  const match = document.cookie
-    .split('; ')
-    .find((entry) => entry.startsWith(`${CONSENT_COOKIE}=`))
+  const match = document.cookie.split('; ').find((entry) => entry.startsWith(`${CONSENT_COOKIE}=`))
   return parseConsent(match?.slice(CONSENT_COOKIE.length + 1))
 }
 
@@ -157,9 +155,7 @@ export const subscribeConsent = (listener: () => void): (() => void) => {
 /** The raw cookie value. A string (or null) so snapshot equality is stable. */
 export const getConsentSnapshot = (): string | null => {
   if (typeof document === 'undefined') return null
-  const match = document.cookie
-    .split('; ')
-    .find((entry) => entry.startsWith(`${CONSENT_COOKIE}=`))
+  const match = document.cookie.split('; ').find((entry) => entry.startsWith(`${CONSENT_COOKIE}=`))
   return match ? match.slice(CONSENT_COOKIE.length + 1) : null
 }
 

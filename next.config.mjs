@@ -1,10 +1,9 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
 /**
- * Content Security Policy.
- *
- * `unsafe-inline`/`unsafe-eval` are scoped to the Payload admin route group only
- * (see `middleware.ts`); the public site runs the strict policy below.
+ * Security headers that are the same for every response live here. The Content
+ * Security Policy is not one of them — it varies per request, so it is built in
+ * `src/proxy.ts`.
  */
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -43,6 +42,14 @@ const nextConfig = {
     globalNotFound: true,
   },
   poweredByHeader: false,
+  /*
+   * The social-card route reads its TTFs from `assets/` at runtime. Nothing
+   * imports them, so tracing cannot infer them and a standalone build would
+   * ship without them — the card would then 500 on first share.
+   */
+  outputFileTracingIncludes: {
+    '/og/default.png': ['./assets/brand/fonts/**'],
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

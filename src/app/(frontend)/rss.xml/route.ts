@@ -4,8 +4,10 @@ import { getPayloadClient } from '@/lib/payload'
 
 /** Escapes text for inclusion in XML character data. */
 const escapeXml = (value: string): string =>
-  value.replace(/[<>&'"]/g, (char) =>
-    ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' })[char] ?? char,
+  value.replace(
+    /[<>&'"]/g,
+    (char) =>
+      ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' })[char] ?? char,
   )
 
 /**
@@ -46,8 +48,7 @@ export const GET = async () => {
     .map((post) => {
       const url = `${base}/knowledge/${post.slug}`
       const date = post.publishedAt ?? post.createdAt
-      const author =
-        typeof post.author === 'object' && post.author ? post.author.name : null
+      const author = typeof post.author === 'object' && post.author ? post.author.name : null
       const category =
         typeof post.category === 'object' && post.category ? post.category.name : null
 

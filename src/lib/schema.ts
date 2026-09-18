@@ -93,7 +93,6 @@ export const articleSchema = (post: Post, settings: SiteSetting): Json => {
       : { '@type': 'Organization', name: settings.brandName ?? 'Finquiry' },
     publisher: { '@id': `${siteUrl()}#organisation` },
     mainEntityOfPage: absolute(`/knowledge/${post.slug}`),
-    wordCount: undefined,
   }
 }
 
@@ -101,7 +100,7 @@ export const articleSchema = (post: Post, settings: SiteSetting): Json => {
  * A delivery story is an article about completed work, not a product listing.
  * Modelling it as `Article` avoids implying purchasable stock.
  */
-export const deliverySchema = (delivery: Delivery): Json => ({
+export const deliverySchema = (delivery: Delivery, settings: SiteSetting): Json => ({
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: delivery.title,
@@ -109,6 +108,10 @@ export const deliverySchema = (delivery: Delivery): Json => ({
   image: mediaUrl(delivery.mainImage),
   datePublished: delivery.deliveryDate ?? delivery.createdAt,
   dateModified: delivery.updatedAt,
+  // A delivery record is written by the business, not by a named person — and
+  // `Article` requires an author, so naming the organisation is both accurate
+  // and what the schema needs.
+  author: { '@type': 'Organization', name: settings.brandName ?? 'Finquiry' },
   publisher: { '@id': `${siteUrl()}#organisation` },
   mainEntityOfPage: absolute(`/deliveries/${delivery.slug}`),
 })

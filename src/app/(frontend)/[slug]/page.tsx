@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPageBySlug, getAllPageSlugs, getSiteSettings } from '@/lib/queries'
-import { buildMetadata } from '@/lib/seo'
+import { buildMetadata, isIndexablePage } from '@/lib/seo'
 import { breadcrumbSchema } from '@/lib/schema'
 import { PageHero } from '@/components/sections/PageHero'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
@@ -52,9 +52,8 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
     settings,
   })
 
-  // A policy page that has not been through legal review is reachable but is
-  // never offered to search engines as settled wording.
-  if (page.pageType === 'policy' && page.legalReviewRequired) {
+  // Kept in step with the sitemap, which reads the same predicate.
+  if (!isIndexablePage(page)) {
     return { ...metadata, robots: { index: false, follow: false } }
   }
 

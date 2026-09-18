@@ -313,9 +313,7 @@ export const POLICY_PAGES = [
         'This section will describe ownership of the website content, photography and marks. Requires review.',
       ),
       h('h2', 'Service availability'),
-      p(
-        'We aim to keep this website available but do not guarantee uninterrupted access.',
-      ),
+      p('We aim to keep this website available but do not guarantee uninterrupted access.'),
       h('h2', 'Limitation of liability and disputes'),
       p(
         'PLACEHOLDER — requires legal review. No limitation of liability, governing law or dispute-resolution provision is stated here until it has been reviewed and approved.',
@@ -327,8 +325,7 @@ export const POLICY_PAGES = [
   {
     title: 'Cookie Policy',
     slug: 'cookie-policy',
-    intro:
-      'What this website stores on your device, why, and how to change your mind at any time.',
+    intro: 'What this website stores on your device, why, and how to change your mind at any time.',
     content: doc(
       p(
         'This site uses very few cookies. Nothing optional is set until you agree to it, and you can change that decision at any time using the **Cookie preferences** link in the footer.',
@@ -510,3 +507,80 @@ export const AQUARIUM_SERVICES = [
   'Fish-specific system guidance',
   'Installation coordination',
 ]
+
+/**
+ * Starting meta titles and descriptions.
+ *
+ * Seeded once into each page's Payload SEO fields and never rewritten: they are
+ * an editable starting point, not managed copy. Titles put the search intent
+ * first and the brand last, so a shared link still reads as a sentence. Every
+ * description stays under ~160 characters and describes what the page actually
+ * does — none of them promises stock, prices or delivery outcomes.
+ */
+export const PAGE_SEO: Record<string, { title: string; description: string }> = {
+  home: {
+    title: 'Finquiry | Collector Fish Sourcing Across India',
+    description:
+      'Tell Finquiry the species, variety, colour and size you are searching for. Review actual specimen photos, videos and individual pricing before approval.',
+  },
+  'source-a-fish': {
+    title: 'Source a Specific Fish in India | Finquiry',
+    description:
+      'Submit your fish requirement, preferred size, variety, budget and destination. Finquiry will search its sourcing network and contact you on WhatsApp.',
+  },
+  'how-it-works': {
+    title: 'How Collector Fish Sourcing Works | Finquiry',
+    description:
+      "See how Finquiry turns a collector's requirement into a verified specimen option, written approval and coordinated delivery across India.",
+  },
+  deliveries: {
+    title: 'Successful Fish Deliveries Across India | Finquiry',
+    description:
+      'Explore documented fish-sourcing journeys, including the requirement, specimen, route, packing and customer-approved outcome.',
+  },
+  'custom-aquariums': {
+    title: 'Custom Aquarium Design and Setup | Finquiry',
+    description:
+      'Plan a custom aquarium around the fish, including tank dimensions, filtration, stands, cabinets, lighting and equipment.',
+  },
+  knowledge: {
+    title: 'Collector Fish and Aquarium Guides | Finquiry',
+    description:
+      'Read practical guides on evaluating fish, preparing aquariums, transport, acclimatisation and making informed collector decisions.',
+  },
+  about: {
+    title: 'About Finquiry | Fish Sourcing for Collectors',
+    description:
+      'Learn why Finquiry was built and how its collector-focused sourcing process connects specific fish requirements with a wider network.',
+  },
+  contact: {
+    title: 'Contact Finquiry | Start a Fish Sourcing Request',
+    description:
+      'Contact the Finquiry sourcing team or submit a structured requirement for a particular fish, size, variety or custom aquarium.',
+  },
+  'privacy-policy': {
+    title: 'Privacy Policy | Finquiry',
+    description:
+      'How Finquiry collects, uses, stores and shares the information in a sourcing enquiry, and the choices you have over it.',
+  },
+  'terms-and-conditions': {
+    title: 'Terms and Conditions | Finquiry',
+    description:
+      'The terms that apply when you submit a sourcing requirement to Finquiry, approve a specimen or arrange a delivery.',
+  },
+  'sourcing-and-delivery-policy': {
+    title: 'Sourcing and Delivery Policy | Finquiry',
+    description:
+      'What Finquiry does and does not guarantee when searching for a specimen, confirming an option and coordinating transport.',
+  },
+  'restricted-species-policy': {
+    title: 'Restricted Species Policy | Finquiry',
+    description:
+      'Finquiry does not source species restricted under Indian law. How requests are screened, and what happens if one is declined.',
+  },
+  'cookie-policy': {
+    title: 'Cookie Policy | Finquiry',
+    description:
+      'Every cookie this site sets, what each one is for, how long it lasts and how to change your choice at any time.',
+  },
+}

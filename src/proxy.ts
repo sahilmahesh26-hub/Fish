@@ -72,8 +72,7 @@ const analyticsOrigins = (() => {
   return Array.from(origins)
 })()
 
-const join = (...parts: (string | string[])[]) =>
-  parts.flat().filter(Boolean).join(' ')
+const join = (...parts: (string | string[])[]) => parts.flat().filter(Boolean).join(' ')
 
 const PUBLIC_CSP = [
   `default-src 'self'`,
@@ -94,6 +93,25 @@ const PUBLIC_CSP = [
   `base-uri 'self'`,
   `form-action 'self'`,
   `frame-ancestors 'self'`,
+  `upgrade-insecure-requests`,
+].join('; ')
+
+/**
+ * A deliberately partial policy for the Payload admin and API.
+ *
+ * The admin bundle evaluates code at runtime, so a `script-src` it could live
+ * with would need `'unsafe-eval'` — which is exactly what the public policy
+ * exists to forbid. Rather than choose between a policy that breaks the CMS and
+ * one that legitimises `eval` site-wide, this sets only the directives that do
+ * not touch script execution. Clickjacking, `<base>` injection, plugin
+ * embedding and form exfiltration are all still closed off; script execution is
+ * left to Payload's own model and to the session auth in front of it.
+ */
+const ADMIN_CSP = [
+  `frame-ancestors 'self'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
   `upgrade-insecure-requests`,
 ].join('; ')
 
@@ -119,9 +137,12 @@ export const proxy = (request: NextRequest) => {
   }
 
   // The Payload admin and API manage their own security model, and the admin
-  // bundle needs allowances the public site should not have.
+  // bundle needs allowances the public site should not have — but "not the
+  // public policy" is not the same as "no policy".
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/')) {
-    return NextResponse.next()
+    const adminResponse = NextResponse.next()
+    adminResponse.headers.set('Content-Security-Policy', ADMIN_CSP)
+    return adminResponse
   }
 
   const response = NextResponse.next()

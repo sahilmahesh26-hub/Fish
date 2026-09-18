@@ -53,9 +53,10 @@ pnpm dev
 - Public site: <http://localhost:3000>
 - Admin: <http://localhost:3000/admin>
 
-The seed creates a super-admin using `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`,
-falling back to `admin@finquiry.local` / `ChangeMe!2026`.
-**Change that password before the site is reachable by anyone else.**
+The seed creates a super-admin using `SEED_ADMIN_EMAIL` (default
+`admin@finquiry.local`) and `SEED_ADMIN_PASSWORD`. There is no default password:
+in development the seed generates a random one and prints it once, and in
+production it refuses to create the account unless you set one yourself.
 
 In development the Postgres adapter runs in `push` mode, so schema changes are
 applied automatically. In production it does not — generate and run a migration

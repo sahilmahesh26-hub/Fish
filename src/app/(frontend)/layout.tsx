@@ -44,7 +44,11 @@ export const generateMetadata = async (): Promise<Metadata> => {
     formatDetection: { telephone: false },
     // Feed autodiscovery, so a reader finds it from any page.
     alternates: {
-      types: { 'application/rss+xml': [{ url: '/rss.xml', title: `${settings.brandName ?? 'Finquiry'} — Knowledge Hub` }] },
+      types: {
+        'application/rss+xml': [
+          { url: '/rss.xml', title: `${settings.brandName ?? 'Finquiry'} — Knowledge Hub` },
+        ],
+      },
     },
   }
 }

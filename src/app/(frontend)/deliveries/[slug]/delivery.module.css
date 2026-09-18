@@ -1,5 +1,10 @@
 .layout {
   display: grid;
+  /* Named explicitly rather than left implicit: an implicit track is sized
+     `auto`, whose minimum is the item's min-content — for a column holding an
+     image that is the image's intrinsic width, which scrolls the page
+     sideways. `minmax(0, …)` lets the column shrink to the viewport. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
 }
 

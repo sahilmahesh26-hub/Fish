@@ -1,5 +1,19 @@
-/** Environment access with explicit failure messages, so a missing value
- *  surfaces at boot rather than as an obscure runtime error. */
+/**
+ * Environment access with explicit failure messages, so a missing value
+ * surfaces at boot rather than as an obscure runtime error.
+ *
+ * ---------------------------------------------------------------------------
+ * This module must never return a secret's value.
+ * ---------------------------------------------------------------------------
+ * It sits on `payload.config`'s import path, which the CLI scripts (`pnpm seed`,
+ * `payload migrate`, the QA fixtures) also load — so it cannot carry a
+ * `server-only` guard: outside Next's bundler that package throws and every
+ * script dies. `tests/unit/lib.test.ts` pins the invariant instead.
+ *
+ * The credential helpers below therefore return a boolean, never the value.
+ * Anything that needs an actual secret reads `process.env` at its own call
+ * site, inside a module that is unambiguously server-side.
+ */
 
 export const requireEnv = (name: string): string => {
   const value = process.env[name]

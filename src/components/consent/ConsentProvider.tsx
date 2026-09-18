@@ -51,11 +51,7 @@ export const useConsent = (): ConsentContextValue => {
  * The default is refusal. Nothing optional loads until someone says yes.
  */
 export const ConsentProvider = ({ children }: { children: ReactNode }) => {
-  const raw = useSyncExternalStore(
-    subscribeConsent,
-    getConsentSnapshot,
-    getConsentServerSnapshot,
-  )
+  const raw = useSyncExternalStore(subscribeConsent, getConsentSnapshot, getConsentServerSnapshot)
   const [preferencesOpen, setPreferencesOpen] = useState(false)
 
   const consent = useMemo(() => parseConsent(raw), [raw])

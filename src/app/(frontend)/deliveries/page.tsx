@@ -20,14 +20,21 @@ const TRAIL = [
   { name: 'Successful Deliveries', path: '/deliveries' },
 ]
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  const [page, settings] = await Promise.all([getPageBySlug('deliveries'), getSiteSettings()])
+export const generateMetadata = async ({ searchParams }: Props): Promise<Metadata> => {
+  const [{ category, origin, destination }, page, settings] = await Promise.all([
+    searchParams,
+    getPageBySlug('deliveries'),
+    getSiteSettings(),
+  ])
   return buildMetadata({
     meta: page?.meta,
     title: page?.title ?? 'Successful Deliveries',
     description: page?.hero?.intro,
+    // The canonical is always the unfiltered listing, so a filtered view
+    // consolidates into it rather than competing with it.
     path: '/deliveries',
     settings,
+    forceNoIndex: Boolean(category || origin || destination),
   })
 }
 

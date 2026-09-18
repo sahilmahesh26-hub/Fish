@@ -175,3 +175,63 @@ describe('media helpers', () => {
     expect(altFor({ url: '/a.png', alt: 'A red fish' } as never)).toBe('A red fish')
   })
 })
+
+describe('env', () => {
+  /*
+   * `src/lib/env.ts` is reachable from `payload.config`, which the CLI scripts
+   * load outside Next's bundler — so it cannot carry a `server-only` guard.
+   * This is the guard instead: whatever else it grows, it must never hand back
+   * the value of a credential.
+   */
+  const SECRET_VARS = [
+    'PAYLOAD_SECRET',
+    'DATABASE_URL',
+    'PREVIEW_SECRET',
+    'REVALIDATION_SECRET',
+    'S3_ACCESS_KEY_ID',
+    'S3_SECRET_ACCESS_KEY',
+    'SMTP_USER',
+    'SMTP_PASS',
+    'SEED_ADMIN_PASSWORD',
+  ]
+
+  it('never returns the value of a credential', async () => {
+    const sentinels = Object.fromEntries(
+      SECRET_VARS.map((name, i) => [name, `sentinel-value-${i}-do-not-leak`]),
+    )
+    const previous: Record<string, string | undefined> = {}
+    for (const [name, value] of Object.entries(sentinels)) {
+      previous[name] = process.env[name]
+      process.env[name] = value
+    }
+
+    try {
+      const env = await import('@/lib/env')
+      const returned = Object.entries(env)
+        .filter(([, value]) => typeof value === 'function')
+        // `requireEnv`/`optionalEnv` take a name and are the intended way to
+        // read a secret at a server-side call site, so they are not the risk —
+        // the zero-argument helpers are, because anything may call them.
+        .filter(([, fn]) => (fn as (...args: never[]) => unknown).length === 0)
+        .map(([name, fn]) => [name, (fn as () => unknown)()] as const)
+
+      // Without this the test passes trivially if the filter ever stops
+      // matching anything.
+      expect(returned.map(([name]) => name)).toEqual(
+        expect.arrayContaining(['siteUrl', 'hasS3Storage', 'hasSmtp']),
+      )
+
+      for (const [name, value] of returned) {
+        const serialised = JSON.stringify(value) ?? ''
+        for (const secret of Object.values(sentinels)) {
+          expect(serialised, `${name}() returned a credential`).not.toContain(secret)
+        }
+      }
+    } finally {
+      for (const [name, value] of Object.entries(previous)) {
+        if (value === undefined) delete process.env[name]
+        else process.env[name] = value
+      }
+    }
+  })
+})

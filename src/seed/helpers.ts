@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import type { Payload } from 'payload'
 import { doc, p, h } from './lexical'
 import { placeholderPanel, placeholderFish, placeholderLogo } from './placeholders'
@@ -159,9 +160,34 @@ export const seedMedia = async (payload: Payload) => {
 /* Users                                                                       */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * The first admin's password.
+ *
+ * There is no default. A constant here would mean that anyone who ran the seed
+ * against a real database — which is the documented way to bootstrap one —
+ * created a super-admin account whose password is published in this repository.
+ * So: use what the operator supplied, refuse outright in production if they
+ * supplied nothing, and in development mint a random one and print it once.
+ */
+const resolveAdminPassword = (): string => {
+  const supplied = process.env.SEED_ADMIN_PASSWORD
+  if (supplied && supplied.length > 0) return supplied
+
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'SEED_ADMIN_PASSWORD is not set. Refusing to create a super-admin account ' +
+        'with a default password. Set it to a strong value and run the seed again.',
+    )
+  }
+
+  const generated = randomBytes(18).toString('base64url')
+  log(`user: generated a random admin password for this environment: ${generated}`)
+  log('user: save it now — it is not stored anywhere and will not be shown again.')
+  return generated
+}
+
 export const seedAdminUser = async (payload: Payload) => {
   const email = process.env.SEED_ADMIN_EMAIL ?? 'admin@finquiry.local'
-  const password = process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe!2026'
 
   const existing = await payload.find({
     collection: 'users',
@@ -174,6 +200,10 @@ export const seedAdminUser = async (payload: Payload) => {
     log(`user: ${email} (already exists)`)
     return
   }
+
+  // Resolved only once the account is known to be missing, so a re-run neither
+  // prints a password nor fails a production seed that has nothing left to do.
+  const password = resolveAdminPassword()
 
   await payload.create({
     collection: 'users',

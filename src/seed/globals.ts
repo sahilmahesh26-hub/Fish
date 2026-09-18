@@ -1,6 +1,6 @@
 import type { Payload } from 'payload'
 import { log } from './helpers'
-import { PROCESS_STEPS, AQUARIUM_SERVICES } from './content'
+import { PROCESS_STEPS, AQUARIUM_SERVICES, PAGE_SEO } from './content'
 
 type SeedContext = {
   media: Record<string, number>
@@ -40,7 +40,15 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         defaultTitle: 'Finquiry — Collector-led fish sourcing across India',
         description:
           'Tell us the species, variety, colour, pattern and size you are looking for. We search our network and share suitable specimens with actual photos, videos and individual pricing.',
-        image: media.social,
+        /*
+         * No default social image is seeded, deliberately.
+         *
+         * Leaving it empty is what makes `app/(frontend)/opengraph-image.tsx`
+         * take effect: a generated card in the site's own type and colours.
+         * Pointing this at the placeholder artwork instead would put the words
+         * "placeholder artwork" on every link ever shared. An operator who has
+         * a real card of their own uploads it here, and it wins.
+         */
       },
       organisation: { areaServed: 'India' },
       analytics: { provider: 'none' },
@@ -275,4 +283,26 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
     ...ctx,
   })
   log('global: homepage')
+
+  /*
+   * Homepage SEO, filled only where empty.
+   *
+   * The block above rewrites the global wholesale on every run, which is fine
+   * for layout the seed owns — but a meta title an editor tuned is theirs, so
+   * it is patched separately and never overwritten.
+   */
+  const homepage = await payload.findGlobal({ slug: 'homepage', overrideAccess: true })
+  const seo = PAGE_SEO.home
+  const metaPatch: Record<string, unknown> = {}
+  if (!homepage.meta?.title) metaPatch.title = seo.title
+  if (!homepage.meta?.description) metaPatch.description = seo.description
+
+  if (Object.keys(metaPatch).length > 0) {
+    await payload.updateGlobal({
+      slug: 'homepage',
+      data: { meta: { ...(homepage.meta ?? {}), ...metaPatch } } as never,
+      ...ctx,
+    })
+    log('global: homepage SEO')
+  }
 }

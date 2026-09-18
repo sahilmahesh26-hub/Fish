@@ -196,7 +196,7 @@ const DeliveryPage = async ({ params }: Props) => {
         settings={settings}
       />
 
-      <JsonLd data={deliverySchema(delivery)} />
+      <JsonLd data={deliverySchema(delivery, settings)} />
       <JsonLd data={breadcrumbSchema(trail)} />
     </>
   )

@@ -3,7 +3,8 @@ import { siteUrl } from '@/lib/env'
 
 const robots = async (): Promise<MetadataRoute.Robots> => {
   const base = siteUrl()
-  // Anything that is not a production origin is kept out of the index entirely.
+  // Anything that is not a production origin is kept out of the index entirely,
+  // so a staging or preview deployment can never outrank the real site.
   const isProduction = !base.includes('localhost') && !base.includes('127.0.0.1')
 
   return {
@@ -13,17 +14,24 @@ const robots = async (): Promise<MetadataRoute.Robots> => {
             userAgent: '*',
             allow: '/',
             disallow: [
+              // The CMS. Blocked from crawling, not from access — robots.txt is
+              // not a security control; the admin routes have real auth.
               '/admin',
+              // Internal endpoints, including the draft-preview entry point.
               '/api/',
+              // Request confirmation: reachable only after a submission.
               '/thank-you',
-              // Query-string views duplicate the canonical listing pages.
-              '/deliveries?',
-              '/knowledge?',
             ],
           },
         ]
       : [{ userAgent: '*', disallow: '/' }],
+    // Filtered listing views (`/knowledge?category=…`) are intentionally NOT
+    // disallowed here. They stay crawlable so articles are never orphaned, and
+    // are kept out of the index by a `noindex, follow` directive plus a
+    // canonical pointing at the unfiltered listing — which consolidates
+    // signals, whereas a robots block would merely hide the duplication.
     sitemap: `${base}/sitemap.xml`,
+    host: isProduction ? base.replace(/^https?:\/\//, '') : undefined,
   }
 }
 

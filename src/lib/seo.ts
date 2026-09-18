@@ -26,7 +26,16 @@ type BuildMetadataArgs = {
   type?: 'website' | 'article'
   publishedTime?: string | null
   modifiedTime?: string | null
+  /**
+   * Force `noindex, follow` regardless of the document's own setting. Used for
+   * filtered and paginated views, which are crawlable (so nothing is orphaned)
+   * but should not compete with the canonical listing page.
+   */
+  forceNoIndex?: boolean
 }
+
+/** The generated brand card served by `app/(frontend)/og/default.png`. */
+const DEFAULT_OG_IMAGE = () => `${siteUrl()}/og/default.png`
 
 const imageUrl = (value: unknown): string | null => {
   const media = asMedia(value as never)
@@ -54,11 +63,21 @@ export const buildMetadata = ({
   type = 'website',
   publishedTime,
   modifiedTime,
+  forceNoIndex = false,
 }: BuildMetadataArgs): Metadata => {
   const defaults = settings.defaultSeo
   const brand = settings.brandName ?? 'Finquiry'
 
   const resolvedTitle = meta?.title || title || defaults?.defaultTitle || brand
+
+  /*
+   * An editor writing a title in Payload writes the whole title — the seeded
+   * ones already end in "| Finquiry". Letting the layout's `%s — Finquiry`
+   * template wrap that would print the brand twice, so an explicit override is
+   * marked absolute. A title falling back to the document's own heading is a
+   * fragment, and does want the template.
+   */
+  const titleIsComplete = Boolean(meta?.title)
   const resolvedDescription =
     meta?.description ||
     description ||
@@ -66,24 +85,26 @@ export const buildMetadata = ({
     settings.shortDescription ||
     undefined
 
-  const resolvedImage = imageUrl(meta?.image) ?? imageUrl(image) ?? imageUrl(defaults?.image)
+  /*
+   * Image fallback chain, ending in the generated card so that every single
+   * page has a social image — a link with none renders as a bare grey box.
+   */
+  const resolvedImage =
+    imageUrl(meta?.image) ?? imageUrl(image) ?? imageUrl(defaults?.image) ?? DEFAULT_OG_IMAGE()
 
   const canonical = meta?.canonicalUrl || `${siteUrl()}${path}`
   const noIndex = Boolean(meta?.noIndex)
 
-  // The template only applies to child pages; `absolute` is used where the
-  // title already reads as a complete title.
-  const template = defaults?.titleTemplate?.includes('%s')
-    ? defaults.titleTemplate
-    : `%s — ${brand}`
-
   return {
-    title: resolvedTitle,
+    title: titleIsComplete ? { absolute: resolvedTitle } : resolvedTitle,
     description: resolvedDescription,
     alternates: { canonical },
     robots: noIndex
       ? { index: false, follow: false }
-      : { index: true, follow: true, 'max-image-preview': 'large' },
+      : forceNoIndex
+        ? // `follow` stays on: the filtered view is a discovery path to articles.
+          { index: false, follow: true }
+        : { index: true, follow: true, 'max-image-preview': 'large' },
     openGraph: {
       type,
       title: resolvedTitle,
@@ -91,7 +112,7 @@ export const buildMetadata = ({
       url: canonical,
       siteName: brand,
       locale: 'en_IN',
-      images: resolvedImage ? [{ url: resolvedImage, width: 1200, height: 630 }] : undefined,
+      images: [{ url: resolvedImage, width: 1200, height: 630, alt: resolvedTitle }],
       ...(type === 'article'
         ? {
             publishedTime: publishedTime ?? undefined,
@@ -100,13 +121,12 @@ export const buildMetadata = ({
         : {}),
     },
     twitter: {
-      card: resolvedImage ? 'summary_large_image' : 'summary',
+      // Always the large card: every branch of the fallback chain above ends in
+      // a 1200×630 image, so there is never a case for the small one.
+      card: 'summary_large_image',
       title: resolvedTitle,
       description: resolvedDescription,
-      images: resolvedImage ? [resolvedImage] : undefined,
-    },
-    other: {
-      'og:title:template': template,
+      images: [resolvedImage],
     },
   }
 }
@@ -119,4 +139,29 @@ export const titleTemplateFor = (settings: SiteSetting) => {
     default: settings.defaultSeo?.defaultTitle || `${brand} — ${settings.tagline ?? ''}`.trim(),
     template: template?.includes('%s') ? template : `%s — ${brand}`,
   }
+}
+
+/** The subset of a Page needed to decide whether it may be indexed. */
+type IndexablePage = {
+  pageType?: string | null
+  legalReviewRequired?: boolean | null
+  meta?: { noIndex?: boolean | null } | null
+}
+
+/**
+ * Single source of truth for "may this page be offered to search engines?".
+ *
+ * The sitemap and the page's own robots directive both read it, because a page
+ * listed in the sitemap while serving `noindex` is a contradiction crawlers
+ * report as an error.
+ *
+ * A policy page awaiting legal review is excluded from both. It stays reachable
+ * — the footer and the enquiry form's consent checkbox link to it — but draft
+ * wording is not offered as settled terms. Unticking "requires legal review" in
+ * Payload makes the page indexable and adds it to the sitemap in one step.
+ */
+export const isIndexablePage = (page: IndexablePage): boolean => {
+  if (page.meta?.noIndex) return false
+  if (page.pageType === 'policy' && page.legalReviewRequired) return false
+  return true
 }
