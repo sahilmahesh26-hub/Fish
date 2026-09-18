@@ -102,6 +102,15 @@ export type PageSummary = Pick<
   'slug' | 'updatedAt' | 'pageType' | 'legalReviewRequired' | 'meta'
 >
 
+/**
+ * Every published page, for `generateStaticParams` and the sitemap.
+ *
+ * Deliberately NOT cached. Both callers run at build or revalidation time, and
+ * a cached copy here is actively harmful: with `dynamicParams = false` on the
+ * catch-all route, a stale list means a newly published page is simply missing
+ * from the build and 404s until someone clears `.next/cache`. The query is one
+ * indexed select against a small table.
+ */
 export const getAllPageSlugs = async (): Promise<PageSummary[]> => {
   const load = async () => {
     const payload = await getPayloadClient()
@@ -121,7 +130,7 @@ export const getAllPageSlugs = async (): Promise<PageSummary[]> => {
     })
     return result.docs as PageSummary[]
   }
-  return cached(['page-slugs'], ['pages'], load)()
+  return load()
 }
 
 /* -------------------------------------------------------------------------- */

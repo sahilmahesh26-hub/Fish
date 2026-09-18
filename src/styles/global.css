@@ -43,6 +43,11 @@ ol[role='list'] {
 
 body {
   min-block-size: 100svh;
+  /* Removes the 300ms double-tap zoom delay on touch without disabling
+     pinch-zoom, which must stay available. */
+  touch-action: manipulation;
+  /* Set deliberately rather than left to the browser's default blue-grey. */
+  -webkit-tap-highlight-color: rgb(217 26 42 / 12%);
   background-color: var(--surface);
   color: var(--text);
   font-family: var(--font-body);

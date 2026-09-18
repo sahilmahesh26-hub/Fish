@@ -75,6 +75,7 @@ export const TextInput = ({
   inputMode,
   placeholder,
   defaultValue,
+  spellCheck,
   className,
   onChange,
 }: BaseProps & {
@@ -83,6 +84,8 @@ export const TextInput = ({
   inputMode?: 'text' | 'tel' | 'email' | 'numeric'
   placeholder?: string
   defaultValue?: string
+  /** Off for addresses, codes and identifiers, where a red squiggle is noise. */
+  spellCheck?: boolean
   onChange?: (value: string) => void
 }) => (
   <Field
@@ -103,6 +106,7 @@ export const TextInput = ({
         inputMode={inputMode}
         placeholder={placeholder}
         defaultValue={defaultValue}
+        spellCheck={spellCheck}
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         aria-required={required || undefined}

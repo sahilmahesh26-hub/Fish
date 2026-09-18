@@ -1,0 +1,35 @@
+# Local development database.
+#
+# Production uses a managed Postgres — this file exists so a developer gets the
+# same major version locally without installing anything.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finquiry-postgres
+    # `unless-stopped`, not `always`: a container the developer stopped on
+    # purpose stays stopped, but one that crashes or is killed by a host reboot
+    # comes back. Losing the database mid-session is exactly what happened
+    # during the first QA pass.
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: finquiry
+      POSTGRES_PASSWORD: finquiry
+      POSTGRES_DB: finquiry
+      # Rebuilding the index on every start is wasted work for a dev database.
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    ports:
+      - '5432:5432'
+    volumes:
+      - finquiry-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # `pg_isready` answers once the server accepts connections, which is the
+      # condition that actually matters — the container being "up" is not the
+      # same as the database being ready.
+      test: ['CMD-SHELL', 'pg_isready -U finquiry -d finquiry']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+volumes:
+  finquiry-pgdata:

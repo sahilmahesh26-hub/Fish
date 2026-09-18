@@ -61,6 +61,7 @@ const initialState: EnquiryState = { status: 'idle' }
 export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) => {
   const [state, formAction, isPending] = useActionState(submitEnquiry, initialState)
   const [step, setStep] = useState(0)
+  const [dirty, setDirty] = useState(false)
   const [fileError, setFileError] = useState<string>()
   const [fileName, setFileName] = useState<string>()
 
@@ -131,9 +132,46 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
     router.push(`/thank-you?${params.toString()}`)
   }, [state, router])
 
-  // Move focus to the error summary so the problem is announced, not silent.
+  /*
+   * On a rejected submit, move focus to the first control the server rejected.
+   *
+   * The summary stays and still lists every problem with in-page links, but
+   * focus goes to the field itself — that is what lets someone fix the error
+   * where they are, rather than reading a list and hunting for the input. If
+   * the offending field is on another step, switch to that step first.
+   */
   useEffect(() => {
-    if (state.status === 'error') errorSummaryRef.current?.focus()
+    if (state.status !== 'error') return
+
+    const firstField = Object.keys(state.errors ?? {})[0]
+    if (!firstField) {
+      errorSummaryRef.current?.focus()
+      return
+    }
+
+    const stepIndex = STEPS.findIndex((definition) =>
+      (definition.fields as readonly string[]).includes(firstField),
+    )
+
+    /*
+     * Two frames, not a synchronous state update: a hidden step's controls are
+     * not focusable, so the step has to be switched and committed to the DOM
+     * before the field can take focus.
+     */
+    let focusFrame = 0
+    const stepFrame = window.requestAnimationFrame(() => {
+      if (stepIndex >= 0) setStep(stepIndex)
+      focusFrame = window.requestAnimationFrame(() => {
+        const control = document.getElementById(`field-${firstField}`)
+        if (control instanceof HTMLElement) control.focus()
+        else errorSummaryRef.current?.focus()
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(stepFrame)
+      if (focusFrame) window.cancelAnimationFrame(focusFrame)
+    }
   }, [state])
 
   const goToStep = (next: number) => {
@@ -147,8 +185,32 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
   const onFirstInput = () => {
     if (hasStarted.current) return
     hasStarted.current = true
+    setDirty(true)
     trackEvent(ANALYTICS_EVENTS.enquiryStarted)
   }
+
+  /*
+   * Warn before closing the tab on a part-filled form.
+   *
+   * Registered only once something has actually been typed, and removed on a
+   * successful submit, so nobody is nagged about a form they never touched or
+   * one they just completed.
+   */
+  // Derived, not stored: a successful submit releases the guard without an
+  // extra state update, and the navigation to the confirmation page is not
+  // interrupted by our own warning.
+  const guardUnload = dirty && state.status !== 'success'
+
+  useEffect(() => {
+    if (!guardUnload) return
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      // Browsers show their own wording; returning a value is what triggers it.
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [guardUnload])
 
   // Memoised so the step-error memo below does not recompute every render.
   const errors = useMemo(() => state.errors ?? {}, [state.errors])
@@ -302,8 +364,9 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   type="tel"
                   inputMode="tel"
                   autoComplete="tel"
+                  spellCheck={false}
                   hint="We will continue the conversation here."
-                  placeholder="98765 43210"
+                  placeholder="98765 43210…"
                   error={errors.whatsapp}
                 />
                 <TextInput
@@ -312,6 +375,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   type="email"
                   inputMode="email"
                   autoComplete="email"
+                  spellCheck={false}
                   error={errors.email}
                 />
                 <TextInput
@@ -334,6 +398,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   required
                   inputMode="numeric"
                   autoComplete="postal-code"
+                  spellCheck={false}
                   error={errors.pincode}
                 />
               </>
@@ -346,7 +411,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   label="Fish required"
                   required
                   hint="In your own words — we will refine it with you."
-                  placeholder="Super red arowana, around 10 inches"
+                  placeholder="Super red arowana, around 10 inches…"
                   defaultValue={defaultCategory}
                   error={errors.fishRequired}
                   className={styles.full}
@@ -356,7 +421,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="preferredSize"
                   label="Preferred size"
-                  placeholder="10–12 inches"
+                  placeholder="10–12 inches…"
                   error={errors.preferredSize}
                 />
                 <TextInput
@@ -395,7 +460,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="tankDimensions"
                   label="Aquarium dimensions"
-                  placeholder="72 × 24 × 24 inches"
+                  placeholder="72 × 24 × 24 inches…"
                   error={errors.tankDimensions}
                 />
                 <TextInput
@@ -441,7 +506,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="timeline"
                   label="Purchase timeline"
-                  placeholder="Within a month"
+                  placeholder="Within a month…"
                   error={errors.timeline}
                 />
                 <TextInput name="deliveryCity" label="Delivery city" error={errors.deliveryCity} />
@@ -449,6 +514,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   name="deliveryPincode"
                   label="Delivery PIN code"
                   inputMode="numeric"
+                  spellCheck={false}
                   error={errors.deliveryPincode}
                 />
               </>
@@ -492,7 +558,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="preferredContactTime"
                   label="Preferred contact time"
-                  placeholder="Evenings after 7pm"
+                  placeholder="Evenings after 7pm…"
                   error={errors.preferredContactTime}
                 />
 
@@ -548,7 +614,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
             disabled={isPending}
             className={!isLast ? styles.quietSubmit : undefined}
           >
-            {isPending ? 'Sending…' : 'Submit my requirement'}
+            {isPending ? 'Sending…' : 'Submit My Requirement'}
           </Button>
         </div>
 

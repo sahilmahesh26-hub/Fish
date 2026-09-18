@@ -109,6 +109,7 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
       policyLinks: [
         { label: 'Privacy Policy', href: '/privacy-policy' },
         { label: 'Terms and Conditions', href: '/terms-and-conditions' },
+        { label: 'Cookie Policy', href: '/cookie-policy' },
         { label: 'Sourcing and Delivery Policy', href: '/sourcing-and-delivery-policy' },
         { label: 'Restricted-Species Policy', href: '/restricted-species-policy' },
       ],
@@ -135,11 +136,20 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         annotation: 'Specimen shown is placeholder artwork',
         scrollHint: 'See how it works',
       },
+      /*
+       * Eyebrows are deliberately sparse.
+       *
+       * The taste-skill audit caps them at one per three sections; this page has
+       * eleven, so four are kept — hero, category grid, trust statements and the
+       * article shelf, where the small label does navigational work. An eyebrow
+       * above every headline is the templated rhythm the rule exists to catch.
+       * Every block still has the field: an editor can restore any of them in
+       * Payload without a developer. See docs/DESIGN-REFERENCE-AUDIT.md.
+       */
       sections: [
         {
           blockType: 'sectionIntro',
           background: 'linen',
-          eyebrow: 'Not another aquarium store',
           heading: 'You tell us the fish. We search beyond one store.',
           body: "A collector's search should not depend on the stock of a single aquarium shop. Finquiry brings your requirement to a wider sourcing network and returns with the closest verified options we can find.",
           alignment: 'start',
@@ -147,7 +157,6 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         {
           blockType: 'processRoute',
           background: 'linen-raised',
-          eyebrow: 'The sourcing route',
           heading: 'From a specific requirement to an approved specimen.',
           steps: PROCESS_STEPS,
           cta: { label: 'Start Your Search', type: 'internal', href: '/source-a-fish' },
@@ -163,7 +172,6 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         {
           blockType: 'specimenRecord',
           background: 'linen-raised',
-          eyebrow: 'Review before approval',
           heading: 'See the individual fish—not a generic product photo.',
           body: 'Every option is shared as a specific specimen. Where available, we provide current photographs, videos, approximate size, origin, feeding information and other details that can be confirmed.',
           note: 'Availability and condition can change. We reconfirm the specimen before payment and dispatch.',
@@ -211,7 +219,6 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         {
           blockType: 'deliveryStories',
           background: 'linen',
-          eyebrow: 'Documented journeys',
           heading: 'Every delivery begins as a search.',
           body: 'Explore real sourcing stories, from the original requirement and specimen review to packing, dispatch and arrival.',
           mode: 'featured',
@@ -224,7 +231,6 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         },
         {
           blockType: 'aquariumFeature',
-          eyebrow: 'Custom aquarium solutions',
           heading: 'Built around the fish, not just the room.',
           body: 'From tank dimensions and filtration to stands, cabinets, lighting and equipment, we help plan systems around the specimen’s long-term requirements.',
           mainImage: media.aquarium,
@@ -250,7 +256,6 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         {
           blockType: 'faqs',
           background: 'linen',
-          eyebrow: 'Before you ask',
           heading: 'Questions collectors ask first.',
           mode: 'category',
           category: 'sourcing',

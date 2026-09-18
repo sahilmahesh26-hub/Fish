@@ -251,7 +251,25 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
     })
   }
 
+  /*
+   * Policy pages refresh while they are still flagged for legal review.
+   *
+   * The seed is create-only everywhere else, so an editor's work is never
+   * overwritten. Policy pages are the exception: until someone unticks
+   * "requires legal review" there is no approved wording to protect, and the
+   * placeholder text should track what the site actually does. The moment
+   * legal clears a page, that flag goes off and the seed stops touching it.
+   */
   for (const policy of POLICY_PAGES) {
+    const existing = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: policy.slug } },
+      limit: 1,
+      draft: true,
+      overrideAccess: true,
+    })
+    const stillDraftWording = existing.docs[0]?.legalReviewRequired !== false
+
     await upsertBySlug(payload, 'pages', policy.slug, {
       title: policy.title,
       pageType: 'policy',
@@ -274,7 +292,7 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
        * unticks it in Payload.
        */
       _status: 'published',
-    })
+    }, { updateExisting: stillDraftWording })
   }
 
   log(`pages: ${pages.length} content pages, ${POLICY_PAGES.length} policy drafts`)

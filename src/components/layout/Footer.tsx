@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getFooter, getSiteSettings } from '@/lib/queries'
 import { whatsappLink } from '@/lib/whatsapp'
+import { CookiePreferencesLink } from '@/components/consent/CookiePreferencesLink'
 import styles from './Footer.module.css'
 
 export const SiteFooter = async () => {
@@ -96,6 +97,11 @@ export const SiteFooter = async () => {
                     </Link>
                   </li>
                 ))}
+                {/* Always present, regardless of configuration — consent must stay
+                    reversible from every page. */}
+                <li>
+                  <CookiePreferencesLink className={styles.link} />
+                </li>
               </ul>
             </nav>
           ) : null}

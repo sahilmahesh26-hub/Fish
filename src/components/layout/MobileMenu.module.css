@@ -45,6 +45,9 @@
   /* `dvh` keeps the panel correct as mobile browser chrome collapses. */
   max-block-size: 100dvh;
   overflow-y: auto;
+  /* Scrolling to the end of the menu must not start scrolling the page behind
+     it. */
+  overscroll-behavior: contain;
   padding: var(--space-2) var(--gutter) calc(var(--space-4) + env(safe-area-inset-bottom));
   background: var(--linen);
   animation: slide-in var(--dur-base) var(--ease-out);

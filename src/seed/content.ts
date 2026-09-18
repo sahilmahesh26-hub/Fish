@@ -189,26 +189,66 @@ export const POLICY_PAGES = [
     intro:
       'How Finquiry collects, uses and protects the information you share when you submit a sourcing requirement or contact our team.',
     content: doc(
-      h('h2', 'Information we collect'),
+      h('h2', 'Who operates this website'),
       p(
-        'This section will describe the categories of information collected through the sourcing enquiry form and other contact channels, including contact details, requirement details and any reference images you choose to upload.',
+        'This section will name the business operating Finquiry, its registered address and its contact details. Those values are supplied by the business owner before publication.',
+      ),
+      h('h2', 'Information you submit through the sourcing form'),
+      p(
+        'The sourcing form collects your name, WhatsApp number, optional email address, city, state and PIN code, together with the details of the fish you are looking for, your aquarium, your budget range, your timeline and your delivery destination.',
+      ),
+      p(
+        'We ask for this because a sourcing request cannot be answered without it: the species and size drive the search, and the destination drives what delivery is possible.',
+      ),
+      h('h2', 'Reference images and uploads'),
+      p(
+        'If you upload a reference image, it is stored privately and is visible only to the Finquiry sourcing team. It is never published on this website, never added to the public media library, and never shared with an analytics provider.',
+      ),
+      h('h2', 'Technical and analytics data'),
+      p(
+        'If you agree to analytics cookies, we collect anonymous usage measurement — which pages are read, which buttons are used. This never includes your name, number, email, PIN code, budget or requirement text. See the Cookie Policy for the detail.',
       ),
       h('h2', 'How we use your information'),
+      list([
+        'To review your requirement and ask any follow-up questions.',
+        'To search our network of aquarium stores, breeders, importers, wholesalers and collectors.',
+        'To share suitable specimens with you, including photographs, video and individual pricing.',
+        'To coordinate documentation, preparation, packing, transport and arrival once you approve a specimen.',
+      ]),
+      h('h2', 'WhatsApp and other communication'),
       p(
-        'This section will describe the purposes for which information is used, such as reviewing a requirement, searching our network, sharing options and coordinating delivery.',
+        'Most conversation happens on WhatsApp, because that is where collectors want it. WhatsApp is operated by a third party under its own privacy terms, which we do not control. The link from this website opens WhatsApp with a short prefilled message containing your Request ID and the fish you asked about — never your name, number, budget or full requirement.',
       ),
-      h('h2', 'Sharing with third parties'),
+      h('h2', 'Service providers'),
       p(
-        'This section will describe when information is shared with the aquarium stores, breeders, importers, wholesalers, collectors and transport providers involved in a search, and what is not shared.',
+        'This section will list the categories of third party that may process information on our behalf — website hosting, database hosting, file storage and email delivery — once those providers are confirmed.',
       ),
-      h('h2', 'Data retention'),
-      p('This section will state how long enquiry records and uploaded references are kept.'),
-      h('h2', 'Your rights'),
+      h('h2', 'Retention'),
       p(
-        'This section will describe how to request access to, correction of, or deletion of the information Finquiry holds about you.',
+        'This section will state how long enquiry records and uploaded reference images are kept. Requires review before publication.',
+      ),
+      h('h2', 'Security'),
+      p(
+        'Enquiry records are private and are not readable through any public interface. Reference images are stored outside the public website and are served only to an authenticated member of the Finquiry team. No security measure is perfect, and we do not claim otherwise.',
+      ),
+      h('h2', 'Cookies'),
+      p('See the Cookie Policy for what is stored on your device and how to change it.'),
+      h('h2', 'Your choices and requests'),
+      p(
+        'This section will describe how to ask for a copy of the information we hold about you, ask for it to be corrected, or ask for it to be deleted, and how long we take to respond.',
+      ),
+      h('h2', "Children's privacy"),
+      p(
+        'This website is intended for adults. We do not knowingly collect information from children.',
+      ),
+      h('h2', 'Changes to this policy'),
+      p(
+        'This section will describe how changes are published and how you will be told about material ones.',
       ),
       h('h2', 'Contact'),
-      p('This section will confirm how to reach Finquiry about a privacy question.'),
+      p(
+        'This section will confirm the email address for privacy questions, once the business contact details are supplied.',
+      ),
     ),
   },
   {
@@ -217,23 +257,117 @@ export const POLICY_PAGES = [
     intro: 'The basis on which Finquiry provides its sourcing and aquarium services.',
     content: doc(
       h('h2', 'About these terms'),
-      p('This section will set out who these terms apply to and when they take effect.'),
-      h('h2', 'Nature of the service'),
       p(
-        'This section will confirm that Finquiry is an enquiry-led sourcing service, that submitting a requirement does not create an order, and that availability is never guaranteed before verification.',
+        'This section will set out who these terms apply to, when they take effect, and the business entity behind them. The legal name and registered address are supplied by the owner before publication.',
       ),
-      h('h2', 'Enquiries and approval'),
+      h('h2', 'Nature of the sourcing service'),
       p(
-        'This section will describe how a requirement becomes an approved specimen, and the role of written approval.',
+        'Finquiry is a sourcing service, not a shop. We do not hold stock and we do not present fish as permanently available products. We take your requirement, search a network of aquarium stores, breeders, importers, wholesalers and collectors, and share the options we can actually confirm.',
       ),
-      h('h2', 'Pricing and payment'),
-      p('This section will describe how individual pricing is presented and when payment applies.'),
-      h('h2', 'Cancellation and changes'),
-      p('This section requires legal review before any commitment is stated.'),
-      h('h2', 'Limitations'),
-      p('This section requires legal review before any limitation of liability is stated.'),
-      h('h2', 'Governing law'),
-      p('This section will state the governing law and jurisdiction.'),
+      h('h2', 'An enquiry is not a confirmed order'),
+      p(
+        'Submitting the sourcing form starts a search. It does not create an order, reserve a specimen or oblige either side to proceed.',
+      ),
+      h('h2', 'Availability is not guaranteed'),
+      p(
+        'We never promise a fish before we have checked. Availability and condition can change between a specimen being offered and being dispatched, and we reconfirm before payment and before dispatch.',
+      ),
+      h('h2', 'Specimen-specific approval'),
+      p(
+        'You approve a specific individual fish, in writing. Nothing is substituted, prepared or dispatched without that approval.',
+      ),
+      h('h2', 'Individual pricing'),
+      p(
+        'Pricing is quoted for a specific specimen. Variety, size, colour development, origin, current availability and the transport route all affect it, which is why no single published price applies to a species.',
+      ),
+      h('h2', 'Payments'),
+      p(
+        'This section will describe accepted payment methods and when payment falls due. Requires legal review before any commitment is stated.',
+      ),
+      h('h2', 'Delivery and transport'),
+      p(
+        'This section will describe how delivery is coordinated, what documentation is provided, and the limits of what can be guaranteed in transit. Requires legal review.',
+      ),
+      h('h2', 'Information you provide'),
+      p(
+        'Our search is only as good as the requirement you give us. Aquarium dimensions, existing inhabitants and readiness matter to whether a specimen suits your system, and we rely on what you tell us being accurate.',
+      ),
+      h('h2', 'Aquarium readiness and your responsibilities'),
+      p(
+        'This section will set out what needs to be ready before a fish is dispatched, and what falls to you once it arrives. Requires legal review.',
+      ),
+      h('h2', 'Cancellation, refunds and claims'),
+      p(
+        'PLACEHOLDER — requires legal review. No refund, mortality, replacement or claims commitment is stated here until it has been reviewed and approved.',
+      ),
+      h('h2', 'Restricted or unlawful requests'),
+      p(
+        'We decline requests for species that may not lawfully be kept, traded or transported, and requests where the legality or origin of a specimen cannot be established. See the Restricted-Species Policy.',
+      ),
+      h('h2', 'Media and testimonials'),
+      p(
+        'Photographs, video and customer quotes are published only with the customer\u2019s written permission. A delivery story is never published without it.',
+      ),
+      h('h2', 'Intellectual property'),
+      p(
+        'This section will describe ownership of the website content, photography and marks. Requires review.',
+      ),
+      h('h2', 'Service availability'),
+      p(
+        'We aim to keep this website available but do not guarantee uninterrupted access.',
+      ),
+      h('h2', 'Limitation of liability and disputes'),
+      p(
+        'PLACEHOLDER — requires legal review. No limitation of liability, governing law or dispute-resolution provision is stated here until it has been reviewed and approved.',
+      ),
+      h('h2', 'Contact'),
+      p('This section will confirm the contact address for questions about these terms.'),
+    ),
+  },
+  {
+    title: 'Cookie Policy',
+    slug: 'cookie-policy',
+    intro:
+      'What this website stores on your device, why, and how to change your mind at any time.',
+    content: doc(
+      p(
+        'This site uses very few cookies. Nothing optional is set until you agree to it, and you can change that decision at any time using the **Cookie preferences** link in the footer.',
+      ),
+      h('h2', 'Necessary cookies'),
+      p(
+        'These are needed for the site to work and cannot be switched off. They store your cookie choice so you are not asked on every page, keep your place in the sourcing form if you reload, and help protect the form from automated abuse.',
+      ),
+      list([
+        'finquiry_consent — records your cookie choice. Expires after one year.',
+        'Short-lived form protection values — cleared when you close the browser.',
+      ]),
+      h('h2', 'Analytics cookies'),
+      p(
+        'Off by default. If you agree, we measure which pages are read and which buttons are used, so we can improve the site. This is anonymous measurement: it never includes your name, phone number, email address, PIN code, budget, the details of your requirement, or any image you upload.',
+      ),
+      p(
+        'The specific cookie names depend on the analytics provider configured for this site. This section will name them once the provider is confirmed.',
+      ),
+      h('h2', 'What we do not use'),
+      list([
+        'No advertising or re-targeting cookies.',
+        'No cross-site tracking pixels.',
+        'No social media tracking widgets.',
+        'No fingerprinting.',
+      ]),
+      h('h2', 'Changing your mind'),
+      p(
+        'Use the **Cookie preferences** link in the footer of any page. Withdrawing consent stops further optional tracking immediately and clears the analytics cookies we are able to reach from this site.',
+      ),
+      p(
+        'You can also clear or block cookies in your browser settings. Blocking necessary cookies may stop parts of the sourcing form working correctly.',
+      ),
+      h('h2', 'Embedded content'),
+      p(
+        'Some pages may embed video from YouTube or Vimeo. Where they appear, those services may set their own cookies once you play a video. We use the privacy-preserving embed option where the provider offers one.',
+      ),
+      h('h2', 'Contact'),
+      p('This section will confirm how to reach Finquiry about a cookie or privacy question.'),
     ),
   },
   {

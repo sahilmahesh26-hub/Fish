@@ -72,6 +72,13 @@
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
+  /* `button` resets, so the preferences control is visually identical to the
+     links beside it. */
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  text-align: start;
   color: var(--linen-100);
   font-size: var(--fs-small);
   text-decoration: none;

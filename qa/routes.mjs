@@ -17,7 +17,7 @@ const ROUTES = [
   '/this-route-does-not-exist',
   '/sitemap.xml',
   '/robots.txt',
-  '/knowledge/rss.xml',
+  '/rss.xml',
 ]
 
 const base = process.env.BASE_URL ?? 'http://localhost:3000'

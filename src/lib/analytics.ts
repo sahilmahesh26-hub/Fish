@@ -7,13 +7,16 @@
  * `trackEvent` below, which accepts no free-form payload by design.
  */
 export const ANALYTICS_EVENTS = {
-  primaryCta: 'primary_cta_click',
+  pageView: 'page_view',
+  primaryCta: 'start_search_click',
   whatsapp: 'whatsapp_click',
-  enquiryStarted: 'enquiry_started',
+  enquiryStarted: 'enquiry_form_started',
   enquiryStepCompleted: 'enquiry_step_completed',
   enquirySubmitted: 'enquiry_submitted',
+  requestConfirmationViewed: 'request_confirmation_viewed',
   articleViewed: 'article_viewed',
-  deliveryViewed: 'delivery_viewed',
+  deliveryViewed: 'delivery_story_viewed',
+  customAquariumCta: 'custom_aquarium_cta_clicked',
 } as const
 
 export type AnalyticsEvent = (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS]
@@ -38,12 +41,26 @@ declare global {
 }
 
 /**
+ * Master switch, driven by cookie consent.
+ *
+ * Starts false. `trackEvent` is a no-op until the Analytics component confirms
+ * a provider is configured, the visitor consented, and this is production — so
+ * a stray call cannot fire before or after permission.
+ */
+let enabled = false
+
+export const setAnalyticsEnabled = (value: boolean): void => {
+  enabled = value
+}
+
+/**
  * Sends an event to whichever provider is configured.
  *
  * No-ops silently when analytics is switched off, which is the default.
  */
 export const trackEvent = (event: AnalyticsEvent, props?: AnalyticsProps): void => {
   if (typeof window === 'undefined') return
+  if (!enabled) return
 
   if (typeof window.plausible === 'function') {
     window.plausible(event, props ? { props } : undefined)

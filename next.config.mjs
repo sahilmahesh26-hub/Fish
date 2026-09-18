@@ -8,6 +8,28 @@ import { withPayload } from '@payloadcms/next/withPayload'
  */
 const isDev = process.env.NODE_ENV === 'development'
 
+/**
+ * HSTS, added only once HTTPS genuinely works.
+ *
+ * Sending it from an origin that is not fully HTTPS locks visitors out of the
+ * site in a way that cannot be undone from the server — the browser remembers
+ * it. So it is emitted only when the configured site URL is already https.
+ *
+ * `preload` is a separate, stronger commitment: submitting to the preload list
+ * is effectively irreversible for months and covers every subdomain. It stays
+ * off until the owner explicitly opts in with HSTS_PRELOAD=true, having
+ * confirmed the apex and every required subdomain serve HTTPS.
+ */
+const hstsHeader = () => {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
+  if (isDev || !siteUrl.startsWith('https://')) return []
+
+  const directives = ['max-age=63072000', 'includeSubDomains']
+  if (process.env.HSTS_PRELOAD === 'true') directives.push('preload')
+
+  return [{ key: 'Strict-Transport-Security', value: directives.join('; ') }]
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -46,14 +68,7 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
-          ...(isDev
-            ? []
-            : [
-                {
-                  key: 'Strict-Transport-Security',
-                  value: 'max-age=63072000; includeSubDomains; preload',
-                },
-              ]),
+          ...hstsHeader(),
         ],
       },
     ]

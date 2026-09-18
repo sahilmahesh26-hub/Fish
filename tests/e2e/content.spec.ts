@@ -26,11 +26,21 @@ test.describe('knowledge hub', () => {
     await expect(filters.getByRole('link', { name: 'All' })).toHaveAttribute('aria-current', 'page')
   })
 
-  test('serves an RSS feed', async ({ request }) => {
-    const response = await request.get('/knowledge/rss.xml')
+  test('serves an RSS feed at /rss.xml', async ({ request }) => {
+    const response = await request.get('/rss.xml')
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/rss+xml')
-    expect(await response.text()).toContain('<rss')
+    const body = await response.text()
+    expect(body).toContain('<rss')
+    expect(body).toContain('<channel>')
+    // Absolute URLs only — a feed reader has no page to resolve a path against.
+    expect(body).not.toMatch(/<link>\/[^/]/)
+  })
+
+  test('redirects the old feed path permanently', async ({ request }) => {
+    const response = await request.get('/knowledge/rss.xml', { maxRedirects: 0 })
+    expect([301, 308]).toContain(response.status())
+    expect(response.headers()['location']).toContain('/rss.xml')
   })
 })
 
