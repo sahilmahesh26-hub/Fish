@@ -56,6 +56,18 @@
   font-size: var(--fs-small);
 }
 
+/*
+ * The category link is the whole value of its row, not a link inside a
+ * sentence, so WCAG's inline exception does not cover it. `inline-flex` with a
+ * minimum block size gives it a real 44px target while keeping it sitting on
+ * the text baseline of the row.
+ */
+.metaList dd a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+}
+
 .relatedHeading {
   margin-block-end: var(--space-4);
   font-size: var(--fs-subsection);

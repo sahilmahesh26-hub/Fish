@@ -133,12 +133,29 @@ for (const vp of VIEWPORTS) {
       }
 
       // 3. Touch targets under 44px on touch-sized viewports.
+      //
+      //    WCAG 2.5.8 exempts a link sitting inside a sentence, because its
+      //    height is set by the surrounding line and enlarging it would break
+      //    the paragraph. Without that exception this flags every inline link
+      //    in body copy, which buries the targets that can actually be fixed.
+      const isInlineInSentence = (el) => {
+        if (el.tagName !== 'A') return false
+        const parent = el.parentElement
+        if (!parent) return false
+        if (!['P', 'LI', 'SPAN', 'EM', 'STRONG'].includes(parent.tagName)) return false
+        const own = (el.textContent ?? '').trim().length
+        const around = (parent.textContent ?? '').trim().length
+        // Meaningfully more text around it than in it: it is part of a sentence.
+        return around > own + 20
+      }
+
       if (window.innerWidth < 1024) {
         const tiny = Array.from(document.querySelectorAll('a, button, input[type="checkbox"]'))
           .filter((el) => {
             const r = el.getBoundingClientRect()
             if (r.width === 0 || r.height === 0) return false
             if (getComputedStyle(el).position === 'absolute' && r.height < 2) return false
+            if (isInlineInSentence(el)) return false
             return r.height < 44
           })
           .slice(0, 3)
@@ -175,17 +192,39 @@ for (const vp of VIEWPORTS) {
         if (tooWide.length > 0) issues.push(`line length over ~95 characters: ${tooWide.join(', ')}`)
       }
 
-      // 6. A fixed height cutting off content an editor added.
+      // 6. A declared height cutting off content an editor added.
+      //
+      //    Narrow on purpose. `scrollHeight > clientHeight` on any
+      //    `overflow: hidden` box is far too blunt a test: every hero clips a
+      //    decorative glow that deliberately bleeds past its edges, and every
+      //    visually-hidden helper is clipped as its entire mechanism. Both
+      //    look identical to a real clip from the outside.
+      //
+      //    What the brief actually warns against is a *declared* height on CMS
+      //    copy. `max-height` is the one property whose computed value still
+      //    says whether it was declared — it reads `none` unless someone set
+      //    it — so that is what this looks for, plus `-webkit-line-clamp` on
+      //    something that is not a decorative preview.
       const cutOff = Array.from(document.querySelectorAll('main *'))
         .filter((el) => {
+          if (el.classList.contains('u-visually-hidden')) return false
+          if (el.querySelector('.u-visually-hidden')) return false
+
           const style = getComputedStyle(el)
-          if (style.overflowY !== 'hidden') return false
-          if (style.height === 'auto') return false
+          if (style.overflowY !== 'hidden' && style.overflowY !== 'clip') return false
+
+          const declaredMaxHeight = style.maxHeight !== 'none'
+          const clamped = style.webkitLineClamp && style.webkitLineClamp !== 'none'
+          if (!declaredMaxHeight && !clamped) return false
+
           return el.scrollHeight > el.clientHeight + 4 && el.clientHeight > 0
         })
         .slice(0, 2)
-        .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]} ${el.clientHeight}px holds ${el.scrollHeight}px`)
-      if (cutOff.length > 0) issues.push(`fixed height clipping content: ${cutOff.join(', ')}`)
+        .map(
+          (el) =>
+            `${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]} ${el.clientHeight}px holds ${el.scrollHeight}px`,
+        )
+      if (cutOff.length > 0) issues.push(`declared height clipping content: ${cutOff.join(', ')}`)
 
       // 7. Broken images.
       const broken = Array.from(document.images)

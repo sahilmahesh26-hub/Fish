@@ -43,6 +43,17 @@
 .body a {
   color: var(--linen-100);
   font-weight: 600;
+  /*
+   * A comfortable tap area without disturbing the line box.
+   *
+   * Vertical padding on an inline element extends the hit target but does not
+   * change line height, and the negative margin keeps the paragraph's own
+   * spacing exactly as it was. WCAG exempts a link inside a sentence from the
+   * target-size minimum, but this is the one link in the banner that people
+   * actually need, so it gets the full 44px anyway.
+   */
+  padding-block: 0.7rem;
+  margin-block: -0.7rem;
 }
 
 .actions {

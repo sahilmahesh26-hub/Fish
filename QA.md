@@ -4,6 +4,26 @@ What was tested, what the numbers were, and what is genuinely still open.
 Everything below was measured against the production build (`pnpm build` +
 `pnpm start`), not the dev server.
 
+## Results, last full run
+
+Against a production build on the shipped content state (no fixtures), except
+the responsive and accessibility sweeps, which need the detail templates to
+have something to render.
+
+| Check                                                  | Result                                                                                            |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `pnpm check` — format, lint, types                     | pass                                                                                              |
+| Unit tests                                             | **73 passed**, 0 failed                                                                           |
+| End-to-end, desktop + mobile                           | **85 passed**, 0 failed, 5 skipped (project-scoped: desktop-only tests on mobile and the reverse) |
+| Routes — status, one H1, console, CSP, failed requests | **23 of 23 OK**                                                                                   |
+| Responsive — 21 viewports x 17 routes                  | **0 issues** across 357 combinations                                                              |
+| Horizontal overflow — 10 widths x 16 routes            | **0 issues**                                                                                      |
+| Accessibility — axe, 15 routes x 2 viewports           | **0 violations** at moderate or above                                                             |
+| Link crawl                                             | 33 internal pages, **0 broken**; a missing URL returns a real 404                                 |
+| Sitemap                                                | 8 URLs in the shipped state, valid, no duplicates, every one returns 200                          |
+| Structured data                                        | **40 JSON-LD blocks** across 12 routes, 0 problems                                                |
+| Metadata                                               | 17 routes: unique titles, descriptions and canonicals; one H1 each; `en-IN` throughout            |
+
 ---
 
 ## Running it
@@ -79,7 +99,7 @@ listing had been hiding.
 
 ### Unit — `pnpm test`
 
-73 tests. The enquiry schema (required fields, consent, Indian phone formats,
+73 tests, all passing. The enquiry schema (required fields, consent, Indian phone formats,
 PIN codes, optional selects, upload limits, the submission token), rich-text
 helpers, WhatsApp link building, rate limiting, media helpers and link
 resolution.
@@ -170,12 +190,12 @@ menu, and the form's error and success states.
 `node qa/perf.mjs` — 4× CPU throttling and a Fast-3G network profile, against
 the production build.
 
-| Route            | LCP    | CLS   | TTFB  | Transfer | Scripts |
-| ---------------- | ------ | ----- | ----- | -------- | ------- |
-| `/`              | 1072ms | 0.084 | 164ms | 77KB     | 8       |
-| `/source-a-fish` | 948ms  | 0.005 | 183ms | 70KB     | 9       |
-| `/knowledge`     | 924ms  | 0.044 | 180ms | 70KB     | 8       |
-| `/about`         | 932ms  | 0.006 | 163ms | 70KB     | 8       |
+| Route            | LCP    | CLS    | TTFB  | Transfer | Scripts |
+| ---------------- | ------ | ------ | ----- | -------- | ------- |
+| `/`              | 1344ms | 0.0844 | 167ms | 71KB     | 8       |
+| `/source-a-fish` | 1208ms | 0      | 172ms | 64KB     | 9       |
+| `/knowledge`     | 1064ms | 0.0443 | 181ms | 69KB     | 9       |
+| `/about`         | 1060ms | 0.0061 | 161ms | 64KB     | 8       |
 
 Targets met: LCP well under 2.5s, CLS under 0.1, transfer weight under 80KB.
 
