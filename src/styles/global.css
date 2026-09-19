@@ -56,6 +56,19 @@ body {
   letter-spacing: var(--tracking-body);
   font-synthesis-weight: none;
   text-rendering: optimizeLegibility;
+  /*
+   * A long unbreakable token must wrap rather than push the page sideways.
+   *
+   * Every string on this site comes from an editor, and a scientific name or a
+   * hyphen-free compound will eventually be longer than a 320px column. Without
+   * this, one such word scrolls the whole document — which a content-resilience
+   * fixture proved before this rule existed.
+   *
+   * `anywhere`, not `break-word`: only `anywhere` lets the element's own
+   * min-content width shrink, which is what stops a grid or flex track being
+   * sized to the unbroken word in the first place.
+   */
+  overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
   /* Warm paper grain — a token-driven texture, not an image request */
   background-image: radial-gradient(rgb(8 31 51 / 2.2%) 0.5px, transparent 0.5px);

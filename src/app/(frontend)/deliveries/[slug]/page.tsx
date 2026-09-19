@@ -192,7 +192,14 @@ const DeliveryPage = async ({ params }: Props) => {
           background: 'scarlet',
           heading: 'Searching for something similar?',
           body: 'Share the species, variety, size and destination. We will search our network and share what we can confirm.',
-          primaryCta: { label: 'Start Your Search', type: 'internal', href: '/source-a-fish' },
+          /*
+           * The one place the primary label differs from the rest of the site.
+           * Someone reading a delivery story has a specific fish in mind, and
+           * "a similar search" names what they are actually about to do. It
+           * routes into the same sourcing flow as every other primary CTA, so
+           * the conversion path is unchanged.
+           */
+          primaryCta: { label: 'Start a Similar Search', type: 'internal', href: '/source-a-fish' },
           secondaryCta: { label: 'Talk to Us on WhatsApp', type: 'whatsapp' },
         }}
         settings={settings}

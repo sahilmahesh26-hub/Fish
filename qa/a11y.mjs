@@ -8,11 +8,17 @@ const ROUTES = [
   '/source-a-fish',
   '/how-it-works',
   '/deliveries',
+  // Detail templates need `pnpm qa:fixtures apply`; without it they 404 and the
+  // run says so rather than quietly skipping the two densest pages on the site.
+  '/deliveries/qa-fixture-super-red-arowana-to-bengaluru',
   '/custom-aquariums',
   '/knowledge',
+  '/knowledge/how-to-evaluate-a-fish-through-photos-and-video',
   '/about',
   '/contact',
   '/privacy-policy',
+  '/terms-and-conditions',
+  '/cookie-policy',
   '/thank-you?request=FQ-1709-0001&fish=Arowana',
   '/no-such-page',
 ]
