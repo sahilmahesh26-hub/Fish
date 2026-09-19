@@ -76,5 +76,5 @@
 
 [data-on-dark] .list,
 [data-on-dark] .item {
-  border-color: rgb(253 251 247 / 22%);
+  border-color: var(--on-dark-rule-quiet);
 }

@@ -47,7 +47,7 @@
   position: absolute;
   inset-block-end: var(--space-1);
   inset-inline-end: var(--space-1);
-  background: rgb(253 251 247 / 92%);
+  background: var(--on-dark-veil);
 }
 
 .body {

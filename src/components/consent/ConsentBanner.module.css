@@ -37,7 +37,7 @@
 .body {
   max-inline-size: 70ch;
   font-size: var(--fs-small);
-  color: rgb(253 251 247 / 86%);
+  color: var(--text-on-dark-muted);
 }
 
 .body a {

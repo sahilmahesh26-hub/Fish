@@ -148,7 +148,7 @@
   margin-block-start: var(--space-2);
   font-size: var(--fs-small);
   font-weight: 600;
-  color: rgb(253 251 247 / 76%);
+  color: var(--on-dark-label);
 }
 
 @media (min-width: 1024px) {

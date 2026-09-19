@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
+import { revalidateRunningSite } from '../src/seed/revalidate'
 
 /**
  * QA fixtures — NOT seed data.
@@ -72,6 +73,7 @@ const run = async () => {
         `${posts.docs.length} articles returned to draft, ` +
         `${pages.docs.length} policy pages re-flagged`,
     )
+    await revalidateRunningSite()
     process.exit(0)
   }
 
@@ -153,6 +155,7 @@ const run = async () => {
       `${policies.docs.length} policy pages cleared for indexing, ` +
       `1 delivery record present`,
   )
+  await revalidateRunningSite()
   process.exit(0)
 }
 

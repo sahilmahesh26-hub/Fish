@@ -1,3 +1,11 @@
+/*
+ * Payload admin theming.
+ *
+ * The admin bundle does not load `src/styles/tokens.css`, so the Finquiry
+ * palette is repeated here as literals rather than referenced. Keep these in
+ * step with tokens.css by hand: #1a6fbf is --aegean and #fdfbf7 is --linen-100.
+ */
+
 /* Light Finquiry cues inside the Payload admin so editors recognise where they
    are. Deliberately restrained — the admin stays Payload's own UI. */
 :root {

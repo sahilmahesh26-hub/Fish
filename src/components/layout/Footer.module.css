@@ -39,7 +39,7 @@
 }
 
 .statement {
-  color: rgb(253 251 247 / 78%);
+  color: var(--on-dark-label);
   font-size: var(--fs-small);
 }
 
@@ -60,7 +60,7 @@
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: rgb(253 251 247 / 62%);
+  color: var(--on-dark-label-quiet);
 }
 
 .columnList {
@@ -102,11 +102,11 @@
   font-style: normal;
   font-size: var(--fs-small);
   line-height: 1.7;
-  color: rgb(253 251 247 / 78%);
+  color: var(--on-dark-label);
 }
 
 .smallPrint {
-  border-block-start: 1px solid rgb(253 251 247 / 16%);
+  border-block-start: 1px solid var(--on-dark-rule-quiet);
 }
 
 .smallPrintInner {
@@ -125,7 +125,7 @@
   /* `--fs-small`, not `--fs-label`: the label size is for uppercase microcopy,
      and this is a sentence. It reaches a full 16px on phones. */
   font-size: var(--fs-small);
-  color: rgb(253 251 247 / 72%);
+  color: var(--on-dark-wash);
 }
 
 .policyList {
@@ -139,7 +139,7 @@
 
 .policyList .link {
   font-size: var(--fs-small);
-  color: rgb(253 251 247 / 78%);
+  color: var(--on-dark-label);
 }
 
 @media (min-width: 640px) {

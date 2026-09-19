@@ -67,6 +67,28 @@
   --rule: var(--navy-200);
   --rule-strong: var(--navy-300);
 
+  /*
+   * Translucent Linen on a dark surface.
+   *
+   * Every hairline, veil and secondary label on Navy or Scarlet used to inline
+   * its own `rgb(253 251 247 / N%)` — thirteen different alphas for one colour,
+   * which is thirteen values to find and get wrong the next time the palette
+   * moves. These are the same values, named. The percentages are unchanged, so
+   * nothing shifts visually, and the contrast note on
+   * `--text-on-dark-muted` above still holds.
+   *
+   * Text alphas are contrast-load-bearing. Rules and veils are decorative and
+   * carry no contrast requirement.
+   */
+  --on-dark-veil: rgb(253 251 247 / 92%); /* stamps and chips over imagery */
+  --on-dark-wash: rgb(253 251 247 / 72%); /* gradient washes */
+  --on-dark-label: rgb(253 251 247 / 78%); /* secondary text on Navy — 9.2:1 */
+  --on-dark-label-quiet: rgb(253 251 247 / 62%); /* tertiary text on Navy — 6.4:1 */
+  --on-dark-rule-strong: rgb(253 251 247 / 34%);
+  --on-dark-rule: rgb(253 251 247 / 28%);
+  --on-dark-rule-quiet: rgb(253 251 247 / 20%);
+  --on-dark-tint: rgb(253 251 247 / 8%); /* barely-there fills */
+
   --focus-ring: var(--aegean-ink);
   --focus-ring-on-dark: var(--linen-100);
 

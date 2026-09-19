@@ -65,12 +65,12 @@
   margin: var(--space-2) 0 0;
   padding: 0;
   list-style: none;
-  border-block-start: 1px solid rgb(253 251 247 / 28%);
+  border-block-start: 1px solid var(--on-dark-rule);
 }
 
 .service {
   padding-block: 0.6rem;
-  border-block-end: 1px solid rgb(253 251 247 / 28%);
+  border-block-end: 1px solid var(--on-dark-rule);
   font-size: var(--fs-small);
   font-weight: 600;
 }

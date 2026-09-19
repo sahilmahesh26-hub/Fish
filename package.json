@@ -35,7 +35,8 @@
     "qa:fixtures": "tsx qa/fixtures.ts",
     "qa:overflow": "node qa/overflow.mjs",
     "qa:links": "node qa/links.mjs",
-    "qa:responsive": "node qa/responsive.mjs"
+    "qa:responsive": "node qa/responsive.mjs",
+    "qa:resilience": "tsx qa/resilience.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",

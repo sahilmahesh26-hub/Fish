@@ -89,5 +89,8 @@
 }
 
 .onDark:hover {
+  /* Pure white, not Linen: this is the one place the palette lifts past its
+     lightest tone, so a button on a dark band reads as pressed rather than
+     merely present. Deliberate, and the only use of #fff outside print. */
   --button-bg: #fff;
 }

@@ -61,7 +61,7 @@
   padding: clamp(1rem, 2.4vw, 2rem) var(--gutter) clamp(1.25rem, 2.6vw, 2.25rem);
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgb(253 251 247 / 72%), rgb(245 240 232 / 30%));
+  background: linear-gradient(180deg, var(--on-dark-wash), rgb(245 240 232 / 30%));
 }
 
 .grid {
