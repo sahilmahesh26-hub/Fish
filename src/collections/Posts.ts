@@ -4,6 +4,7 @@ import { slugField } from '@/fields/slug'
 import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidate'
 import { createRedirectOnSlugChange } from '@/hooks/redirects'
 import { enforcePublishPermission } from '@/hooks/publishGuard'
+import { blockStarterDraftPublish } from '@/hooks/starterDraftGuard'
 import { setReadingTime } from '@/hooks/readingTime'
 import { previewUrl } from '@/lib/preview'
 
@@ -32,7 +33,7 @@ export const Posts: CollectionConfig = {
   },
   defaultSort: '-publishedAt',
   hooks: {
-    beforeChange: [enforcePublishPermission, setReadingTime],
+    beforeChange: [enforcePublishPermission, blockStarterDraftPublish, setReadingTime],
     afterChange: [revalidateAfterChange('posts'), createRedirectOnSlugChange('posts')],
     afterDelete: [revalidateAfterDelete('posts')],
   },

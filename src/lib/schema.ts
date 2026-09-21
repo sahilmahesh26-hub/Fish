@@ -14,6 +14,32 @@ type Json = Record<string, unknown>
 
 const absolute = (path: string) => `${siteUrl()}${path}`
 
+/** Hosts that only ever appear in documentation and template content. */
+const EXAMPLE_HOSTS = ['example.com', 'example.org', 'example.net', 'yourdomain.com']
+
+/**
+ * A social profile URL worth publishing in structured data.
+ *
+ * Rejects the placeholder shapes a half-filled CMS produces: an empty string,
+ * a bare `#`, a relative path, and the example domains that setup guides use.
+ */
+const isUsableProfileUrl = (value: unknown): value is string => {
+  if (typeof value !== 'string') return false
+  const trimmed = value.trim()
+  if (trimmed.length === 0 || trimmed === '#') return false
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false
+    const host = url.hostname.toLowerCase()
+    if (EXAMPLE_HOSTS.some((example) => host === example || host.endsWith(`.${example}`))) {
+      return false
+    }
+    return host.includes('.')
+  } catch {
+    return false
+  }
+}
+
 const mediaUrl = (value: unknown): string | undefined => {
   const media = asMedia(value as never)
   if (!media?.url) return undefined
@@ -50,10 +76,17 @@ export const organisationSchema = (settings: SiteSetting): Json => {
           addressCountry: address?.country ?? 'IN',
         }
       : undefined,
+    /*
+     * `sameAs` is a list of profiles a search engine will actually follow to
+     * confirm this organisation is who it says it is. A `#`, a relative path
+     * or an untouched example URL there is worse than an empty list: it is a
+     * broken claim about the business. Only absolute http(s) URLs on a real
+     * host survive.
+     */
     sameAs: [
       ...(settings.organisation?.sameAs ?? []),
       ...(settings.socialLinks?.map((link) => link.url) ?? []),
-    ].filter(Boolean),
+    ].filter(isUsableProfileUrl),
   }
 }
 

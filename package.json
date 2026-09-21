@@ -36,7 +36,9 @@
     "qa:overflow": "node qa/overflow.mjs",
     "qa:links": "node qa/links.mjs",
     "qa:responsive": "node qa/responsive.mjs",
-    "qa:resilience": "tsx qa/resilience.ts"
+    "qa:resilience": "tsx qa/resilience.ts",
+    "qa:media": "tsx qa/media-integrity.ts",
+    "qa:seed-idempotency": "tsx qa/seed-idempotency.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",

@@ -124,8 +124,30 @@
   color: var(--text-muted);
 }
 
+/*
+ * The enquiry CTA stays on screen while the list scrolls.
+ *
+ * The panel is 848px of content in a 727px viewport on a Pixel 5, and less on
+ * anything smaller, so "Start Your Search" sat below the fold on every phone:
+ * the one action the whole site is built around needed a scroll inside a menu
+ * to find. Sticking it to the bottom of the scroll container keeps it in reach
+ * without shortening the navigation.
+ *
+ * `margin-block-start: auto` still pushes it down when the list is short
+ * enough to fit, so on a tall phone it sits at the foot of the panel rather
+ * than floating under the last link.
+ */
 .panelFooter {
+  position: sticky;
+  inset-block-end: 0;
   margin-block-start: auto;
+  /* Clear of the last link's rule, and of the home indicator on iOS. */
+  padding-block: var(--space-2);
+  padding-block-end: calc(var(--space-2) + env(safe-area-inset-bottom));
+  background: var(--ink-900);
+  /* A short fade so list items pass under the bar rather than colliding with
+     its edge. */
+  box-shadow: 0 -12px 16px -8px var(--ink-900);
 }
 
 .panelCta {

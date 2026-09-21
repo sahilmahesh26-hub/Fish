@@ -112,5 +112,16 @@ export const Media: CollectionConfig = {
           'Set by the seed script so re-seeding updates this file instead of uploading a duplicate. Leave blank for files you upload yourself.',
       },
     },
+    {
+      name: 'seedHash',
+      type: 'text',
+      index: true,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description:
+          'Checksum of the artwork the seed last wrote here. The seed compares it before touching the file, so re-running the seed leaves an unchanged image completely alone. Blank for files you upload yourself.',
+      },
+    },
   ],
 }

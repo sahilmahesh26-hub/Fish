@@ -1,22 +1,24 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { whatsappLink, enquiryWhatsappMessage } from '@/lib/whatsapp'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { whatsappLink, enquiryWhatsappMessage, resolveWhatsappNumber } from '@/lib/whatsapp'
 import { resolveLink } from '@/lib/links'
 import { slugify } from '@/fields/slug'
 import { richTextToPlainText, richTextExcerpt } from '@/lib/richText'
 import { renderEmphasis, stripEmphasis } from '@/lib/emphasis'
 import { checkRateLimit, resetRateLimits } from '@/lib/rateLimit'
 import { mediaSrc, altFor, isDecorative } from '@/lib/media'
+import { buildMetadata } from '@/lib/seo'
+import { isProductionOrigin } from '@/lib/env'
 import type { SiteSetting } from '@/payload-types'
 
 const settings = {
-  whatsappNumber: '919876543210',
+  whatsappNumber: '919845012345',
   whatsappDefaultMessage: 'Hello Finquiry',
 } as SiteSetting
 
 describe('whatsappLink', () => {
   it('builds a wa.me link with the encoded default message', () => {
     const link = whatsappLink(settings)
-    expect(link).toBe('https://wa.me/919876543210?text=Hello%20Finquiry')
+    expect(link).toBe('https://wa.me/919845012345?text=Hello%20Finquiry')
   })
 
   it('returns null when no number is configured anywhere', () => {
@@ -27,8 +29,8 @@ describe('whatsappLink', () => {
   })
 
   it('strips non-digits from the configured number', () => {
-    const link = whatsappLink({ ...settings, whatsappNumber: '+91 98765-43210' } as SiteSetting)
-    expect(link).toContain('wa.me/919876543210')
+    const link = whatsappLink({ ...settings, whatsappNumber: '+91 98450-12345' } as SiteSetting)
+    expect(link).toContain('wa.me/919845012345')
   })
 })
 
@@ -281,5 +283,130 @@ describe('analytics', () => {
     const { analyticsPath } = await import('@/components/layout/Analytics')
     const sneaky = new URLSearchParams({ email: 'someone@example.com', phone: '9876543210' })
     expect(analyticsPath('/', sneaky)).toBe('/')
+  })
+})
+
+describe('whatsapp number resolution', () => {
+  const original = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+  afterEach(() => {
+    if (original === undefined) delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+    else process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = original
+  })
+
+  it('accepts a real Indian mobile number', () => {
+    expect(resolveWhatsappNumber({ whatsappNumber: '919845012345' })).toBe('919845012345')
+  })
+
+  it('strips punctuation an editor is likely to paste', () => {
+    expect(resolveWhatsappNumber({ whatsappNumber: '+91 98450 12345' })).toBe('919845012345')
+  })
+
+  it('rejects the placeholder shipped in .env.example', () => {
+    // This is the whole point of the guard: it is well formed, it builds a
+    // working wa.me link, and it belongs to somebody else.
+    expect(resolveWhatsappNumber({ whatsappNumber: '919000000000' })).toBeNull()
+  })
+
+  it('rejects filler shapes', () => {
+    expect(resolveWhatsappNumber({ whatsappNumber: '911111111111' })).toBeNull()
+    expect(resolveWhatsappNumber({ whatsappNumber: '911234567890' })).toBeNull()
+    expect(resolveWhatsappNumber({ whatsappNumber: '000000000000' })).toBeNull()
+  })
+
+  it('rejects a number that is too short or too long', () => {
+    expect(resolveWhatsappNumber({ whatsappNumber: '9184' })).toBeNull()
+    expect(resolveWhatsappNumber({ whatsappNumber: '9184501234567890123' })).toBeNull()
+  })
+
+  it('falls back to the environment when Site Settings is blank', () => {
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '919845012345'
+    expect(resolveWhatsappNumber({ whatsappNumber: null })).toBe('919845012345')
+  })
+
+  it('does not fall back to a placeholder in the environment', () => {
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '919000000000'
+    expect(resolveWhatsappNumber({ whatsappNumber: null })).toBeNull()
+    expect(whatsappLink({ whatsappNumber: null, whatsappDefaultMessage: 'hi' })).toBeNull()
+  })
+
+  it('prefers Site Settings over the environment', () => {
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = '919845099999'
+    expect(resolveWhatsappNumber({ whatsappNumber: '919845012345' })).toBe('919845012345')
+  })
+
+  it('never puts personal data in the continuation message', () => {
+    const message = enquiryWhatsappMessage('FQ-2609-4417', 'Super Red Arowana')
+    expect(message).toContain('FQ-2609-4417')
+    expect(message).toContain('Super Red Arowana')
+    expect(message).not.toMatch(/\+?\d{10}/)
+  })
+})
+
+describe('open graph image fallback', () => {
+  const settings = { brandName: 'Finquiry' } as SiteSetting
+
+  const ogImage = (meta: Parameters<typeof buildMetadata>[0]['meta']) =>
+    (buildMetadata({ meta, path: '/', settings }).openGraph as { images?: unknown })?.images
+
+  const firstUrl = (images: unknown): string => {
+    const list = Array.isArray(images) ? images : [images]
+    const first = list[0] as { url?: string } | string | undefined
+    return typeof first === 'string' ? first : (first?.url ?? '')
+  }
+
+  it('uses the generated brand card when no image is set', () => {
+    expect(firstUrl(ogImage(undefined))).toContain('/og/default.png')
+  })
+
+  it('ignores seeded placeholder artwork so the brand card still wins', () => {
+    // The seed fills defaultSeo.image on a fresh install. That must not
+    // displace the card that actually carries the Finquiry wordmark.
+    const placeholder = {
+      id: 1,
+      seedKey: 'social',
+      url: '/api/media/file/placeholder-social.webp',
+      sizes: { social: { url: '/api/media/file/placeholder-social-1200x630.jpg' } },
+    }
+    expect(firstUrl(ogImage({ image: placeholder } as never))).toContain('/og/default.png')
+  })
+
+  it('uses a genuine editor upload when one exists', () => {
+    const real = {
+      id: 2,
+      seedKey: null,
+      url: '/api/media/file/finquiry-social.webp',
+      sizes: { social: { url: '/api/media/file/finquiry-social-1200x630.jpg' } },
+    }
+    expect(firstUrl(ogImage({ image: real } as never))).toContain('finquiry-social-1200x630.jpg')
+  })
+})
+
+describe('production origin detection', () => {
+  it('accepts a real https domain', () => {
+    expect(isProductionOrigin('https://finquiry.in')).toBe(true)
+    expect(isProductionOrigin('https://www.finquiry.in')).toBe(true)
+  })
+
+  it('rejects local development origins', () => {
+    expect(isProductionOrigin('http://localhost:3000')).toBe(false)
+    expect(isProductionOrigin('http://127.0.0.1:3000')).toBe(false)
+    expect(isProductionOrigin('https://finquiry.local')).toBe(false)
+  })
+
+  it('rejects per-deploy preview hosts, which would outrank the real site', () => {
+    expect(isProductionOrigin('https://fish-git-main.vercel.app')).toBe(false)
+    expect(isProductionOrigin('https://finquiry.netlify.app')).toBe(false)
+    expect(isProductionOrigin('https://abc123.ngrok-free.app')).toBe(false)
+  })
+
+  it('rejects plain http on a public domain', () => {
+    // Canonicals, OG URLs and JSON-LD @ids must all be the secure origin.
+    expect(isProductionOrigin('http://finquiry.in')).toBe(false)
+  })
+
+  it('rejects a malformed or bare-host value', () => {
+    expect(isProductionOrigin('finquiry.in')).toBe(false)
+    expect(isProductionOrigin('https://staging')).toBe(false)
+    expect(isProductionOrigin('')).toBe(false)
   })
 })

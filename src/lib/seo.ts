@@ -37,10 +37,26 @@ type BuildMetadataArgs = {
 /** The generated brand card served by `app/(frontend)/og/default.png`. */
 const DEFAULT_OG_IMAGE = () => `${siteUrl()}/og/default.png`
 
+/**
+ * Seed artwork is not a social preview.
+ *
+ * The seed fills `defaultSeo.image` so the CMS field is not empty on a fresh
+ * install, and every seeded plate is abstract dark water. Treating that as a
+ * real image meant the generated brand card, which actually says Finquiry and
+ * carries the wordmark, was never reached: every link shared anywhere
+ * previewed as an anonymous dark rectangle.
+ *
+ * A row the seed owns carries `seedKey`. An image an editor uploads does not,
+ * so a genuine custom OG image is used the moment it is set.
+ */
+const isSeedArtwork = (media: { seedKey?: string | null } | null): boolean =>
+  Boolean(media?.seedKey)
+
 const imageUrl = (value: unknown): string | null => {
   const media = asMedia(value as never)
   if (!media) return null
-  // Prefer the generated 1200×630 size; fall back to the original.
+  if (isSeedArtwork(media)) return null
+  // Prefer the generated 1200x630 size; fall back to the original.
   const social = media.sizes?.social?.url
   const url = social ?? media.url
   if (!url) return null
@@ -155,9 +171,9 @@ type IndexablePage = {
  * listed in the sitemap while serving `noindex` is a contradiction crawlers
  * report as an error.
  *
- * A policy page awaiting legal review is excluded from both. It stays reachable
- *, the footer and the enquiry form's consent checkbox link to it — but draft
- * wording is not offered as settled terms. Unticking "requires legal review" in
+ * A policy page awaiting legal review is excluded from both. It stays
+ * reachable, because the footer and the enquiry form's consent checkbox link
+ * to it, but draft wording is not offered as settled terms. Unticking "requires legal review" in
  * Payload makes the page indexable and adds it to the sitemap in one step.
  */
 export const isIndexablePage = (page: IndexablePage): boolean => {

@@ -2,6 +2,8 @@ import 'dotenv/config'
 import { getPayload } from 'payload'
 import config from '../src/payload.config'
 import { revalidateRunningSite } from '../src/seed/revalidate'
+import { doc, p, h, list } from '../src/seed/lexical'
+import { starterArticleBody } from '../src/seed/helpers'
 
 /**
  * QA fixtures — NOT seed data.
@@ -37,6 +39,43 @@ const assertLocalDatabase = () => {
   }
 }
 
+/**
+ * A rich-text body for a fixture article.
+ *
+ * Deliberately exercises every element the article template claims to
+ * support, so a rendering regression in any one of them shows up in QA rather
+ * than after an editor publishes a real piece.
+ */
+const fixtureArticleBody = (title: string) =>
+  doc(
+    p(
+      `${FIXTURE_MARK} This body is test content, not published guidance. It exists so the article template can be checked end to end.`,
+    ),
+    h('h2', 'What a collector is deciding'),
+    p(
+      'A sourcing request starts with a requirement rather than a product. The clearer the requirement, the narrower the search, and the fewer unsuitable options come back.',
+    ),
+    list([
+      'Species and variety, including the names a seller might use instead.',
+      'An acceptable size range rather than a single figure.',
+      'Tank context: footprint, filtration and existing occupants.',
+      'A budget band, so the search stays inside it.',
+    ]),
+    h('h2', 'How the search proceeds'),
+    list(
+      [
+        'The requirement is reviewed and any gaps are queried.',
+        'Relevant sources are contacted with the specifics.',
+        'Specimen-level photographs, video and individual pricing come back.',
+        'Nothing is prepared or dispatched until a specific fish is approved.',
+      ],
+      true,
+    ),
+    p(
+      `Full guidance on ${title.toLowerCase()} is written by the Finquiry team before this article is published.`,
+    ),
+  )
+
 const run = async () => {
   const command = process.argv[2]
   if (command !== 'apply' && command !== 'reset') {
@@ -53,14 +92,33 @@ const run = async () => {
       where: { title: { contains: FIXTURE_MARK } },
       overrideAccess: true,
     })
-    // Articles are not deleted — the seed owns them. They are only returned to
-    // the draft state the seed created them in.
-    const posts = await payload.update({
+    /*
+     * Articles are not deleted, the seed owns them. They are returned to the
+     * draft state the seed created them in, body included: `apply` swaps in a
+     * richer fixture body to exercise the article template, and leaving that
+     * behind would put `[QA FIXTURE]` prose in the drafts an editor is meant
+     * to replace with real guidance.
+     */
+    const published = await payload.find({
       collection: 'posts',
       where: { _status: { equals: 'published' } },
-      data: { _status: 'draft' } as never,
+      limit: 100,
+      draft: true,
       overrideAccess: true,
     })
+    for (const post of published.docs) {
+      await payload.update({
+        collection: 'posts',
+        id: post.id,
+        data: {
+          _status: 'draft',
+          content: starterArticleBody((post.excerpt as string) ?? ''),
+        } as never,
+        overrideAccess: true,
+        context: { skipRevalidate: true },
+      })
+    }
+    const posts = published
     // Policy pages go back to awaiting review, which is their honest state.
     const pages = await payload.update({
       collection: 'pages',
@@ -81,7 +139,20 @@ const run = async () => {
   /* apply                                                                   */
   /* ---------------------------------------------------------------------- */
 
-  // Publish the starter articles so `/knowledge` and article detail render.
+  /*
+   * Publish the starter articles so `/knowledge` and article detail render.
+   *
+   * Their seeded bodies are a single line telling an editor to replace them,
+   * which exercises none of the rich-text rendering the article template has
+   * to support. Each one gets a fixture body carrying a heading, an
+   * introduction, both list styles, a quotation and an outbound link, so
+   * `reset` has something real to restore and a QA screenshot of the article
+   * template shows the template rather than one stranded sentence.
+   *
+   * The prose is about how Finquiry works, never about a specific fish, a
+   * price or an availability claim, and every article is titled and bodied as
+   * a fixture so it cannot be mistaken for approved editorial.
+   */
   const drafts = await payload.find({
     collection: 'posts',
     where: { _status: { equals: 'draft' } },
@@ -93,7 +164,11 @@ const run = async () => {
     await payload.update({
       collection: 'posts',
       id: post.id,
-      data: { _status: 'published', publishedAt: new Date().toISOString() } as never,
+      data: {
+        _status: 'published',
+        publishedAt: new Date().toISOString(),
+        content: fixtureArticleBody(post.title as string),
+      } as never,
       overrideAccess: true,
       context: { skipRevalidate: true },
     })

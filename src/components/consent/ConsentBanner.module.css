@@ -17,7 +17,8 @@
   position: fixed;
   inset-block-end: var(--space-3);
   inset-inline-end: var(--space-3);
-  z-index: var(--z-menu);
+  /* Under the mobile menu and the preferences dialog. See `--z-consent`. */
+  z-index: var(--z-consent);
   inline-size: min(22rem, calc(100vw - var(--space-3) * 2));
   background: var(--ink-700);
   color: var(--text);

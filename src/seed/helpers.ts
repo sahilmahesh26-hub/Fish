@@ -1,9 +1,11 @@
-import { randomBytes } from 'node:crypto'
-import { rm } from 'node:fs/promises'
+import { createHash, randomBytes } from 'node:crypto'
+import { access, rm } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Payload } from 'payload'
 import { doc, p, h } from './lexical'
+import { richTextToPlainText } from '@/lib/richText'
+import { STARTER_DRAFT_MARKER } from '@/hooks/starterDraftGuard'
 import { waterPlate, categoryPlate, placeholderLogo } from './placeholders'
 import { SOURCING_CATEGORIES, KNOWLEDGE_CATEGORIES, STARTER_POSTS, FAQS } from './content'
 
@@ -50,22 +52,19 @@ const seedCaption = 'Generated artwork. Replace with photography before launch.'
 /** The directory Payload's local storage writes uploads into. */
 const MEDIA_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../public/media')
 
-type MediaDoc = { filename?: string | null; sizes?: Record<string, { filename?: string | null }> }
+type MediaDoc = {
+  filename?: string | null
+  seedHash?: string | null
+  sizes?: Record<string, { filename?: string | null }>
+}
 
 /**
  * Delete a media document's files, original and every generated size.
  *
- * Payload will not reuse a filename that is already taken, so re-seeding
- * republishes the artwork under a suffixed name and the previous file is left
- * behind in `public/media`. Left alone that accumulates: this project reached
- * 31 stranded `-1`, `-2`, `-3` copies of the same eight plates.
- *
- * This clears them, so each seeded image keeps exactly one file on disk. The
- * name itself still alternates between `plate.webp` and `plate-1.webp` from
- * run to run, because the collision is with the row being updated and its own
- * name is not free until the update commits. That is why the seed revalidates
- * the running site afterwards: a page prerendered against the previous name
- * will 500 on its images until it is refreshed.
+ * Only ever called for a row the seed itself owns, identified by `seedKey`,
+ * and only when that row's artwork has genuinely changed. An upload an editor
+ * made carries no `seedKey` and is never matched, so a development seed cannot
+ * remove production media.
  *
  * Best effort. A missing file is the state we wanted anyway.
  */
@@ -80,6 +79,21 @@ const removeMediaFiles = async (doc: MediaDoc) => {
       .map((name) => rm(path.join(MEDIA_DIR, name), { force: true })),
   )
 }
+
+/** True when a media document's primary file is still on disk. */
+const primaryFileExists = async (doc: MediaDoc): Promise<boolean> => {
+  const name = doc.filename
+  if (!name || path.basename(name) !== name) return false
+  try {
+    await access(path.join(MEDIA_DIR, name))
+    return true
+  } catch {
+    return false
+  }
+}
+
+/** Checksum of the bytes the seed generates, stored on the row as `seedHash`. */
+const checksum = (data: Buffer): string => createHash('sha256').update(data).digest('hex')
 
 export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<number> => {
   // Matched on `seedKey`, not on filename: Payload appends a suffix when a
@@ -103,19 +117,67 @@ export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<nu
    * An editor's own upload is never touched: this only ever matches rows the
    * seed itself created, which are the only ones carrying a `seedKey`.
    */
+  const hash = checksum(data)
+
   if (existing.docs.length > 0) {
     const doc = existing.docs[0]
     const id = doc.id as number
-    // Clear the old files off disk BEFORE writing the new ones. Payload will
-    // not overwrite an occupied filename, it appends `-1`, `-2` and so on, so
-    // without this every re-seed renames the image, strands the previous file
-    // in `public/media`, and breaks any HTML still pointing at the old name
-    // until the next full rebuild. See `removeMediaFiles`.
+
+    /*
+     * The file is only rewritten when the artwork actually changed.
+     *
+     * This is what makes re-seeding idempotent. Payload will not reuse a
+     * filename that is already taken, and the row being updated holds its own
+     * name until the update commits, so passing `file` on every run renamed
+     * the image to `plate-1.webp`, then back, then to `-1` again. Prerendered
+     * pages kept pointing at the name from the run before and 500'd on their
+     * images.
+     *
+     * Comparing the checksum first means an unchanged plate is never
+     * re-uploaded: its filename, its generated sizes and every reference to it
+     * survive any number of seed runs untouched. Metadata still converges, so
+     * an edited alt string in the spec is picked up without disturbing files.
+     */
+    if (doc.seedHash === hash && (await primaryFileExists(doc as MediaDoc))) {
+      await payload.update({
+        collection: 'media',
+        id,
+        data: { alt: spec.alt, caption: seedCaption, tags: ['placeholder'] },
+        overrideAccess: true,
+        context: { skipRevalidate: true },
+      })
+      log(`media: ${doc.filename} (unchanged)`)
+      return id
+    }
+
+    // The artwork genuinely differs, or the file went missing. Clear the old
+    // files off disk first so nothing is stranded in `public/media`.
     await removeMediaFiles(doc as MediaDoc)
+
+    /*
+     * Release the row's own filename before rewriting it.
+     *
+     * Payload treats an occupied filename as a collision and appends `-1`,
+     * and the name this row already holds counts as occupied even though we
+     * are about to replace it. Parking the row on a throwaway name for one
+     * statement means the canonical name is free when the file lands, so the
+     * artwork keeps the name the spec asked for instead of drifting to
+     * `plate-1.webp` the first time it changes.
+     */
+    if (doc.filename === spec.filename) {
+      await payload.update({
+        collection: 'media',
+        id,
+        data: { filename: `seed-tmp-${spec.key}-${randomBytes(4).toString('hex')}` },
+        overrideAccess: true,
+        context: { skipRevalidate: true },
+      })
+    }
+
     await payload.update({
       collection: 'media',
       id,
-      data: { alt: spec.alt, caption: seedCaption, tags: ['placeholder'] },
+      data: { alt: spec.alt, caption: seedCaption, tags: ['placeholder'], seedHash: hash },
       file: {
         data,
         name: spec.filename,
@@ -125,7 +187,7 @@ export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<nu
       overrideAccess: true,
       context: { skipRevalidate: true },
     })
-    log(`media: ${spec.filename} (refreshed)`)
+    log(`media: ${spec.filename} (rewritten)`)
     return id
   }
 
@@ -136,6 +198,7 @@ export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<nu
       caption: seedCaption,
       tags: ['placeholder'],
       seedKey: spec.key,
+      seedHash: hash,
     },
     file: {
       data,
@@ -176,49 +239,49 @@ export const seedMedia = async (payload: Payload) => {
     {
       key: 'specimen',
       filename: 'placeholder-specimen.jpg',
-      alt: 'Dark water, awaiting a specimen photograph.',
+      alt: 'Dark water, lit from one side, with the light breaking into bands as it falls.',
       build: () => waterPlate(23, 1600, 1280, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'detailA',
       filename: 'placeholder-detail-a.jpg',
-      alt: 'Dark water, awaiting a detail crop.',
+      alt: 'A close crop of dark water, with a single band of light across it.',
       build: () => waterPlate(37, 900, 900, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'detailB',
       filename: 'placeholder-detail-b.jpg',
-      alt: 'Dark water, awaiting a second detail crop.',
+      alt: 'A close crop of dark water, the light falling away towards the lower edge.',
       build: () => waterPlate(53, 900, 900, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'aquarium',
       filename: 'placeholder-aquarium.jpg',
-      alt: 'Dark water, awaiting a custom aquarium photograph.',
+      alt: 'Dark water lit from above, fading to black at the base.',
       build: () => waterPlate(67, 1600, 1280, 'neutral'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'aquariumDetail',
       filename: 'placeholder-aquarium-detail.jpg',
-      alt: 'Dark water, awaiting an equipment detail.',
+      alt: 'A close crop of dark, still water.',
       build: () => waterPlate(83, 900, 900, 'neutral'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'article',
       filename: 'placeholder-article.jpg',
-      alt: 'Dark water, awaiting an article image.',
+      alt: 'Dark water with shafts of light crossing it.',
       build: () => waterPlate(97, 1600, 1000, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'social',
       filename: 'placeholder-social.jpg',
-      alt: 'Dark water, used as a social sharing image.',
+      alt: 'Dark water lit from above, used as the Finquiry sharing image.',
       build: () => waterPlate(101, 1200, 630, 'warm'),
       mimeType: 'image/jpeg',
     },
@@ -229,7 +292,7 @@ export const seedMedia = async (payload: Payload) => {
     specs.push({
       key: `category-${slugify(category.name)}`,
       filename: `placeholder-category-${slugify(category.name)}.jpg`,
-      alt: `Dark water, awaiting photography for ${category.name}.`,
+      alt: `Dark water lit from above, shown for ${category.name.toLowerCase()}.`,
       build: () => categoryPlate(category.name, 1200, 1500),
       mimeType: 'image/jpeg',
     })
@@ -379,6 +442,26 @@ export const seedKnowledgeCategories = async (payload: Payload) => {
   return ids
 }
 
+/**
+ * The placeholder body every starter article ships with.
+ *
+ * Exported because `qa/fixtures.ts` restores it on `reset`: the fixture run
+ * replaces these bodies with richer test prose, and without a shared
+ * definition the two would drift and a reset would leave `[QA FIXTURE]` text
+ * sitting in the drafts.
+ *
+ * `blockStarterDraftPublish` matches on the first sentence, so changing that
+ * wording here means changing `STARTER_DRAFT_MARKER` too.
+ */
+export const starterArticleBody = (excerpt: string) =>
+  doc(
+    p(
+      'This article is a starter draft. Replace this body with the real guidance before publishing.',
+    ),
+    h('h2', 'What this article will cover'),
+    p(excerpt),
+  )
+
 export const seedPosts = async (
   payload: Payload,
   categories: Record<string, number>,
@@ -386,21 +469,51 @@ export const seedPosts = async (
 ) => {
   for (const post of STARTER_POSTS) {
     const slug = slugify(post.title)
-    await upsertBySlug(payload, 'posts', slug, {
-      title: post.title,
-      excerpt: post.excerpt,
-      category: categories[post.category],
-      featuredImage: media.article,
-      // Draft: an editor writes the real article before it is published.
-      _status: 'draft',
-      content: doc(
-        p(
-          'This article is a starter draft. Replace this body with the real guidance before publishing.',
-        ),
-        h('h2', 'What this article will cover'),
-        p(post.excerpt),
-      ),
+
+    /*
+     * Refresh a starter draft, but only while it is still a starter draft.
+     *
+     * `upsertBySlug` leaves an existing document alone by default, which is
+     * right for anything an editor may have touched. Applied to these six it
+     * meant they froze at whatever was first written: a copy correction in
+     * this file never reached a database that had already been seeded, and
+     * stale wording sat in the CMS indefinitely.
+     *
+     * The compromise is to look at what is actually there. A document that is
+     * still an unpublished draft whose body is still the seeded placeholder
+     * has had no editorial work done on it, so replacing it loses nothing. The
+     * moment somebody writes a real body or publishes it, the condition stops
+     * holding and the seed never touches it again.
+     */
+    const existing = await payload.find({
+      collection: 'posts',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      draft: true,
+      overrideAccess: true,
     })
+
+    const doc = existing.docs[0]
+    const untouched =
+      !doc ||
+      (doc._status !== 'published' &&
+        richTextToPlainText(doc.content as never).includes(STARTER_DRAFT_MARKER))
+
+    await upsertBySlug(
+      payload,
+      'posts',
+      slug,
+      {
+        title: post.title,
+        excerpt: post.excerpt,
+        category: categories[post.category],
+        featuredImage: media.article,
+        // Draft: an editor writes the real article before it is published.
+        _status: 'draft',
+        content: starterArticleBody(post.excerpt),
+      },
+      { updateExisting: untouched },
+    )
   }
 }
 

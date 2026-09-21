@@ -203,6 +203,29 @@
   --z-sticky: 40;
   --z-header: 50;
   --z-menu: 60;
+  /*
+   * The consent banner sits BELOW the header, and therefore below the mobile
+   * menu, which renders inside it.
+   *
+   * All three shared `--z-menu`, so the winner was whichever rendered last in
+   * the DOM: the consent sheet. Opening the menu on a phone with the sheet
+   * still up put the sheet over the navigation and over the menu's own pinned
+   * enquiry button.
+   *
+   * Raising the menu above it does not work, because the header sets a
+   * z-index and so opens a stacking context: every z-index inside the header,
+   * the menu overlay's included, is resolved against the HEADER's level, not
+   * against the document. The only value that reliably wins is one below the
+   * header's own.
+   *
+   * 45 keeps the banner above sticky page furniture (`--z-sticky`) and below
+   * the header (`--z-header`). The two never overlap in practice, since the
+   * header is a bar at the top and the banner sits at the bottom.
+   *
+   * The preferences dialog is a different thing: it IS modal, it traps focus,
+   * it renders at document level, and it keeps `--z-menu` so it covers both.
+   */
+  --z-consent: 45;
   --z-skip: 70;
 }
 

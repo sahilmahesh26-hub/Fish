@@ -73,7 +73,10 @@ test.describe('sourcing enquiry form', () => {
     await page.fill('#field-fishRequired', 'Black diamond stingray')
 
     // Jump to the final step through the step indicator, using the keyboard.
-    const lastStep = page.getByRole('navigation', { name: 'Form progress' }).getByRole('button').last()
+    const lastStep = page
+      .getByRole('navigation', { name: 'Form progress' })
+      .getByRole('button')
+      .last()
     await lastStep.focus()
     await page.keyboard.press('Enter')
 
@@ -82,7 +85,9 @@ test.describe('sourcing enquiry form', () => {
     await expect(page.locator('#field-consent')).toBeChecked()
   })
 
-  test('creates an enquiry, shows the request ID and offers a WhatsApp handover', async ({ page }) => {
+  test('creates an enquiry, shows the request ID and offers a way to continue', async ({
+    page,
+  }) => {
     await page.goto('/source-a-fish')
     await page.waitForTimeout(HUMAN_PAUSE)
 
@@ -99,17 +104,35 @@ test.describe('sourcing enquiry form', () => {
     const requestId = page.locator('body')
     await expect(requestId).toContainText(/FQ-\d{4}-\d{4}/)
 
+    /*
+     * The WhatsApp handover is configuration-dependent, and a missing number
+     * must never cost the enquiry. Both branches are real production states,
+     * so both are asserted: what is constant is that the requirement was
+     * recorded, the reference is shown, and the page offers a way forward.
+     */
     const whatsapp = page.locator('a[href^="https://wa.me/"]').first()
-    await expect(whatsapp).toBeVisible()
 
-    const href = await whatsapp.getAttribute('href')
-    const shown = (await page.locator('body').innerText()).match(/FQ-\d{4}-\d{4}/)?.[0]
-    expect(decodeURIComponent(href ?? '')).toContain(shown)
+    if ((await whatsapp.count()) > 0) {
+      await expect(whatsapp).toBeVisible()
 
-    // The handover must not carry the customer's own details.
-    expect(href).not.toContain('9876543210')
-    expect(decodeURIComponent(href ?? '')).not.toContain('A. Collector')
+      const href = await whatsapp.getAttribute('href')
+      const shown = (await page.locator('body').innerText()).match(/FQ-\d{4}-\d{4}/)?.[0]
+      expect(decodeURIComponent(href ?? '')).toContain(shown)
+
+      // The handover must not carry the customer's own details.
+      expect(href).not.toContain('9876543210')
+      expect(decodeURIComponent(href ?? '')).not.toContain('A. Collector')
+    } else {
+      // No number configured: the page substitutes an on-site route rather
+      // than leaving the visitor with nothing, and promises no WhatsApp
+      // message that will never arrive.
+      await expect(page.getByRole('link', { name: /contact the sourcing team/i })).toBeVisible()
+      await expect(page.locator('body')).not.toContainText(/continue on whatsapp/i)
+    }
+
+    // Whatever the configuration, nothing personal reaches the URL.
     expect(page.url()).not.toContain('9876543210')
+    expect(page.url()).not.toContain('A. Collector')
   })
 
   test('rejects an invalid phone number and PIN code on the server', async ({ page }) => {
@@ -154,7 +177,9 @@ test.describe('sourcing enquiry form', () => {
     await expect(page.locator('body')).toContainText(/FQ-\d{4}-\d{4}/)
   })
 
-  test('a repeated submission of the same form does not create a second enquiry', async ({ page }) => {
+  test('a repeated submission of the same form does not create a second enquiry', async ({
+    page,
+  }) => {
     await page.goto('/source-a-fish')
     await page.waitForTimeout(HUMAN_PAUSE)
 
@@ -188,10 +213,9 @@ test.describe('sourcing enquiry form', () => {
     await page.fill('#field-fishRequired', 'Duplicate guard specimen')
     await page.getByRole('navigation', { name: 'Form progress' }).getByRole('button').last().click()
     await page.check('#field-consent')
-    await page.locator('input[name="submissionToken"]').evaluate(
-      (el, value) => ((el as HTMLInputElement).value = value),
-      token,
-    )
+    await page
+      .locator('input[name="submissionToken"]')
+      .evaluate((el, value) => ((el as HTMLInputElement).value = value), token)
     await page.getByRole('button', { name: /submit my requirement/i }).click()
 
     await page.waitForURL(/\/thank-you/, { timeout: 30_000 })
@@ -207,7 +231,9 @@ test.describe('sourcing enquiry form', () => {
     // cross-site submission would look like.
     await page.route('**/source-a-fish', async (route) => {
       if (route.request().method() !== 'POST') return route.continue()
-      await route.continue({ headers: { ...route.request().headers(), origin: 'https://evil.example' } })
+      await route.continue({
+        headers: { ...route.request().headers(), origin: 'https://evil.example' },
+      })
     })
 
     await fillStepOne(page)

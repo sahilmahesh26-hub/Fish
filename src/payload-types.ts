@@ -267,6 +267,10 @@ export interface Media {
    * Set by the seed script so re-seeding updates this file instead of uploading a duplicate. Leave blank for files you upload yourself.
    */
   seedKey?: string | null;
+  /**
+   * Checksum of the artwork the seed last wrote here. The seed compares it before touching the file, so re-running the seed leaves an unchanged image completely alone. Blank for files you upload yourself.
+   */
+  seedHash?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -2466,6 +2470,7 @@ export interface MediaSelect<T extends boolean = true> {
   credit?: T;
   tags?: T;
   seedKey?: T;
+  seedHash?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

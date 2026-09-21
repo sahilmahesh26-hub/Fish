@@ -57,9 +57,48 @@ const Banner = ({
   onManage: () => void
 }) => {
   const headingId = useId()
+  const bannerRef = useRef<HTMLElement>(null)
+
+  /*
+   * Publish the banner's height so layout can make room for it.
+   *
+   * On a phone this is a full-width sheet across the bottom of the screen,
+   * which is the right pattern for a consent gate and also means it sits on
+   * top of whatever is at the foot of the first screen. On the homepage that
+   * is "Start Your Search": the one control someone has to be able to reach
+   * while they decide about cookies.
+   *
+   * Rather than move the sheet somewhere worse, it measures itself into
+   * `--consent-h` and the hero subtracts that from its own height, so the
+   * hero's content sits above the sheet instead of behind it. The variable is
+   * cleared on unmount, so the moment a decision is made the hero takes the
+   * full viewport back.
+   */
+  useEffect(() => {
+    const element = bannerRef.current
+    if (!element) return
+
+    const root = document.documentElement
+    const publish = () => {
+      root.style.setProperty(
+        '--consent-h',
+        `${Math.ceil(element.getBoundingClientRect().height)}px`,
+      )
+    }
+
+    publish()
+    const observer = new ResizeObserver(publish)
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+      root.style.removeProperty('--consent-h')
+    }
+  }, [])
 
   return (
     <aside
+      ref={bannerRef}
       className={styles.banner}
       // `region`, not `dialog`: it does not trap focus or block the page.
       role="region"

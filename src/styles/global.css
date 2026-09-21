@@ -316,3 +316,27 @@ html[data-motion='on'] [data-reveal][data-revealed] {
     display: none !important;
   }
 }
+
+/* --- consent sheet clearance --------------------------------------------- */
+
+/*
+ * Keep the bottom of the document reachable while the consent sheet is up.
+ *
+ * On a phone the sheet is a full-width bar fixed to the bottom of the screen.
+ * Whatever is last on the page, in practice the footer's policy links and the
+ * cookie-preferences control itself, sits underneath it and cannot be scrolled
+ * into view, because there is nothing below it to scroll to.
+ *
+ * `--consent-h` is published by the banner while it is on screen and removed
+ * on dismissal. Adding it as trailing padding only ever adds scrollable space,
+ * so nothing moves when the sheet goes away: no layout shift, and no content
+ * permanently hidden behind it.
+ *
+ * Deliberately not applied to the hero. The hero's height is driven by its own
+ * content on a phone, so subtracting the sheet there changes nothing, and on a
+ * desktop, where the sheet is a small corner card, it would shrink the hero
+ * and then jump it back the moment somebody chose.
+ */
+body {
+  padding-block-end: var(--consent-h, 0px);
+}

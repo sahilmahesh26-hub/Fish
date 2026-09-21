@@ -71,7 +71,7 @@ with `pnpm payload migrate:create` and `pnpm payload migrate`.
 | `pnpm dev`                          | Development server                      |
 | `pnpm build`                        | Production build                        |
 | `pnpm start`                        | Serve the production build              |
-| `pnpm seed`                         | Idempotent seed — safe to re-run        |
+| `pnpm seed`                         | Idempotent seed, safe to re-run         |
 | `pnpm lint`                         | ESLint (flat config)                    |
 | `pnpm typecheck`                    | `tsc --noEmit`                          |
 | `pnpm format` / `pnpm format:check` | Prettier                                |
@@ -98,6 +98,8 @@ The scripts in `qa/` run against a running site (`BASE_URL`, default
 | `pnpm qa:overflow`                            | Horizontal page scroll only, at ten widths, naming the element responsible                                                                                              |
 | `pnpm qa:links`                               | Crawls every internal link, and checks a missing URL returns a real 404                                                                                                 |
 | `pnpm qa:fixtures <apply\|reset>`             | Puts a local database into the state a launched site would be in, so the article and delivery templates can be tested. Never run against anything but a local database. |
+| `pnpm qa:seed-idempotency`                    | Runs `pnpm seed` three times and asserts nothing changed: same media rows, same files, no collision suffixes                                                            |
+| `pnpm qa:media`                               | Every media reference resolves to a file, no orphans in `public/media`, no suffixed seed filenames                                                                      |
 | `node qa/perf.mjs`                            | LCP, CLS and transfer weight under 4× CPU and Fast-3G throttling                                                                                                        |
 | `node qa/shot.mjs <url> <out> [w] [h] [full]` | One screenshot                                                                                                                                                          |
 
@@ -303,6 +305,8 @@ src/
 
 ## Further reading
 
+Start with **LAUNCH-READINESS** if you are preparing to go live.
+
 | Document                                                           | Contents                                                                                 |
 | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | [DESIGN.md](./DESIGN.md)                                           | The visual system: colour, type, shape, motion, and the contrast maths behind the tokens |
@@ -313,3 +317,8 @@ src/
 | [docs/SECURITY.md](./docs/SECURITY.md)                             | CSP strategy, headers, HTTPS, secrets, and the form and consent controls                 |
 | [docs/TOOLING-AUDIT.md](./docs/TOOLING-AUDIT.md)                   | Every external tool considered, what it was used for, and what could not be installed    |
 | [docs/DESIGN-REFERENCE-AUDIT.md](./docs/DESIGN-REFERENCE-AUDIT.md) | The design references reviewed and what was taken from each                              |
+| [docs/LAUNCH-READINESS.md](./docs/LAUNCH-READINESS.md)             | Every remaining owner action, and how the site behaves until each one is done            |
+| [docs/SEEDING.md](./docs/SEEDING.md)                               | The seed's idempotency contract, media handling and the QA fixtures                      |
+| [docs/PHOTO-SHOT-LIST.md](./docs/PHOTO-SHOT-LIST.md)               | What to photograph, for which CMS field, at what size, with a usage-rights table         |
+| [docs/LEGAL-REVIEW-CHECKLIST.md](./docs/LEGAL-REVIEW-CHECKLIST.md) | What to check before approving each policy page                                          |
+| [docs/ANALYTICS.md](./docs/ANALYTICS.md)                           | Event names, what triggers them, and what is never sent                                  |

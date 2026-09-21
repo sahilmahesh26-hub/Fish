@@ -61,9 +61,7 @@ test.describe('mobile menu', () => {
     await expect(dialog).toBeVisible()
 
     // Body scroll is locked while the menu is open.
-    await expect
-      .poll(() => page.evaluate(() => document.body.style.overflow))
-      .toBe('hidden')
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe('hidden')
 
     // Focus has moved into the panel.
     const focusedInDialog = await page.evaluate(() => {
@@ -78,6 +76,68 @@ test.describe('mobile menu', () => {
 
     // Scroll lock released.
     await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe('hidden')
+  })
+
+  test('the overlay actually covers the viewport', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile', 'Mobile menu only')
+
+    /*
+     * Regression: the menu opened but could not be seen.
+     *
+     * `backdrop-filter` on the sticky header made the header a containing
+     * block for every `position: fixed` descendant, and the menu renders
+     * inside it. The overlay's `inset: 0` then resolved against the header's
+     * own 72px strip instead of the viewport, so tapping the trigger flipped
+     * it to a close icon and nothing else appeared to happen.
+     *
+     * Every existing test passed throughout, because the panel was in the DOM,
+     * focusable, and locking body scroll the whole time. Only geometry catches
+     * this, so geometry is what is asserted: the overlay has to fill the
+     * screen, and a link near the bottom of the list has to be somewhere a
+     * thumb can actually reach it.
+     */
+    await page.goto('/')
+    await page.getByRole('button', { name: /open menu/i }).click()
+
+    const dialog = page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+
+    const viewport = page.viewportSize()
+    if (!viewport) throw new Error('no viewport')
+
+    const box = await dialog.boundingBox()
+    expect(box).not.toBeNull()
+    // Full bleed horizontally, and covering the screen vertically rather than
+    // the header strip it used to be trapped in.
+    expect(box!.width).toBeGreaterThanOrEqual(viewport.width - 1)
+    expect(box!.height).toBeGreaterThanOrEqual(viewport.height * 0.9)
+
+    // The first navigation link is on screen, which it was not when the
+    // overlay was clipped to the header.
+    await expect(dialog.getByRole('link').first()).toBeInViewport()
+
+    // And the enquiry CTA stays reachable without hunting: it is pinned to the
+    // foot of the panel, so it is on screen even though the list scrolls.
+    const panelCta = dialog.getByRole('link', { name: /start your search/i })
+    await expect(panelCta).toBeInViewport()
+
+    /*
+     * The consent sheet must not sit on top of the open menu.
+     *
+     * Both used to take `--z-menu`, so the winner was whichever rendered last
+     * in the DOM, which was the sheet: opening the menu on a first visit put
+     * the cookie notice over the navigation and over this very button. The
+     * sheet now takes `--z-consent`, one step lower.
+     */
+    const ctaBox = await panelCta.boundingBox()
+    const topAtCta = await page.evaluate(
+      ([x, y]) => {
+        const el = document.elementFromPoint(x, y)
+        return el?.closest('[class*="ConsentBanner"]') ? 'consent' : 'menu'
+      },
+      [ctaBox!.x + ctaBox!.width / 2, ctaBox!.y + ctaBox!.height / 2],
+    )
+    expect(topAtCta).toBe('menu')
   })
 
   test('a menu link navigates and closes the menu', async ({ page }, testInfo) => {

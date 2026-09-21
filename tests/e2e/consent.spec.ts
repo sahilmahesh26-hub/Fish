@@ -34,6 +34,92 @@ test.describe('cookie consent', () => {
     expect(Math.abs((acceptBox?.width ?? 0) - (rejectBox?.width ?? 0))).toBeLessThan(2)
   })
 
+  test('leaves the primary call to action usable while it is up', async ({ page }, testInfo) => {
+    /*
+     * Regression: the consent card used to sit in the bottom-LEFT corner.
+     *
+     * Every hero on this site sets its copy and its buttons hard against the
+     * leading edge, so on a desktop the card landed squarely on "Start Your
+     * Search": the one control a visitor has to be able to reach while
+     * deciding about cookies. It now sits in the trailing corner, which is
+     * the only empty quarter of the first screen, and the two rectangles must
+     * stay apart as either one moves.
+     *
+     * On a phone the banner is a full-width sheet along the bottom edge,
+     * which is the right pattern for a consent gate and unavoidably overlaps
+     * the foot of a hero that is taller than the screen. What matters there
+     * is that the action is still reachable rather than trapped underneath,
+     * so that is what is asserted.
+     */
+    await page.goto('/')
+
+    const banner = page.getByRole('region', { name: /cookies on this site/i })
+    await expect(banner).toBeVisible()
+
+    const cta = page.getByRole('link', { name: /start your search/i }).first()
+    const bannerBox = await banner.boundingBox()
+    expect(bannerBox).not.toBeNull()
+
+    if (testInfo.project.name === 'mobile') {
+      /*
+       * The sheet spans the bottom edge, so on a hero taller than the screen
+       * it does sit over the buttons at scroll-top. What has to hold is that
+       * the action still works: the click scrolls it clear and lands on it
+       * rather than being swallowed by the sheet. If the sheet ever became
+       * modal, or grew tall enough to trap the control, this fails.
+       */
+      await cta.click()
+      await expect(page).toHaveURL(/\/source-a-fish/)
+      // And the sheet is still there afterwards: navigating is not a decision.
+      await expect(page.getByRole('region', { name: /cookies on this site/i })).toBeVisible()
+      return
+    }
+
+    await expect(cta).toBeVisible()
+    const ctaBox = await cta.boundingBox()
+    expect(ctaBox).not.toBeNull()
+
+    const overlaps =
+      bannerBox!.x < ctaBox!.x + ctaBox!.width &&
+      bannerBox!.x + bannerBox!.width > ctaBox!.x &&
+      bannerBox!.y < ctaBox!.y + ctaBox!.height &&
+      bannerBox!.y + bannerBox!.height > ctaBox!.y
+    expect(overlaps).toBe(false)
+    await expect(cta).toBeInViewport()
+  })
+
+  test('takes a reasonable share of a mobile viewport, with readable copy', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile', 'Mobile proportions only')
+
+    await page.goto('/')
+    const banner = page.getByRole('region', { name: /cookies on this site/i })
+    await expect(banner).toBeVisible()
+
+    const viewport = page.viewportSize()
+    const box = await banner.boundingBox()
+    expect(box).not.toBeNull()
+
+    // A consent gate needs presence, but it is not the page. Half the screen
+    // is too much; it once stood at 46% and cut the hero paragraph in half.
+    expect(box!.height / viewport!.height).toBeLessThan(0.45)
+
+    /*
+     * Body copy stays at 16px on a phone.
+     *
+     * This is the text somebody reads to make a consent decision, so it is
+     * not the place to save vertical space by shrinking type. An earlier fix
+     * dropped it to 12px to make the sheet shorter and the responsive harness
+     * caught it on every route.
+     */
+    const bodySize = await banner
+      .locator('p')
+      .first()
+      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize))
+    expect(bodySize).toBeGreaterThanOrEqual(16)
+  })
+
   test('loads no analytics request before a decision', async ({ page }) => {
     const thirdParty: string[] = []
     page.on('request', (request) => {
@@ -101,7 +187,10 @@ test.describe('cookie consent', () => {
     await page.getByRole('button', { name: /reject analytics/i }).click()
     await expect(page.getByRole('region', { name: /cookies on this site/i })).toBeHidden()
 
-    await page.getByRole('contentinfo').getByRole('button', { name: /cookie preferences/i }).click()
+    await page
+      .getByRole('contentinfo')
+      .getByRole('button', { name: /cookie preferences/i })
+      .click()
     await expect(page.getByRole('dialog', { name: /cookie preferences/i })).toBeVisible()
   })
 

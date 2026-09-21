@@ -37,7 +37,7 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
       address: { country: 'India' },
       defaultSeo: {
         titleTemplate: '%s | Finquiry',
-        defaultTitle: 'Finquiry — Collector-led fish sourcing across India',
+        defaultTitle: 'Finquiry, collector-led fish sourcing across India',
         description:
           'Tell us the species, variety, colour, pattern and size you are looking for. We search our network and share suitable specimens with actual photos, videos and individual pricing.',
         /*

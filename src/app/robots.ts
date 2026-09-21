@@ -1,11 +1,16 @@
 import type { MetadataRoute } from 'next'
-import { siteUrl } from '@/lib/env'
+import { siteUrl, isProductionOrigin } from '@/lib/env'
 
 const robots = async (): Promise<MetadataRoute.Robots> => {
   const base = siteUrl()
-  // Anything that is not a production origin is kept out of the index entirely,
-  // so a staging or preview deployment can never outrank the real site.
-  const isProduction = !base.includes('localhost') && !base.includes('127.0.0.1')
+  /*
+   * Anything that is not a production origin is kept out of the index
+   * entirely, so a staging or preview deployment can never outrank the real
+   * site. `isProductionOrigin` also rejects plain http, per-deploy preview
+   * hosts and an unset variable, all of which used to read as production
+   * because the check here only looked for the word "localhost".
+   */
+  const isProduction = isProductionOrigin(base)
 
   return {
     rules: isProduction

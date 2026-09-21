@@ -51,10 +51,23 @@ const ThankYouPage = async ({ searchParams }: Props) => {
       <PageHero
         eyebrow="Request received"
         heading={hasRequest ? 'Your search has started.' : 'Start your search'}
+        /*
+         * The copy follows the channel that actually exists.
+         *
+         * Telling someone to continue on WhatsApp when no number is
+         * configured sends them looking for a message that will never
+         * arrive, and it is the enquiry they already submitted that is at
+         * stake. A missing number changes what we promise, never whether the
+         * requirement was recorded.
+         */
         intro={
           hasRequest
-            ? 'We have recorded your requirement. Continue on WhatsApp to confirm the details with our sourcing team.'
-            : 'We could not find a request reference. If you have just submitted a requirement, check your WhatsApp, otherwise start a new search.'
+            ? wa
+              ? 'We have recorded your requirement. Continue on WhatsApp to confirm the details with our sourcing team.'
+              : 'We have recorded your requirement. Our sourcing team will be in touch using the contact details you gave us.'
+            : wa
+              ? 'We could not find a request reference. If you have just submitted a requirement, check your WhatsApp, otherwise start a new search.'
+              : 'We could not find a request reference. If you have just submitted a requirement we already have it, otherwise start a new search.'
         }
       />
 
@@ -90,12 +103,30 @@ const ThankYouPage = async ({ searchParams }: Props) => {
             <p className={styles.note}>No request reference was supplied with this page.</p>
           )}
 
+          {/*
+           * There is always exactly one primary action.
+           *
+           * WhatsApp is it when a number is configured. Without one, a
+           * visitor who has no reference is sent to the enquiry form, and a
+           * visitor who does have one is not given a second form to fill in,
+           * because their requirement is already recorded: they get the
+           * contact page instead. The page never ends in a dead end, and it
+           * never renders a WhatsApp button that goes nowhere.
+           */}
           <div className={styles.actions}>
             {wa ? (
               <Button href={wa} external size="lg" event="thankyou_whatsapp">
                 Continue on WhatsApp
               </Button>
-            ) : null}
+            ) : hasRequest ? (
+              <Button href="/contact" size="lg">
+                Contact the sourcing team
+              </Button>
+            ) : (
+              <Button href="/source-a-fish" size="lg" event="thankyou_start_search">
+                Start Your Search
+              </Button>
+            )}
             <Button href="/" variant="secondary" size="lg">
               Back to home
             </Button>
