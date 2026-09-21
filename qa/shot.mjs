@@ -1,6 +1,7 @@
 import { chromium } from '@playwright/test'
 
-const [url, out, width = '1440', height = '900', full = 'true'] = process.argv.slice(2)
+const [url, out, width = '1440', height = '900', full = 'true', scale = '2'] =
+  process.argv.slice(2)
 
 const browser = await chromium.launch({
   // The environment pre-installs a Chromium that does not match this
@@ -10,7 +11,9 @@ const browser = await chromium.launch({
 
 const page = await browser.newPage({
   viewport: { width: Number(width), height: Number(height) },
-  deviceScaleFactor: 2,
+  // 2 by default for a crisp review capture; pass 1 for a full-page shot of a
+  // long document, where 2 produces a file too large to share.
+  deviceScaleFactor: Number(scale),
 })
 
 await page.goto(url, { waitUntil: 'networkidle', timeout: 90000 })
