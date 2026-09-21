@@ -24,7 +24,7 @@ type Props = { params: Promise<{ slug: string }> }
  * the correct status.
  *
  * The cost is that a brand-new top-level page needs a rebuild before its URL
- * resolves. That suits these routes — About, Contact, the policies — which are
+ * resolves. That suits these routes, About, Contact, the policies, which are
  * set up once. The genuinely editorial collections (`/knowledge/[slug]` and
  * `/deliveries/[slug]`) keep `dynamicParams` on, so new articles and delivery
  * stories go live the moment they are published. See QA.md for the detail.

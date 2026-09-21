@@ -7,7 +7,7 @@ import { ogCard } from '@/lib/og'
  * This is deliberately a route handler rather than Next's `opengraph-image`
  * file convention. That convention attaches the image to the segment holding
  * the file, and any deeper segment returning its own `openGraph` object from
- * `generateMetadata` — which every page here does — replaces it. The result was
+ * `generateMetadata`, which every page here does, replaces it. The result was
  * a card on `/` and nowhere else.
  *
  * A fixed path instead lets `buildMetadata` name the fallback outright, so one

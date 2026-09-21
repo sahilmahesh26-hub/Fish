@@ -47,7 +47,7 @@ body {
      pinch-zoom, which must stay available. */
   touch-action: manipulation;
   /* Set deliberately rather than left to the browser's default blue-grey. */
-  -webkit-tap-highlight-color: rgb(217 26 42 / 12%);
+  -webkit-tap-highlight-color: rgb(239 36 54 / 18%);
   background-color: var(--surface);
   color: var(--text);
   font-family: var(--font-body);
@@ -70,9 +70,14 @@ body {
    */
   overflow-wrap: anywhere;
   -webkit-font-smoothing: antialiased;
-  /* Warm paper grain — a token-driven texture, not an image request */
-  background-image: radial-gradient(rgb(8 31 51 / 2.2%) 0.5px, transparent 0.5px);
-  background-size: 3px 3px;
+  /*
+   * A fixed, very faint cold wash rather than a grain texture. Near-black
+   * that is perfectly flat reads as "unstyled"; this gives the canvas a
+   * direction of light without becoming a gradient feature. Fixed attachment
+   * so it belongs to the window, not to the scroll.
+   */
+  background-image: radial-gradient(120% 80% at 50% -10%, rgb(47 125 219 / 7%), transparent 60%);
+  background-attachment: fixed;
 }
 
 img,
@@ -122,12 +127,12 @@ a:hover {
 :focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 3px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
 }
 
 [data-on-dark] :focus-visible,
-[data-on-scarlet] :focus-visible {
-  outline-color: var(--focus-ring-on-dark);
+[data-on-red] :focus-visible {
+  outline-color: var(--focus-ring);
 }
 
 /* ==========================================================================
@@ -192,9 +197,9 @@ p {
   /* Meets the 44px minimum target size once focused. */
   min-block-size: 44px;
   padding: var(--space-1) var(--space-3);
-  background: var(--navy-900);
-  color: var(--text-on-dark);
-  font-weight: 600;
+  background: var(--red-500);
+  color: var(--text-on-red);
+  font-weight: 700;
   border-radius: var(--radius-sm);
   text-decoration: none;
   transition: transform var(--dur-fast) var(--ease-out);
@@ -213,20 +218,17 @@ p {
   font-weight: 600;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--scarlet-ink);
+  font-family: var(--font-body);
+  color: var(--text-muted);
 }
 
-.u-eyebrow::before {
-  content: '';
-  inline-size: 28px;
-  block-size: 2px;
-  background: currentColor;
-  flex: none;
-}
-
-[data-on-dark] .u-eyebrow,
-[data-on-scarlet] .u-eyebrow {
-  color: var(--linen-100);
+/*
+ * On a red plate the muted grey disappears, so the label takes the plate's own
+ * ink colour. Fully opaque, not knocked back: at label size a translucent ink
+ * lands at 3.6:1, and small text needs 4.5:1.
+ */
+[data-on-red] .u-eyebrow {
+  color: var(--text-on-red);
 }
 
 /* Fine editorial hairline */
@@ -249,12 +251,12 @@ p {
 /* Outlined decorative display word */
 .u-outlined {
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--navy-300);
+  -webkit-text-stroke: 1.5px var(--rule-strong);
 }
 
 @supports not (-webkit-text-stroke: 1px black) {
   .u-outlined {
-    color: var(--navy-300);
+    color: var(--rule-strong);
   }
 }
 

@@ -48,7 +48,7 @@ export const p = (value: string) => {
   return block('paragraph', children, { textFormat: 0, textStyle: '' })
 }
 
-/** Heading, h2–h4 only — h1 belongs to the page itself. */
+/** Heading, h2-h4 only, h1 belongs to the page itself. */
 export const h = (tag: 'h2' | 'h3' | 'h4', value: string) =>
   block('heading', [text(value)], { tag })
 

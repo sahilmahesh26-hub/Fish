@@ -294,7 +294,7 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
           },
         ],
         /*
-         * Published, but flagged. These routes have to resolve — the footer and
+         * Published, but flagged. These routes have to resolve, the footer and
          * the enquiry form's consent checkbox both link to them, and a 404 there
          * would be worse than a page that states its own status. The
          * `legalReviewRequired` flag renders a prominent notice on the page,

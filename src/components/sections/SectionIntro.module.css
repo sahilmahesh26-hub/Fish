@@ -1,17 +1,45 @@
+/*
+ * The statement section.
+ *
+ * This block carries one idea and nothing else, so it is set as a statement
+ * rather than as a heading with a paragraph tucked under it. The type runs
+ * wide and expanded and takes most of the measure; the supporting line sits
+ * below at reading width. That is what fills the section, rather than a column
+ * of text with half a screen of nothing beside it.
+ */
 .section {
   overflow: hidden;
 }
 
 .heading {
-  margin-block-end: var(--space-3);
+  margin-block-end: 0;
+  gap: var(--space-4);
 }
 
 .heading :global(h2) {
-  font-size: var(--fs-section-title);
+  max-inline-size: 22ch;
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-variation-settings: 'wdth' var(--wdth-display);
+  letter-spacing: -0.03em;
+  line-height: 1.02;
 }
 
-.current {
-  inline-size: 100%;
-  color: var(--aegean);
-  opacity: 0.4;
+.heading :global(p) {
+  max-inline-size: 54ch;
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--rule);
+}
+
+@media (min-width: 1024px) {
+  /*
+   * A measured indent, not a push to the far edge.
+   *
+   * Sending the paragraph all the way right opened a hole under the headline
+   * and broke the two apart. A third of the measure keeps the diagonal while
+   * the block still reads as one thing.
+   */
+  .heading :global(p) {
+    margin-inline-start: 33%;
+    max-inline-size: 46ch;
+  }
 }

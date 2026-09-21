@@ -1,12 +1,6 @@
 import { Section } from './Section'
 import { SectionHeading } from './SectionHeading'
 import { Button } from '@/components/ui/Button'
-import {
-  CurrentLine,
-  CurrentLineVertical,
-  RouteArrow,
-  BubbleCluster,
-} from '@/components/art/Shapes'
 import { resolveLink } from '@/lib/links'
 import type { ProcessRouteBlock as ProcessRouteBlockType, SiteSetting } from '@/payload-types'
 import styles from './ProcessRoute.module.css'
@@ -39,17 +33,9 @@ export const ProcessRoute = ({
       />
 
       <div className={styles.route}>
-        <CurrentLine className={styles.currentLine} />
-        <CurrentLineVertical className={styles.currentLineVertical} />
-        <BubbleCluster className={styles.bubbles} />
-
         <ol className={styles.steps}>
           {steps.map((step, index) => (
-            <li
-              key={step.id ?? index}
-              className={styles.step}
-              data-position={index % 2 === 0 ? 'high' : 'low'}
-            >
+            <li key={step.id ?? index} className={styles.step}>
               <span className={styles.marker} aria-hidden="true">
                 <span className={styles.number}>{String(index + 1).padStart(2, '0')}</span>
               </span>
@@ -60,7 +46,6 @@ export const ProcessRoute = ({
                 </h3>
                 <p className={styles.stepCopy}>{step.copy}</p>
               </div>
-              {index < steps.length - 1 ? <RouteArrow className={styles.arrow} /> : null}
             </li>
           ))}
         </ol>

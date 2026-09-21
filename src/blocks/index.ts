@@ -528,7 +528,7 @@ export const FeaturedArticlesBlock: Block = {
       label: 'Empty state',
       admin: {
         description:
-          'Shown while no article is published yet — for example on a new site where every article is still a draft.',
+          'Shown while no article is published yet, for example on a new site where every article is still a draft.',
       },
       fields: [
         { name: 'heading', type: 'text' },
@@ -594,7 +594,7 @@ export const FaqsBlock: Block = {
       label: 'Add FAQ structured data',
       admin: {
         description:
-          'Only enable where these exact questions and answers are visible on the page — Google requires the rendered content to match.',
+          'Only enable where these exact questions and answers are visible on the page, Google requires the rendered content to match.',
       },
     },
   ],

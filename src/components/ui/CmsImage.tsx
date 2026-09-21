@@ -13,8 +13,13 @@ type Props = {
   fill?: boolean
   width?: number
   height?: number
-  /** Renders a labelled placeholder when there is no image. */
-  placeholderLabel?: string
+  /**
+   * Renders a composed dark fallback in place of a missing image rather than
+   * nothing. The string is the accessible name only; it is never painted on
+   * screen, because a public page that says "add an image in Payload" is a
+   * developer note the visitor should never see.
+   */
+  fallbackLabel?: string
 }
 
 /**
@@ -33,18 +38,19 @@ export const CmsImage = ({
   fill = false,
   width,
   height,
-  placeholderLabel,
+  fallbackLabel,
 }: Props) => {
   const doc = asMedia(media)
   const src = mediaSrc(doc?.url)
 
   if (!src) {
-    if (!placeholderLabel) return null
-    return (
-      <div className={cn(styles.placeholder, className)} role="img" aria-label={placeholderLabel}>
-        <span aria-hidden="true">{placeholderLabel}</span>
-      </div>
-    )
+    if (!fallbackLabel) return null
+    /*
+     * The missing-media state. A dark plate with the same grade as real
+     * photography, so a record without an image reads as restrained rather
+     * than as broken. No text: see `fallbackLabel`.
+     */
+    return <div className={cn(styles.fallback, className)} role="img" aria-label={fallbackLabel} />
   }
 
   const alt = altFor(media)

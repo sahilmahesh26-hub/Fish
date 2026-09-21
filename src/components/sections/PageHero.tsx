@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { CmsImage } from '@/components/ui/CmsImage'
-import { Starburst, BubbleCluster } from '@/components/art/Shapes'
+
 import type { Page } from '@/payload-types'
 import styles from './PageHero.module.css'
 
@@ -20,11 +20,6 @@ type Props = {
  */
 export const PageHero = ({ eyebrow, heading, intro, image, breadcrumbs }: Props) => (
   <section className={styles.hero} aria-labelledby="page-heading">
-    <div className={styles.glow} aria-hidden="true">
-      <span className={styles.glowScarlet} />
-      <span className={styles.glowAegean} />
-    </div>
-
     <div className={styles.inner}>
       <div className={styles.copy}>
         {breadcrumbs && breadcrumbs.length > 0 ? (
@@ -53,11 +48,8 @@ export const PageHero = ({ eyebrow, heading, intro, image, breadcrumbs }: Props)
       {image ? (
         <div className={styles.media}>
           <CmsImage media={image as never} priority sizes="(max-width: 1023px) 92vw, 520px" />
-          <Starburst className={styles.starburst} />
         </div>
-      ) : (
-        <BubbleCluster className={styles.bubbles} />
-      )}
+      ) : null}
     </div>
   </section>
 )

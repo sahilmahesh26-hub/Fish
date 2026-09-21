@@ -2,6 +2,15 @@
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  /*
+   * The cinematic treatment, applied once for every CMS image on the site.
+   *
+   * It used to be repeated in whichever component happened to remember it,
+   * which meant the hero, the page hero and the category cards were graded
+   * and every other photograph on the site was not. Grading belongs to the
+   * image component, not to each caller.
+   */
+  filter: var(--image-filter);
   /* Mirror the container's shape onto the image itself rather than relying on
      the parent's `overflow: hidden` clip. An 8-value percentage radius (our
      organic pool masks) can stop a clipped child painting altogether in
@@ -9,19 +18,19 @@
   border-radius: inherit;
 }
 
-.placeholder {
-  display: grid;
-  place-items: center;
+/*
+ * Missing media.
+ *
+ * Reads as a deliberately dark plate rather than a hole: the same depth
+ * gradient the generated artwork uses, so a record without a photograph sits
+ * in the same world as one that has it. Nothing is written on it.
+ */
+.fallback {
   min-block-size: 200px;
   block-size: 100%;
-  padding: var(--space-3);
-  background: repeating-linear-gradient(45deg, var(--linen-400) 0 10px, var(--linen-300) 10px 20px);
-  border: 1px dashed var(--rule-strong);
-  border-radius: var(--radius-md);
-  color: var(--text-muted);
-  font-size: var(--fs-label);
-  font-weight: 600;
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  text-align: center;
+  inline-size: 100%;
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgb(47 125 219 / 10%), transparent 62%),
+    linear-gradient(to bottom, var(--ink-700), var(--ink-900));
+  border-radius: inherit;
 }

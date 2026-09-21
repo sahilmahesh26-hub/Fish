@@ -13,7 +13,7 @@ const escapeXml = (value: string): string =>
 /**
  * Knowledge Hub RSS feed.
  *
- * Published articles only — `getPosts` applies the published filter, and this
+ * Published articles only, `getPosts` applies the published filter, and this
  * route never enables draft mode.
  *
  * Failure is graceful by design. A feed reader polls on a schedule and backs

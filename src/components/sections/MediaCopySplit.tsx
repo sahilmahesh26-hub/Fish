@@ -49,7 +49,7 @@ export const MediaCopySplit = ({
           <CmsImage
             media={block.media}
             sizes="(max-width: 1023px) 92vw, 560px"
-            placeholderLabel="Image"
+            fallbackLabel="Image"
           />
         </div>
       </div>

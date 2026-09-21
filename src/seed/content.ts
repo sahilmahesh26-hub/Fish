@@ -59,7 +59,7 @@ export const STARTER_POSTS = [
     title: 'How to evaluate a fish through photos and video',
     category: 'specimen-evaluation',
     excerpt:
-      'What to look for — and what to ask for — when the only view you have of a specimen is a photograph or a short clip.',
+      'What to look for, and what to ask for, when the only view you have of a specimen is a photograph or a short clip.',
   },
   {
     title: 'Why size ranges matter when sourcing a specimen',
@@ -71,7 +71,7 @@ export const STARTER_POSTS = [
     title: 'Preparing your aquarium before a new fish arrives',
     category: 'aquarium-planning',
     excerpt:
-      'Cycling, water parameters, quarantine and tank mates — the checks worth completing before a dispatch date is set.',
+      'Cycling, water parameters, quarantine and tank mates, the checks worth completing before a dispatch date is set.',
   },
   {
     title: 'What affects the price of a collector fish',
@@ -159,7 +159,7 @@ export const FAQS = [
     order: 70,
     answer: doc(
       p(
-        'Yes. We plan custom aquariums around the specimen rather than only the room — tank dimensions, filtration, stands and cabinets, lighting, equipment and installation coordination. Share the species, its expected adult size, the space you have and your city to begin.',
+        'Yes. We plan custom aquariums around the specimen rather than only the room, tank dimensions, filtration, stands and cabinets, lighting, equipment and installation coordination. Share the species, its expected adult size, the space you have and your city to begin.',
       ),
     ),
   },
@@ -206,7 +206,7 @@ export const POLICY_PAGES = [
       ),
       h('h2', 'Technical and analytics data'),
       p(
-        'If you agree to analytics cookies, we collect anonymous usage measurement — which pages are read, which buttons are used. This never includes your name, number, email, PIN code, budget or requirement text. See the Cookie Policy for the detail.',
+        'If you agree to analytics cookies, we collect anonymous usage measurement, which pages are read, which buttons are used. This never includes your name, number, email, PIN code, budget or requirement text. See the Cookie Policy for the detail.',
       ),
       h('h2', 'How we use your information'),
       list([
@@ -217,11 +217,11 @@ export const POLICY_PAGES = [
       ]),
       h('h2', 'WhatsApp and other communication'),
       p(
-        'Most conversation happens on WhatsApp, because that is where collectors want it. WhatsApp is operated by a third party under its own privacy terms, which we do not control. The link from this website opens WhatsApp with a short prefilled message containing your Request ID and the fish you asked about — never your name, number, budget or full requirement.',
+        'Most conversation happens on WhatsApp, because that is where collectors want it. WhatsApp is operated by a third party under its own privacy terms, which we do not control. The link from this website opens WhatsApp with a short prefilled message containing your Request ID and the fish you asked about, never your name, number, budget or full requirement.',
       ),
       h('h2', 'Service providers'),
       p(
-        'This section will list the categories of third party that may process information on our behalf — website hosting, database hosting, file storage and email delivery — once those providers are confirmed.',
+        'This section will list the categories of third party that may process information on our behalf, website hosting, database hosting, file storage and email delivery, once those providers are confirmed.',
       ),
       h('h2', 'Retention'),
       p(
@@ -298,7 +298,7 @@ export const POLICY_PAGES = [
       ),
       h('h2', 'Cancellation, refunds and claims'),
       p(
-        'PLACEHOLDER — requires legal review. No refund, mortality, replacement or claims commitment is stated here until it has been reviewed and approved.',
+        'PLACEHOLDER, requires legal review. No refund, mortality, replacement or claims commitment is stated here until it has been reviewed and approved.',
       ),
       h('h2', 'Restricted or unlawful requests'),
       p(
@@ -316,7 +316,7 @@ export const POLICY_PAGES = [
       p('We aim to keep this website available but do not guarantee uninterrupted access.'),
       h('h2', 'Limitation of liability and disputes'),
       p(
-        'PLACEHOLDER — requires legal review. No limitation of liability, governing law or dispute-resolution provision is stated here until it has been reviewed and approved.',
+        'PLACEHOLDER, requires legal review. No limitation of liability, governing law or dispute-resolution provision is stated here until it has been reviewed and approved.',
       ),
       h('h2', 'Contact'),
       p('This section will confirm the contact address for questions about these terms.'),
@@ -335,8 +335,8 @@ export const POLICY_PAGES = [
         'These are needed for the site to work and cannot be switched off. They store your cookie choice so you are not asked on every page, keep your place in the sourcing form if you reload, and help protect the form from automated abuse.',
       ),
       list([
-        'finquiry_consent — records your cookie choice. Expires after one year.',
-        'Short-lived form protection values — cleared when you close the browser.',
+        'finquiry_consent, records your cookie choice. Expires after one year.',
+        'Short-lived form protection values, cleared when you close the browser.',
       ]),
       h('h2', 'Analytics cookies'),
       p(
@@ -515,7 +515,7 @@ export const AQUARIUM_SERVICES = [
  * an editable starting point, not managed copy. Titles put the search intent
  * first and the brand last, so a shared link still reads as a sentence. Every
  * description stays under ~160 characters and describes what the page actually
- * does — none of them promises stock, prices or delivery outcomes.
+ * does, none of them promises stock, prices or delivery outcomes.
  */
 export const PAGE_SEO: Record<string, { title: string; description: string }> = {
   home: {

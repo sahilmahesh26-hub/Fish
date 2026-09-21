@@ -1,6 +1,6 @@
 import type { Payload } from 'payload'
 import { log } from './helpers'
-import { PROCESS_STEPS, AQUARIUM_SERVICES, PAGE_SEO } from './content'
+import { PROCESS_STEPS, PAGE_SEO } from './content'
 
 type SeedContext = {
   media: Record<string, number>
@@ -36,7 +36,7 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         'Hello Finquiry, I would like help sourcing a fish. Here is what I am looking for:',
       address: { country: 'India' },
       defaultSeo: {
-        titleTemplate: '%s — Finquiry',
+        titleTemplate: '%s | Finquiry',
         defaultTitle: 'Finquiry — Collector-led fish sourcing across India',
         description:
           'Tell us the species, variety, colour, pattern and size you are looking for. We search our network and share suitable specimens with actual photos, videos and individual pricing.',
@@ -89,7 +89,7 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
     slug: 'footer',
     data: {
       brandStatement:
-        'Finquiry is a sourcing service for collectors. We search, verify and coordinate — we do not hold stock, and nothing moves without your approval.',
+        'Finquiry is a sourcing service for collectors. We search, verify and coordinate, we do not hold stock, and nothing moves without your approval.',
       navGroups: [
         {
           title: 'Sourcing',
@@ -133,33 +133,37 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
     data: {
       hero: {
         eyebrow: 'Collector-led fish sourcing across India',
-        // The asterisks mark the run that is set in Scarlet.
+        // The asterisks mark the run set in red italic.
         headline: 'Every Collector Is *Searching* for Something.',
-        body: 'Tell us the species, variety, colour, pattern and size you are looking for. We will search our network and share suitable specimens with actual photos, videos and individual pricing.',
+        // Twenty words. Longer than that and the hero stops being a hero.
+        body: 'Tell us the species, variety, colour and size. We search our network and come back with actual specimens.',
+        // Three sentences, because the hero splits them into a rail.
         trustLine:
-          'Actual specimen media. Individual pricing. No substitutions without your approval.',
+          'Actual specimen media. Individual pricing per fish. Nothing moves without your approval.',
         primaryCta: { label: 'Start Your Search', type: 'internal', href: '/source-a-fish' },
-        secondaryCta: { label: 'Talk to Us on WhatsApp', type: 'whatsapp' },
-        fishImage: media.fish,
-        annotation: 'Specimen shown is placeholder artwork',
-        scrollHint: 'See how it works',
+        secondaryCta: { label: 'See How It Works', type: 'internal', href: '/how-it-works' },
+        heroImage: media.hero,
       },
       /*
-       * Eyebrows are deliberately sparse.
+       * Seven sections, hero included.
        *
-       * The taste-skill audit caps them at one per three sections; this page has
-       * eleven, so four are kept — hero, category grid, trust statements and the
-       * article shelf, where the small label does navigational work. An eyebrow
-       * above every headline is the templated rhythm the rule exists to catch.
-       * Every block still has the field: an editor can restore any of them in
-       * Payload without a developer. See docs/DESIGN-REFERENCE-AUDIT.md.
+       * The page ran to eleven and roughly 11,800px, and most of the extra was
+       * repetition: a trust band saying what the hero already says, an article
+       * shelf rendering an empty state, an FAQ block duplicating the one on
+       * How It Works. Each of those is now either folded into the hero rail or
+       * living on the page it belongs to.
+       *
+       * Eyebrows: one, on the hero. The cap is one per three sections and the
+       * budget allows two, but the headlines carry their sections without help
+       * and a label above each one is the templated rhythm worth avoiding.
+       * Every block still has the field for an editor who wants it back.
        */
       sections: [
         {
           blockType: 'sectionIntro',
           background: 'linen',
-          heading: 'You tell us the fish. We search beyond one store.',
-          body: "A collector's search should not depend on the stock of a single aquarium shop. Finquiry brings your requirement to a wider sourcing network and returns with the closest verified options we can find.",
+          heading: 'Your search should not end at one shop\u2019s stock.',
+          body: "A collector's requirement is specific, and the fish that matches it is rarely sitting in the nearest tank. Finquiry takes that requirement to a wider sourcing network and comes back with the closest verified options we can actually find.",
           alignment: 'start',
         },
         {
@@ -172,110 +176,60 @@ export const seedGlobals = async (payload: Payload, { media }: SeedContext) => {
         {
           blockType: 'categoryGrid',
           background: 'linen',
-          eyebrow: 'Built around requirements',
-          heading: 'A broader search for a more specific fish.',
-          body: 'These categories represent the types of searches we support. They are not guaranteed stock lists. Every search begins with your requirement.',
+          heading: 'What collectors come to us searching for.',
+          body: 'These are the kinds of searches we support, not a stock list. Every one of them begins with your requirement.',
           mode: 'all',
         },
         {
           blockType: 'specimenRecord',
-          background: 'linen-raised',
-          heading: 'See the individual fish—not a generic product photo.',
-          body: 'Every option is shared as a specific specimen. Where available, we provide current photographs, videos, approximate size, origin, feeding information and other details that can be confirmed.',
-          note: 'Availability and condition can change. We reconfirm the specimen before payment and dispatch.',
+          background: 'navy',
+          heading: 'You see the individual fish, not a catalogue photograph.',
+          body: 'Every option arrives as a specific specimen. Where it exists we send current photographs, video, approximate size, origin and feeding notes, so you are deciding about one fish rather than a species.',
+          note: 'Availability and condition can change. We reconfirm the specimen before any payment or dispatch.',
           mainImage: media.specimen,
-          detailImages: [
-            { image: media.detailA, caption: 'Detail crop — placeholder' },
-            { image: media.detailB, caption: 'Detail crop — placeholder' },
-          ],
+          /*
+           * No detail crops and no `measurement`.
+           *
+           * Both exist as fields for a real record, and both render the moment
+           * an editor fills them in. Seeding them meant the homepage staged
+           * two empty plates and printed the same non-value ('Recorded per
+           * specimen') three times, under the photograph and twice in the
+           * sheet. An illustrative record should show what a collector is
+           * told, not repeat a placeholder until it fills the column.
+           */
           record: {
             requestId: 'FQ-0000-0000',
-            measurement: 'Example only — recorded per specimen',
-            origin: 'Recorded per specimen',
+            origin: 'Named for every specimen we send',
             mediaStatus: 'pending',
             notes:
-              'This is an illustrative record layout. Real specimen details are shared privately with the collector who requested them.',
+              'An illustrative record layout. Real specimen details, photographs and video are shared privately with the collector who asked for them.',
           },
-        },
-        {
-          blockType: 'trustStatements',
-          background: 'navy',
-          eyebrow: 'Why collectors choose Finquiry',
-          heading: 'A sourcing process collectors can follow.',
-          statements: [
-            {
-              heading: 'Search wider',
-              copy: 'One clear requirement can be checked across multiple relevant sources.',
-            },
-            {
-              heading: 'See the actual fish',
-              copy: 'Review specimen-specific photographs, videos and available details before deciding.',
-            },
-            {
-              heading: 'Approve before it moves',
-              copy: 'No substitution, preparation or dispatch without your written confirmation.',
-            },
-          ],
-          proofPoints: [
-            { label: 'Transparent availability' },
-            { label: 'Individual pricing' },
-            { label: 'Direct WhatsApp communication' },
-            { label: 'Interstate delivery coordination' },
-            { label: 'Custom aquarium support' },
-          ],
         },
         {
           blockType: 'deliveryStories',
           background: 'linen',
-          heading: 'Every delivery begins as a search.',
-          body: 'Explore real sourcing stories, from the original requirement and specimen review to packing, dispatch and arrival.',
+          heading: 'Every delivery began as a search.',
+          body: 'Documented sourcing journeys: the original requirement, the specimen, the route and the arrival.',
           mode: 'featured',
           limit: 3,
           emptyState: {
             heading: 'The first stories are being documented.',
-            body: 'Real delivery notes will appear here only after the specimen, route and customer permission are confirmed.',
-            behaviour: 'show',
+            body: 'Delivery notes appear here once the specimen, the route and the customer\u2019s permission are all confirmed.',
+            /*
+             * Hidden rather than shown. There are no published delivery records
+             * yet, and an empty state is not worth a whole screen on the
+             * homepage. It returns by itself the moment one is published.
+             */
+            behaviour: 'hide',
           },
-        },
-        {
-          blockType: 'aquariumFeature',
-          heading: 'Built around the fish, not just the room.',
-          body: 'From tank dimensions and filtration to stands, cabinets, lighting and equipment, we help plan systems around the specimen’s long-term requirements.',
-          mainImage: media.aquarium,
-          detailImages: [{ image: media.aquariumDetail }],
-          services: AQUARIUM_SERVICES.map((label) => ({ label })),
-          cta: { label: 'Plan Your Aquarium', type: 'internal', href: '/custom-aquariums' },
-        },
-        {
-          blockType: 'featuredArticles',
-          background: 'linen-raised',
-          eyebrow: 'Knowledge for collectors',
-          heading: 'Know more before you choose.',
-          body: 'Practical guidance on evaluating specimens, preparing aquariums, managing arrival and making more informed collection decisions.',
-          mode: 'latest',
-          limit: 4,
-          emptyState: {
-            heading: 'The first guides are being written.',
-            body: 'Six starter articles are drafted in the Knowledge Hub. They appear here as soon as an editor publishes them.',
-            behaviour: 'show',
-          },
-          cta: { label: 'Browse the Knowledge Hub', type: 'internal', href: '/knowledge' },
-        },
-        {
-          blockType: 'faqs',
-          background: 'linen',
-          heading: 'Questions collectors ask first.',
-          mode: 'category',
-          category: 'sourcing',
-          emitStructuredData: true,
         },
         {
           blockType: 'cta',
           background: 'scarlet',
           heading: 'Tell us what you are searching for.',
-          body: 'Share the species, variety, colour, size, budget and destination. We will tell you honestly what our network can find.',
+          body: 'The species, the variety, the colour, the size, the budget, the destination. We will tell you honestly what our network can find.',
           primaryCta: { label: 'Start Your Search', type: 'internal', href: '/source-a-fish' },
-          secondaryCta: { label: 'WhatsApp the Sourcing Team', type: 'whatsapp' },
+          secondaryCta: { label: 'Talk to Us on WhatsApp', type: 'whatsapp' },
         },
       ],
       _status: 'published',

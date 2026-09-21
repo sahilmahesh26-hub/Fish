@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
 const CONTENT_TAGS = new Set(['pages', 'posts', 'deliveries'])
 
 /**
- * On-demand revalidation for changes Payload's own hooks cannot see — for
+ * On-demand revalidation for changes Payload's own hooks cannot see, for
  * example a scheduled publish that fires in another process, or a deploy that
  * needs the cache cleared.
  *
@@ -35,7 +35,7 @@ export const POST = async (request: NextRequest) => {
     revalidateTag(tag, 'max')
     /*
      * The sitemap and the feed are prerendered routes whose own cache entries
-     * carry no collection tag — `getAllPageSlugs` is deliberately uncached, so
+     * carry no collection tag, `getAllPageSlugs` is deliberately uncached, so
      * there is nothing for `revalidateTag` to match. Without this, publishing a
      * page refreshed the page itself but left the sitemap up to an hour stale,
      * which is exactly the window in which a crawler notices a new URL.

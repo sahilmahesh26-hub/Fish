@@ -112,7 +112,7 @@ const DeliveriesPage = async ({ searchParams }: Props) => {
                     <CmsImage
                       media={delivery.mainImage}
                       sizes="(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 380px"
-                      placeholderLabel="Delivery photograph"
+                      fallbackLabel="Delivery photograph"
                     />
                     {delivery.requestId ? (
                       <SpecimenStamp

@@ -14,17 +14,17 @@ const FONT_DIR = join(process.cwd(), 'assets', 'brand', 'fonts')
  *
  * Satori cannot read WOFF2, which is the only format `next/font` keeps, so the
  * card needs its own copies. They are the same Google Fonts sources
- * `next/font` downloads at build time — see `docs/SEO.md`.
+ * `next/font` downloads at build time, see `docs/SEO.md`.
  */
 const loadFonts = async () => {
-  const [bricolage, manrope] = await Promise.all([
-    readFile(join(FONT_DIR, 'bricolage-grotesque-700.ttf')),
+  const [archivo, manrope] = await Promise.all([
+    readFile(join(FONT_DIR, 'archivo-expanded-700.ttf')),
     readFile(join(FONT_DIR, 'manrope-500.ttf')),
   ])
   return [
     {
-      name: 'Bricolage Grotesque',
-      data: bricolage,
+      name: 'Archivo',
+      data: archivo,
       weight: 700 as const,
       style: 'normal' as const,
     },
@@ -32,11 +32,13 @@ const loadFonts = async () => {
   ]
 }
 
-const LINEN = '#f5f0e8'
-const LINEN_100 = '#fdfbf7'
-const SCARLET = '#d91a2a'
-const NAVY = '#081f33'
-const NAVY_500 = '#2b5573'
+/* The card is the brand's first impression in a feed, so it uses the same
+   near-black canvas and the same single red as the site. */
+const INK = '#050607'
+const INK_800 = '#0a0d10'
+const BONE = '#f4f1ea'
+const BONE_500 = '#9aa0a6'
+const RED = '#ef2436'
 
 /** The configured host, or nothing at all — never an invented domain. */
 const displayHost = () => {
@@ -58,14 +60,14 @@ type OgCardArgs = {
  * with the brand says it twice and costs a line of the card's two.
  */
 const withoutBrandPrefix = (heading: string, brand: string) =>
-  heading.replace(new RegExp(`^${brand}\\s*[—|:-]\\s*`, 'i'), '').trim() || heading
+  heading.replace(new RegExp(`^${brand}\\s*[-|:-]\\s*`, 'i'), '').trim() || heading
 
 /**
  * The branded fallback card, used wherever a document has no featured image.
  *
  * It takes no request input on purpose. A `?title=` endpoint would render
  * arbitrary text as an image under this domain, which is a phishing surface
- * for the sake of a marginal gain — documents that want their own card supply
+ * for the sake of a marginal gain, documents that want their own card supply
  * one through Payload instead.
  */
 export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
@@ -79,7 +81,7 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: LINEN,
+        backgroundColor: INK,
         fontFamily: 'Manrope',
       }}
     >
@@ -100,7 +102,7 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
               width: 34,
               height: 34,
               borderRadius: 9,
-              backgroundColor: SCARLET,
+              backgroundColor: RED,
             }}
           />
           <div
@@ -108,7 +110,7 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
               display: 'flex',
               fontSize: 27,
               letterSpacing: 5,
-              color: NAVY,
+              color: BONE,
               textTransform: 'uppercase',
             }}
           >
@@ -120,11 +122,11 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
           style={{
             display: 'flex',
             marginTop: 54,
-            fontFamily: 'Bricolage Grotesque',
+            fontFamily: 'Archivo',
             fontSize: 78,
             lineHeight: 1.06,
             letterSpacing: -2,
-            color: NAVY,
+            color: BONE,
             maxWidth: 940,
           }}
         >
@@ -137,7 +139,7 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
             marginTop: 30,
             fontSize: 31,
             lineHeight: 1.4,
-            color: NAVY_500,
+            color: BONE_500,
             maxWidth: 880,
           }}
         >
@@ -145,9 +147,9 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
         </div>
       </div>
 
-      {/* Scarlet hairline above the navy footer — the same edge the site uses
+      {/* Scarlet hairline above the navy footer, the same edge the site uses
             to separate a dark band from linen. */}
-      <div style={{ display: 'flex', height: 8, backgroundColor: SCARLET }} />
+      <div style={{ display: 'flex', height: 8, backgroundColor: RED }} />
 
       <div
         style={{
@@ -156,14 +158,12 @@ export const ogCard = async ({ heading, subheading, footnote }: OgCardArgs) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 72px',
-          backgroundColor: NAVY,
+          backgroundColor: INK_800,
         }}
       >
-        <div style={{ display: 'flex', fontSize: 26, color: LINEN_100 }}>{footnote}</div>
+        <div style={{ display: 'flex', fontSize: 26, color: BONE }}>{footnote}</div>
         {host ? (
-          <div style={{ display: 'flex', fontSize: 26, color: LINEN_100, opacity: 0.84 }}>
-            {host}
-          </div>
+          <div style={{ display: 'flex', fontSize: 26, color: BONE, opacity: 0.84 }}>{host}</div>
         ) : null}
       </div>
     </div>,

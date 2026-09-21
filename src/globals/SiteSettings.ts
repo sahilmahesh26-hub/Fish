@@ -54,7 +54,7 @@ export const SiteSettings: GlobalConfig = {
                 if (!value) return true
                 return /^\d{8,15}$/.test(String(value))
                   ? true
-                  : 'Digits only, 8–15 characters, no "+" or spaces.'
+                  : 'Digits only, 8-15 characters, no "+" or spaces.'
               },
             },
             {
@@ -112,7 +112,7 @@ export const SiteSettings: GlobalConfig = {
                   'The last fallback. A page uses its own SEO override first, then its title and excerpt, then these values.',
               },
               fields: [
-                { name: 'titleTemplate', type: 'text', defaultValue: '%s — Finquiry' },
+                { name: 'titleTemplate', type: 'text', defaultValue: '%s, Finquiry' },
                 { name: 'defaultTitle', type: 'text' },
                 { name: 'description', type: 'textarea', maxLength: 200 },
                 { name: 'image', type: 'upload', relationTo: 'media' },

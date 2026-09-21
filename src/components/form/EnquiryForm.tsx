@@ -178,7 +178,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
   }, [state])
 
   // On success: clear the draft and hand off to the confirmation page, which
-  // receives only the request ID and the fish description — never the rest.
+  // receives only the request ID and the fish description, never the rest.
   useEffect(() => {
     if (state.status !== 'success' || !state.requestId) return
     clearDraft()
@@ -194,7 +194,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
    * On a rejected submit, move focus to the first control the server rejected.
    *
    * The summary stays and still lists every problem with in-page links, but
-   * focus goes to the field itself — that is what lets someone fix the error
+   * focus goes to the field itself, that is what lets someone fix the error
    * where they are, rather than reading a list and hunting for the input. If
    * the offending field is on another step, switch to that step first.
    */
@@ -358,7 +358,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   <span className="u-visually-hidden">{`Step ${index + 1} of ${STEPS.length}: `}</span>
                   {definition.title}
                   {stepsWithErrors[index] ? (
-                    <span className="u-visually-hidden"> — has errors</span>
+                    <span className="u-visually-hidden">, has errors</span>
                   ) : null}
                 </span>
               </button>
@@ -470,7 +470,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   name="fishRequired"
                   label="Fish required"
                   required
-                  hint="In your own words — we will refine it with you."
+                  hint="In your own words, we will refine it with you."
                   placeholder="Super red arowana, around 10 inches…"
                   defaultValue={defaultCategory}
                   error={errors.fishRequired}
@@ -481,7 +481,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="preferredSize"
                   label="Preferred size"
-                  placeholder="10–12 inches…"
+                  placeholder="10-12 inches…"
                   error={errors.preferredSize}
                 />
                 <TextInput
@@ -501,7 +501,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                   label="Would you consider alternatives?"
                   options={[
                     { label: 'Yes', value: 'yes' },
-                    { label: 'No — this specimen only', value: 'no' },
+                    { label: 'No, this specimen only', value: 'no' },
                     { label: 'Described below', value: 'describe' },
                   ]}
                   error={errors.alternativesAccepted}
@@ -560,7 +560,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
                 <TextInput
                   name="budgetRange"
                   label="Budget range"
-                  hint="A range is fine — it helps us search in the right places."
+                  hint="A range is fine, it helps us search in the right places."
                   error={errors.budgetRange}
                 />
                 <TextInput
@@ -665,8 +665,7 @@ export const EnquiryForm = ({ defaultCategory }: { defaultCategory?: string }) =
 
           {/*
             The submit button exists on every step, not just the last, so the
-            form can be completed and sent from the keyboard at any point —
-            the server validates the whole thing regardless.
+            form can be completed and sent from the keyboard at any point, the server validates the whole thing regardless.
           */}
           <Button
             type="submit"

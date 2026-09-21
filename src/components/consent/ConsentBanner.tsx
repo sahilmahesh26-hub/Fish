@@ -70,10 +70,12 @@ const Banner = ({
           <h2 id={headingId} className={styles.title}>
             Cookies on this site
           </h2>
+          {/* Two lines, not five. The card sits over the hero until it is
+              answered, so every line it loses is hero it stops covering. The
+              detail it used to carry lives on the policy page it links to. */}
           <p className={styles.body}>
-            We use a small amount of anonymous analytics to understand which pages are read. It is
-            off until you say yes, and it never includes your name, number or the details of your
-            requirement. <Link href="/cookie-policy">Read the Cookie Policy</Link>.
+            Anonymous analytics only, off until you accept. Never your name, number or requirement.{' '}
+            <Link href="/cookie-policy">Read the Cookie Policy</Link>.
           </p>
         </div>
 

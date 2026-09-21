@@ -16,7 +16,7 @@ export const revalidateRunningSite = async (baseUrl?: string): Promise<void> => 
   const target = (baseUrl ?? process.env.BASE_URL ?? siteUrl()).replace(/\/$/, '')
   const secret = process.env.REVALIDATION_SECRET
   if (!secret) {
-    console.log('  cache: REVALIDATION_SECRET not set — restart the site to pick up new content')
+    console.log('  cache: REVALIDATION_SECRET not set, restart the site to pick up new content')
     return
   }
 
@@ -45,7 +45,7 @@ export const revalidateRunningSite = async (baseUrl?: string): Promise<void> => 
     console.log(
       `  cache: could not reach ${target} (${
         error instanceof Error ? error.message : 'unknown error'
-      }) — restart the site to pick up new content`,
+      }), restart the site to pick up new content`,
     )
   }
 }

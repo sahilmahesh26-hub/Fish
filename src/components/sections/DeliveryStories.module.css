@@ -22,7 +22,7 @@
   overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   color: var(--text);
   text-decoration: none;
   /* Postcard tilt, corrected on hover. */
@@ -40,14 +40,14 @@
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .stamp {
   position: absolute;
   inset-block-end: var(--space-1);
   inset-inline-end: var(--space-1);
-  background: var(--on-dark-veil);
+  background: var(--ink-700);
 }
 
 .body {
@@ -70,12 +70,12 @@
   gap: 0.5rem;
   font-size: var(--fs-small);
   font-weight: 600;
-  color: var(--aegean-ink);
+  color: var(--cobalt-400);
 }
 
 .arrow {
   inline-size: 28px;
-  color: var(--scarlet);
+  color: var(--red-500);
   flex: none;
 }
 
@@ -106,15 +106,19 @@
   font-size: var(--fs-small);
 }
 
+/* A ruled band across the measure, matching the empty listings on
+   /deliveries and /knowledge. A dashed card reads as a component that failed
+   to load; a rule reads as an editor's decision. */
 .empty {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  max-inline-size: 56ch;
-  padding: var(--space-5);
-  border: 1px dashed var(--rule-strong);
-  border-radius: var(--radius-md);
-  background: var(--linen-200);
+  padding-block: var(--space-5);
+  border-block: 1px solid var(--rule);
+}
+
+.empty > * {
+  max-inline-size: 52ch;
 }
 
 .emptyHeading {
@@ -125,7 +129,7 @@
 }
 
 .emptyBody {
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .cta {

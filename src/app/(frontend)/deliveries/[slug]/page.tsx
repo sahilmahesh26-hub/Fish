@@ -12,7 +12,7 @@ import { TrackView } from '@/components/layout/TrackView'
 import { ANALYTICS_EVENTS } from '@/lib/analytics'
 import { DraftBanner } from '@/components/ui/DraftBanner'
 import { SpecimenStamp } from '@/components/art/SpecimenStamp'
-import { RouteArrow, MeasurementMark } from '@/components/art/Shapes'
+import { RouteArrow } from '@/components/art/Shapes'
 import { Cta } from '@/components/sections/Cta'
 import styles from './delivery.module.css'
 
@@ -93,10 +93,9 @@ const DeliveryPage = async ({ params }: Props) => {
                   media={delivery.mainImage}
                   priority
                   sizes="(max-width: 1023px) 92vw, 700px"
-                  placeholderLabel="Delivery photograph"
+                  fallbackLabel="Delivery photograph"
                 />
               </div>
-              <MeasurementMark className={styles.measure} />
             </figure>
 
             {(delivery.gallery ?? []).length > 0 ? (

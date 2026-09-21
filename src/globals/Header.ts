@@ -20,7 +20,7 @@ export const Header: GlobalConfig = {
       labels: { singular: 'Navigation item', plural: 'Navigation items' },
       admin: {
         description:
-          'Drag to reorder. Keep labels short — more than eight items crowds the desktop bar.',
+          'Drag to reorder. Keep labels short, more than eight items crowds the desktop bar.',
       },
       fields: [
         { name: 'label', type: 'text', required: true, maxLength: 28 },

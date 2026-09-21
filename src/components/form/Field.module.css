@@ -10,11 +10,11 @@
   gap: 0.4rem;
   font-size: var(--fs-small);
   font-weight: 700;
-  color: var(--navy-900);
+  color: var(--bone-100);
 }
 
 .required {
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .optional {
@@ -34,10 +34,17 @@
   /* Comfortably above the 44px touch-target minimum. */
   min-block-size: 48px;
   padding: 0.7rem 0.9rem;
-  border: 1.5px solid var(--rule-strong);
+  /*
+   * On a near-black page an input needs a visible edge or it disappears into
+   * the section. The fill sits one step BELOW the surrounding surface, which
+   * reads as a well rather than as a raised card, and the border is bright
+   * enough to trace at a glance.
+   */
+  border: 1px solid var(--field-border);
   border-radius: var(--radius-sm);
-  background: var(--linen-100);
-  color: var(--navy-900);
+  background: var(--ink-900);
+  box-shadow: inset 0 1px 0 rgb(0 0 0 / 40%);
+  color: var(--bone-100);
   /* 16px minimum stops iOS Safari zooming the page on focus. */
   font-size: 1rem;
   font-family: var(--font-body);
@@ -47,16 +54,16 @@
 }
 
 .input::placeholder {
-  color: var(--linen-600);
+  color: var(--text-faint);
 }
 
 .input:hover {
-  border-color: var(--navy-500);
+  border-color: var(--text-muted);
 }
 
 .input:focus-visible {
-  border-color: var(--aegean-ink);
-  outline: 3px solid var(--aegean-ink);
+  border-color: var(--cobalt-400);
+  outline: 3px solid var(--cobalt-400);
   outline-offset: 1px;
 }
 
@@ -68,13 +75,26 @@
 .select {
   /* Room for the native arrow. */
   padding-inline-end: 2.25rem;
+  /*
+   * Explicit, not inherited. A native select on Windows in dark mode paints
+   * its own popup from the OS palette unless both values are set here, which
+   * produces black text on a black list.
+   */
+  background-color: var(--ink-900);
+  color: var(--text);
+}
+
+.select option {
+  background-color: var(--ink-700);
+  color: var(--text);
 }
 
 /* The error state is signalled by a thicker border, an icon and a message —
    never by colour on its own. */
 .hasError .input {
-  border-width: 2.5px;
-  border-color: var(--scarlet-ink);
+  border-width: 1px;
+  border-color: var(--danger);
+  box-shadow: inset 0 0 0 1px var(--danger);
 }
 
 .error {
@@ -83,5 +103,5 @@
   gap: 0.4rem;
   font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }

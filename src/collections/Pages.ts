@@ -67,7 +67,7 @@ export const Pages: CollectionConfig = {
               name: 'legalReviewRequired',
               type: 'checkbox',
               defaultValue: false,
-              label: 'Draft — requires legal review before publication',
+              label: 'Draft, requires legal review before publication',
               admin: {
                 condition: (data) => data?.pageType === 'policy',
                 description:

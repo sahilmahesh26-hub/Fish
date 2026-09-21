@@ -7,7 +7,7 @@
   inset-block-start: -12%;
   inset-inline-end: -8%;
   inline-size: min(48vw, 520px);
-  color: var(--aegean-400);
+  color: var(--cobalt-400);
   opacity: 0.22;
   pointer-events: none;
 }
@@ -55,7 +55,7 @@
   line-height: 0.85;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  color: var(--scarlet-400);
+  color: var(--red-400);
 }
 
 .statementHeading {
@@ -66,11 +66,11 @@
 
 .statementCopy {
   max-inline-size: 38ch;
-  color: var(--text-on-dark-muted);
+  color: var(--bone-300);
 }
 
-[data-on-scarlet] .statementCopy {
-  color: var(--text-on-scarlet);
+[data-on-red] .statementCopy {
+  color: var(--text-on-red);
 }
 
 .proofPoints {
@@ -81,32 +81,32 @@
   gap: 0.6rem;
   margin: var(--space-8) 0 0;
   padding: var(--space-4) 0 0;
-  border-block-start: 1px solid var(--on-dark-rule-quiet);
+  border-block-start: 1px solid var(--rule-faint);
   list-style: none;
 }
 
 .proofPoint {
   padding: 0.45rem 0.9rem;
-  border: 1px solid var(--on-dark-rule-strong);
+  border: 1px solid var(--rule-strong);
   border-radius: var(--radius-pill);
   font-size: var(--fs-small);
   font-weight: 600;
 }
 
 /* On a Sandy Linen background the statements need the darker text colours. */
-.section:not([data-on-dark]):not([data-on-scarlet]) .statementCopy {
-  color: var(--navy-700);
+.section:not([data-on-dark]):not([data-on-red]) .statementCopy {
+  color: var(--bone-300);
 }
 
-.section:not([data-on-dark]):not([data-on-scarlet]) .numeral {
-  color: var(--scarlet-ink);
+.section:not([data-on-dark]):not([data-on-red]) .numeral {
+  color: var(--red-400);
 }
 
-.section:not([data-on-dark]):not([data-on-scarlet]) .proofPoints {
+.section:not([data-on-dark]):not([data-on-red]) .proofPoints {
   border-block-start-color: var(--rule);
 }
 
-.section:not([data-on-dark]):not([data-on-scarlet]) .proofPoint {
+.section:not([data-on-dark]):not([data-on-red]) .proofPoint {
   border-color: var(--rule-strong);
 }
 

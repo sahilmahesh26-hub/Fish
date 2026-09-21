@@ -16,14 +16,16 @@
 }
 
 .cardLink {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   block-size: 100%;
+  min-block-size: 100%;
   overflow: hidden;
   border: 1px solid var(--rule);
-  /* Varied radii, not one 16px value repeated everywhere. */
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   color: var(--text);
   text-decoration: none;
   transition:
@@ -34,15 +36,34 @@
 
 .cardLink:hover {
   transform: translateY(-4px);
-  border-color: var(--scarlet);
+  border-color: var(--red-500);
   box-shadow: var(--shadow-md);
 }
 
+/*
+ * The image is the card, not a panel above it.
+ *
+ * Text sits over the photograph under a scrim, which is what makes a set of
+ * these read as one catalogue rather than as seven separate tiles.
+ */
 .media {
-  position: relative;
-  aspect-ratio: 4 / 3;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  background: var(--linen-400);
+  background: var(--ink-600);
+}
+
+.media :global(img) {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--image-scrim);
 }
 
 .media :global(img) {
@@ -54,20 +75,20 @@
 }
 
 .cardBody {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   padding: var(--space-3);
-  flex: 1;
 }
 
 .availability {
   display: inline-flex;
   align-self: flex-start;
   padding: 0.25rem 0.6rem;
-  border: 1px solid var(--aegean-ink);
-  border-radius: var(--radius-pill);
-  color: var(--aegean-ink);
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: var(--tracking-label);
@@ -81,14 +102,14 @@
 }
 
 .cardCopy {
-  color: var(--navy-700);
+  color: var(--bone-300);
   font-size: var(--fs-small);
 }
 
 .cardAction {
   margin-block-start: auto;
   padding-block-start: var(--space-2);
-  color: var(--scarlet-ink);
+  color: var(--red-400);
   font-size: var(--fs-small);
   font-weight: 700;
 }
@@ -108,43 +129,36 @@
 }
 
 @media (min-width: 1024px) {
+  /*
+   * Four columns, one feature.
+   *
+   * Seven categories fill eight cell-widths exactly: the feature takes two on
+   * the first row beside two singles, and four singles complete the second.
+   * No empty cell, no trailing orphan, and nothing nudged out of line.
+   */
   .grid {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--space-4);
-    align-items: start;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    align-items: stretch;
   }
 
-  /* Varied card sizes across a 6-column editorial grid. */
-  .card[data-size='lg'] {
-    grid-column: span 3;
+  .card {
+    /* A consistent portrait crop. Uniform ratio is what "consistent image
+       treatment" actually means; varying it per card is what made the old
+       grid read as accidental. */
+    aspect-ratio: 4 / 5;
   }
 
-  .card[data-size='md'] {
-    grid-column: span 3;
-  }
-
-  .card[data-size='sm'] {
+  .card[data-feature] {
     grid-column: span 2;
+    aspect-ratio: 8 / 5;
   }
 
-  .card[data-size='lg'] .media {
-    aspect-ratio: 16 / 10;
+  .card[data-feature] .cardTitle {
+    font-size: clamp(1.75rem, 2.4vw, 2.5rem);
   }
 
-  .card[data-size='lg'] .cardTitle {
-    font-size: clamp(1.5rem, 2.2vw, 2.1rem);
-  }
-
-  .card[data-size='sm'] .media {
-    aspect-ratio: 1 / 1;
-  }
-
-  /* Controlled overlap: every third card lifts out of the grid rhythm. */
-  .card[data-size='sm']:nth-of-type(3n) {
-    margin-block-start: var(--space-6);
-  }
-
-  .card[data-size='lg'] .cardLink {
-    border-radius: var(--radius-lg);
+  .card[data-feature] .cardBody {
+    padding: var(--space-4);
   }
 }

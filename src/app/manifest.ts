@@ -8,7 +8,7 @@ import type { MetadataRoute } from 'next'
  * icon set to work with rather than guessing from the page.
  */
 const manifest = (): MetadataRoute.Manifest => ({
-  name: 'Finquiry — Collector Fish Sourcing Across India',
+  name: 'Finquiry, Collector Fish Sourcing Across India',
   short_name: 'Finquiry',
   description:
     'Tell Finquiry the species, variety, colour and size you are searching for. Review actual specimen photos, videos and individual pricing before approval.',

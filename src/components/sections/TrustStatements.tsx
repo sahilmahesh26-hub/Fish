@@ -1,5 +1,5 @@
 import { Section } from './Section'
-import { RippleRings } from '@/components/art/Shapes'
+
 import type { TrustStatementsBlock as TrustStatementsBlockType } from '@/payload-types'
 import styles from './TrustStatements.module.css'
 
@@ -16,8 +16,6 @@ export const TrustStatements = ({ block }: { block: TrustStatementsBlockType }) 
 
   return (
     <Section background={block.background} labelledBy={headingId} className={styles.section}>
-      <RippleRings className={styles.ripples} />
-
       <header className={styles.header}>
         {block.eyebrow ? <p className="u-eyebrow">{block.eyebrow}</p> : null}
         <h2 id={headingId} className={styles.heading}>

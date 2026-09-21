@@ -2,7 +2,7 @@ import { Section } from './Section'
 import { SectionHeading } from './SectionHeading'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { SpecimenStamp } from '@/components/art/SpecimenStamp'
-import { MeasurementMark } from '@/components/art/Shapes'
+
 import type { SpecimenRecordBlock as SpecimenRecordBlockType } from '@/payload-types'
 import styles from './SpecimenRecord.module.css'
 
@@ -15,9 +15,10 @@ const MEDIA_STATUS_LABEL: Record<string, string> = {
 /**
  * A collector's specimen sheet.
  *
- * Every row is driven by CMS data and omitted when blank. When no media has
- * been uploaded the component shows an explicitly labelled placeholder — it
- * never fabricates a specimen, a measurement or an origin to fill the layout.
+ * Every row is driven by CMS data and omitted when blank. Rows, crops and the
+ * stamp are each omitted when their data is absent, rather than being staged
+ * as empty wells. The component never fabricates a specimen, a measurement or
+ * an origin to fill the layout.
  */
 export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) => {
   const record = block.record
@@ -48,10 +49,9 @@ export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) =>
             <CmsImage
               media={block.mainImage}
               sizes="(max-width: 1023px) 92vw, 620px"
-              placeholderLabel="Specimen photograph — added per enquiry"
+              fallbackLabel="Specimen photograph"
             />
           </div>
-          <MeasurementMark className={styles.measurement} />
           {record?.measurement ? (
             <figcaption className={styles.measurementCaption}>{record.measurement}</figcaption>
           ) : null}
@@ -62,22 +62,28 @@ export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) =>
             <SpecimenStamp label="Request" value={record.requestId} className={styles.stamp} />
           ) : null}
 
-          <div className={styles.crops}>
-            {details2.length > 0
-              ? details2.map((detail, index) => (
-                  <figure key={detail.id ?? index} className={styles.crop}>
-                    <CmsImage media={detail.image} sizes="180px" />
-                    {detail.caption ? (
-                      <figcaption className={styles.cropCaption}>{detail.caption}</figcaption>
-                    ) : null}
-                  </figure>
-                ))
-              : [0, 1].map((index) => (
-                  <div key={index} className={styles.crop}>
-                    <CmsImage media={null} placeholderLabel="Detail crop" />
-                  </div>
-                ))}
-          </div>
+          {/*
+           * Detail crops only when there are detail crops.
+           *
+           * This used to fall back to two empty wells so the column had
+           * something in it. Two blank plates beside a blank plate is not a
+           * specimen record, it is scaffolding left on a public page, and it
+           * was the single largest dead area on the homepage. With no crops
+           * the record simply reads as a sheet of data, which is honest and
+           * is also the section's actual point.
+           */}
+          {details2.length > 0 ? (
+            <div className={styles.crops}>
+              {details2.map((detail, index) => (
+                <figure key={detail.id ?? index} className={styles.crop}>
+                  <CmsImage media={detail.image} sizes="180px" />
+                  {detail.caption ? (
+                    <figcaption className={styles.cropCaption}>{detail.caption}</figcaption>
+                  ) : null}
+                </figure>
+              ))}
+            </div>
+          ) : null}
 
           {details.length > 0 ? (
             <dl className={styles.record}>

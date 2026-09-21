@@ -29,7 +29,7 @@ export const AquariumFeature = ({
             <CmsImage
               media={block.mainImage}
               sizes="(max-width: 1023px) 92vw, 640px"
-              placeholderLabel="Custom aquarium photograph"
+              fallbackLabel="Custom aquarium photograph"
             />
           </div>
 
@@ -44,7 +44,7 @@ export const AquariumFeature = ({
           ) : null}
         </div>
 
-        <div className={styles.panel} data-on-scarlet>
+        <div className={styles.panel} data-on-red>
           {block.eyebrow ? <p className="u-eyebrow">{block.eyebrow}</p> : null}
           <h2 id={headingId} className={styles.heading}>
             {block.heading}

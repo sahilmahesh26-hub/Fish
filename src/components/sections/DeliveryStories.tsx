@@ -64,7 +64,7 @@ export const DeliveryStories = async ({
                   <CmsImage
                     media={delivery.mainImage}
                     sizes="(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 400px"
-                    placeholderLabel="Delivery photograph"
+                    fallbackLabel="Delivery photograph"
                   />
                   {delivery.requestId ? (
                     <SpecimenStamp

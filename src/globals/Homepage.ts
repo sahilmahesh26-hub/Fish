@@ -25,7 +25,7 @@ import { revalidateGlobal } from '@/hooks/revalidate'
  * The hero is a fixed group because its composition is art-directed and the
  * page must always open with it. Everything below the hero is a blocks list,
  * so an editor can reorder sections by dragging and hide any of them with the
- * block's own "Hide this section" switch — without a developer.
+ * block's own "Hide this section" switch, without a developer.
  */
 export const Homepage: GlobalConfig = {
   slug: 'homepage',
@@ -57,7 +57,7 @@ export const Homepage: GlobalConfig = {
                   required: true,
                   admin: {
                     description:
-                      'Wrap a word or phrase in *asterisks* to set it in Scarlet, e.g. Every Collector Is *Searching* for Something.',
+                      'Wrap a word or phrase in *asterisks* to emphasise it, e.g. Every Collector Is *Searching* for Something.',
                   },
                 },
                 { name: 'body', type: 'textarea' },
@@ -65,25 +65,13 @@ export const Homepage: GlobalConfig = {
                 linkField('primaryCta', 'Primary CTA'),
                 linkField('secondaryCta', 'Secondary CTA'),
                 {
-                  name: 'fishImage',
+                  name: 'heroImage',
                   type: 'upload',
                   relationTo: 'media',
                   admin: {
                     description:
-                      'Transparent cutout of one fish (PNG or WebP). It overlaps the hero shapes and drifts gently. Replace this to change the hero artwork.',
+                      'The full-bleed hero photograph. Use one strong, dark, cinematic image: a macro crop of a single specimen, or dark water. It is held under a scrim so the headline stays legible, which means a busy or bright image will fight the type. Landscape, at least 2400px wide.',
                   },
-                },
-                {
-                  name: 'annotation',
-                  type: 'text',
-                  maxLength: 80,
-                  admin: { description: 'Small annotation printed beside the artwork.' },
-                },
-                {
-                  name: 'scrollHint',
-                  type: 'text',
-                  defaultValue: 'Scroll to see how it works',
-                  maxLength: 60,
                 },
               ],
             },

@@ -20,23 +20,29 @@
 }
 
 .heading {
-  max-inline-size: 18ch;
+  max-inline-size: 20ch;
+  font-family: var(--font-display);
   font-size: var(--fs-section-title);
+  /* Section headings run at normal width. The expanded cut is reserved for
+     the hero and for statement sections, so that when width does change it
+     means something. */
+  font-variation-settings: 'wdth' var(--wdth-normal);
   font-weight: 700;
   line-height: var(--lh-title);
   letter-spacing: var(--tracking-title);
+  text-wrap: balance;
 }
 
 .body {
   max-inline-size: 52ch;
   font-size: var(--fs-lead);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 [data-on-dark] .body {
-  color: var(--text-on-dark-muted);
+  color: var(--bone-300);
 }
 
-[data-on-scarlet] .body {
-  color: var(--text-on-scarlet);
+[data-on-red] .body {
+  color: var(--text-on-red);
 }

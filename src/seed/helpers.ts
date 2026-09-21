@@ -1,7 +1,10 @@
 import { randomBytes } from 'node:crypto'
+import { rm } from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import type { Payload } from 'payload'
 import { doc, p, h } from './lexical'
-import { placeholderPanel, placeholderFish, placeholderLogo } from './placeholders'
+import { waterPlate, categoryPlate, placeholderLogo } from './placeholders'
 import { SOURCING_CATEGORIES, KNOWLEDGE_CATEGORIES, STARTER_POSTS, FAQS } from './content'
 
 /**
@@ -35,6 +38,49 @@ type MediaSpec = {
   mimeType: string
 }
 
+/*
+ * The caption every seeded image carries.
+ *
+ * It is editor-facing: captions render only where a component asks for one, and
+ * none of the redesigned components do. It exists so the media library can be
+ * filtered and cleared in one pass.
+ */
+const seedCaption = 'Generated artwork. Replace with photography before launch.'
+
+/** The directory Payload's local storage writes uploads into. */
+const MEDIA_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../public/media')
+
+type MediaDoc = { filename?: string | null; sizes?: Record<string, { filename?: string | null }> }
+
+/**
+ * Delete a media document's files, original and every generated size.
+ *
+ * Payload will not reuse a filename that is already taken, so re-seeding
+ * republishes the artwork under a suffixed name and the previous file is left
+ * behind in `public/media`. Left alone that accumulates: this project reached
+ * 31 stranded `-1`, `-2`, `-3` copies of the same eight plates.
+ *
+ * This clears them, so each seeded image keeps exactly one file on disk. The
+ * name itself still alternates between `plate.webp` and `plate-1.webp` from
+ * run to run, because the collision is with the row being updated and its own
+ * name is not free until the update commits. That is why the seed revalidates
+ * the running site afterwards: a page prerendered against the previous name
+ * will 500 on its images until it is refreshed.
+ *
+ * Best effort. A missing file is the state we wanted anyway.
+ */
+const removeMediaFiles = async (doc: MediaDoc) => {
+  const names = [doc.filename, ...Object.values(doc.sizes ?? {}).map((size) => size?.filename)]
+  await Promise.all(
+    names
+      .filter((name): name is string => Boolean(name))
+      // Defend the directory against a crafted filename: only a bare basename
+      // inside the media directory is ever removed.
+      .filter((name) => path.basename(name) === name)
+      .map((name) => rm(path.join(MEDIA_DIR, name), { force: true })),
+  )
+}
+
 export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<number> => {
   // Matched on `seedKey`, not on filename: Payload appends a suffix when a
   // filename collides, so a filename lookup would miss on the second run and
@@ -46,14 +92,48 @@ export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<nu
     overrideAccess: true,
   })
 
-  if (existing.docs.length > 0) return existing.docs[0].id as number
-
   const data = await spec.build()
+
+  /*
+   * An existing record gets its FILE replaced rather than being deleted and
+   * recreated. The id survives, so every page, global and block still points
+   * at the right image. Deleting and recreating would orphan those relations
+   * and quietly blank out artwork across the site.
+   *
+   * An editor's own upload is never touched: this only ever matches rows the
+   * seed itself created, which are the only ones carrying a `seedKey`.
+   */
+  if (existing.docs.length > 0) {
+    const doc = existing.docs[0]
+    const id = doc.id as number
+    // Clear the old files off disk BEFORE writing the new ones. Payload will
+    // not overwrite an occupied filename, it appends `-1`, `-2` and so on, so
+    // without this every re-seed renames the image, strands the previous file
+    // in `public/media`, and breaks any HTML still pointing at the old name
+    // until the next full rebuild. See `removeMediaFiles`.
+    await removeMediaFiles(doc as MediaDoc)
+    await payload.update({
+      collection: 'media',
+      id,
+      data: { alt: spec.alt, caption: seedCaption, tags: ['placeholder'] },
+      file: {
+        data,
+        name: spec.filename,
+        mimetype: spec.mimeType,
+        size: data.byteLength,
+      },
+      overrideAccess: true,
+      context: { skipRevalidate: true },
+    })
+    log(`media: ${spec.filename} (refreshed)`)
+    return id
+  }
+
   const created = await payload.create({
     collection: 'media',
     data: {
       alt: spec.alt,
-      caption: 'Placeholder artwork — replace with a real image.',
+      caption: seedCaption,
       tags: ['placeholder'],
       seedKey: spec.key,
     },
@@ -72,68 +152,74 @@ export const upsertMedia = async (payload: Payload, spec: MediaSpec): Promise<nu
 }
 
 export const seedMedia = async (payload: Payload) => {
+  /*
+   * Alt text describes what the image IS, not what it stands in for. A
+   * screen-reader user hearing "placeholder for a specimen photograph" learns
+   * nothing about the page; hearing "dark water, lit from above" at least
+   * matches what a sighted visitor sees.
+   */
   const specs: MediaSpec[] = [
     {
-      key: 'fish',
-      filename: 'placeholder-hero-fish.png',
-      alt: 'Placeholder illustration of a fish. Replace with a real specimen cutout.',
-      build: placeholderFish,
-      mimeType: 'image/png',
+      key: 'hero',
+      filename: 'placeholder-hero-water.jpg',
+      alt: 'Dark water lit from above, the light falling away into depth.',
+      build: () => waterPlate(11, 2400, 1600, 'cold'),
+      mimeType: 'image/jpeg',
     },
     {
       key: 'logo',
       filename: 'placeholder-logo.png',
-      alt: 'Finquiry placeholder logo mark.',
+      alt: 'Finquiry logo mark.',
       build: () => placeholderLogo(512),
       mimeType: 'image/png',
     },
     {
       key: 'specimen',
       filename: 'placeholder-specimen.jpg',
-      alt: 'Placeholder for a specimen photograph.',
-      build: () => placeholderPanel('Specimen photograph', 1600, 1280),
+      alt: 'Dark water, awaiting a specimen photograph.',
+      build: () => waterPlate(23, 1600, 1280, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'detailA',
       filename: 'placeholder-detail-a.jpg',
-      alt: 'Placeholder for a specimen detail crop.',
-      build: () => placeholderPanel('Detail crop', 900, 900),
+      alt: 'Dark water, awaiting a detail crop.',
+      build: () => waterPlate(37, 900, 900, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'detailB',
       filename: 'placeholder-detail-b.jpg',
-      alt: 'Placeholder for a second specimen detail crop.',
-      build: () => placeholderPanel('Detail crop', 900, 900),
+      alt: 'Dark water, awaiting a second detail crop.',
+      build: () => waterPlate(53, 900, 900, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'aquarium',
       filename: 'placeholder-aquarium.jpg',
-      alt: 'Placeholder for a custom aquarium photograph.',
-      build: () => placeholderPanel('Custom aquarium', 1600, 1280),
+      alt: 'Dark water, awaiting a custom aquarium photograph.',
+      build: () => waterPlate(67, 1600, 1280, 'neutral'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'aquariumDetail',
       filename: 'placeholder-aquarium-detail.jpg',
-      alt: 'Placeholder for an aquarium equipment detail.',
-      build: () => placeholderPanel('Equipment detail', 900, 900),
+      alt: 'Dark water, awaiting an equipment detail.',
+      build: () => waterPlate(83, 900, 900, 'neutral'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'article',
       filename: 'placeholder-article.jpg',
-      alt: 'Placeholder for an article image.',
-      build: () => placeholderPanel('Article image', 1600, 1000),
+      alt: 'Dark water, awaiting an article image.',
+      build: () => waterPlate(97, 1600, 1000, 'cold'),
       mimeType: 'image/jpeg',
     },
     {
       key: 'social',
       filename: 'placeholder-social.jpg',
-      alt: 'Placeholder social sharing image for Finquiry.',
-      build: () => placeholderPanel('Finquiry — social preview', 1200, 630),
+      alt: 'Dark water, used as a social sharing image.',
+      build: () => waterPlate(101, 1200, 630, 'warm'),
       mimeType: 'image/jpeg',
     },
   ]
@@ -143,8 +229,8 @@ export const seedMedia = async (payload: Payload) => {
     specs.push({
       key: `category-${slugify(category.name)}`,
       filename: `placeholder-category-${slugify(category.name)}.jpg`,
-      alt: `Placeholder image for the ${category.name} sourcing category.`,
-      build: () => placeholderPanel(category.name, 1200, 900),
+      alt: `Dark water, awaiting photography for ${category.name}.`,
+      build: () => categoryPlate(category.name, 1200, 1500),
       mimeType: 'image/jpeg',
     })
   }
@@ -164,8 +250,7 @@ export const seedMedia = async (payload: Payload) => {
  * The first admin's password.
  *
  * There is no default. A constant here would mean that anyone who ran the seed
- * against a real database — which is the documented way to bootstrap one —
- * created a super-admin account whose password is published in this repository.
+ * against a real database, which is the documented way to bootstrap one, * created a super-admin account whose password is published in this repository.
  * So: use what the operator supplied, refuse outright in production if they
  * supplied nothing, and in development mint a random one and print it once.
  */
@@ -182,7 +267,7 @@ const resolveAdminPassword = (): string => {
 
   const generated = randomBytes(18).toString('base64url')
   log(`user: generated a random admin password for this environment: ${generated}`)
-  log('user: save it now — it is not stored anywhere and will not be shown again.')
+  log('user: save it now. It is not stored anywhere and will not be shown again.')
   return generated
 }
 
@@ -218,7 +303,7 @@ export const seedAdminUser = async (payload: Payload) => {
     context: { skipRevalidate: true },
   })
 
-  log(`user: ${email} created — change this password before going live`)
+  log(`user: ${email} created, change this password before going live`)
 }
 
 /* -------------------------------------------------------------------------- */

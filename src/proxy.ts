@@ -119,7 +119,7 @@ const ADMIN_CSP = [
  * The host the visitor actually typed.
  *
  * `request.nextUrl.host` is the address the server was reached on, which behind
- * a load balancer is an internal one — using it made the HTTPS redirect below
+ * a load balancer is an internal one, using it made the HTTPS redirect below
  * silently never fire, because every real request looked like it came from
  * localhost. The forwarded headers carry the external host; `nextUrl` is only
  * the last resort.
@@ -144,7 +144,7 @@ export const proxy = (request: NextRequest) => {
    * Force HTTPS in production.
    *
    * The deciding header is `x-forwarded-proto`, set by the proxy or load
-   * balancer that terminated TLS — `request.nextUrl.protocol` reflects the
+   * balancer that terminated TLS, `request.nextUrl.protocol` reflects the
    * internal hop and would cause a redirect loop behind a terminating proxy.
    * Only redirect when the forwarded protocol says plain HTTP, and never in
    * development or on a local host.
@@ -161,7 +161,7 @@ export const proxy = (request: NextRequest) => {
   }
 
   // The Payload admin and API manage their own security model, and the admin
-  // bundle needs allowances the public site should not have — but "not the
+  // bundle needs allowances the public site should not have, but "not the
   // public policy" is not the same as "no policy".
   if (pathname.startsWith('/admin') || pathname.startsWith('/api/')) {
     const adminResponse = NextResponse.next()

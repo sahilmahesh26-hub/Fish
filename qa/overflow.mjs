@@ -15,7 +15,7 @@ import { chromium } from '@playwright/test'
 const BASE = process.env.BASE_URL ?? 'http://127.0.0.1:3100'
 const CHROMIUM = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome'
 
-const WIDTHS = [320, 360, 375, 390, 393, 412, 430, 768, 820, 1024]
+const WIDTHS = [320, 360, 390, 430, 768, 1024, 1280, 1440, 1728]
 const ROUTES = (process.env.ROUTES ?? '/,/source-a-fish,/how-it-works,/deliveries,/knowledge,/about,/contact,/custom-aquariums,/cookie-policy,/thank-you').split(',')
 
 const browser = await chromium.launch({ executablePath: CHROMIUM })

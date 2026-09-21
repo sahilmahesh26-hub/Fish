@@ -361,7 +361,7 @@ export interface HeroBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -380,7 +380,7 @@ export interface HeroBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -498,7 +498,7 @@ export interface MediaCopySplitBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -548,7 +548,7 @@ export interface ProcessRouteBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -595,7 +595,7 @@ export interface CategoryGridBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -612,7 +612,7 @@ export interface CategoryGridBlock {
   blockType: 'categoryGrid';
 }
 /**
- * The kinds of search Finquiry supports. These are never presented as stock — every card carries a "sourced on request" label.
+ * The kinds of search Finquiry supports. These are never presented as stock, every card carries a "sourced on request" label.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "sourcing-categories".
@@ -757,7 +757,7 @@ export interface DeliveryStoriesBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -908,7 +908,7 @@ export interface AquariumFeatureBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -1056,7 +1056,7 @@ export interface FeaturedArticlesBlock {
   posts?: (number | Post)[] | null;
   limit?: number | null;
   /**
-   * Shown while no article is published yet — for example on a new site where every article is still a draft.
+   * Shown while no article is published yet, for example on a new site where every article is still a draft.
    */
   emptyState?: {
     heading?: string | null;
@@ -1070,7 +1070,7 @@ export interface FeaturedArticlesBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -1220,7 +1220,7 @@ export interface FaqsBlock {
   category?: ('sourcing' | 'delivery' | 'pricing' | 'aquariums' | 'general') | null;
   faqs?: (number | Faq)[] | null;
   /**
-   * Only enable where these exact questions and answers are visible on the page — Google requires the rendered content to match.
+   * Only enable where these exact questions and answers are visible on the page, Google requires the rendered content to match.
    */
   emitStructuredData?: boolean | null;
   id?: string | null;
@@ -1284,7 +1284,7 @@ export interface CtaBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -1303,7 +1303,7 @@ export interface CtaBlock {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -1403,7 +1403,7 @@ export interface Testimonial {
   createdAt: string;
 }
 /**
- * Customer sourcing requests. Private — never exposed on the public site.
+ * Customer sourcing requests. Private, never exposed on the public site.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "enquiries".
@@ -2699,7 +2699,7 @@ export interface Homepage {
   hero: {
     eyebrow?: string | null;
     /**
-     * Wrap a word or phrase in *asterisks* to set it in Scarlet, e.g. Every Collector Is *Searching* for Something.
+     * Wrap a word or phrase in *asterisks* to emphasise it, e.g. Every Collector Is *Searching* for Something.
      */
     headline: string;
     body?: string | null;
@@ -2711,7 +2711,7 @@ export interface Homepage {
       label?: string | null;
       type?: ('internal' | 'external' | 'whatsapp') | null;
       /**
-       * Path starting with "/" — for example /source-a-fish
+       * Path starting with "/", for example /source-a-fish
        */
       href?: string | null;
       /**
@@ -2730,7 +2730,7 @@ export interface Homepage {
       label?: string | null;
       type?: ('internal' | 'external' | 'whatsapp') | null;
       /**
-       * Path starting with "/" — for example /source-a-fish
+       * Path starting with "/", for example /source-a-fish
        */
       href?: string | null;
       /**
@@ -2743,14 +2743,9 @@ export interface Homepage {
       whatsappMessage?: string | null;
     };
     /**
-     * Transparent cutout of one fish (PNG or WebP). It overlaps the hero shapes and drifts gently. Replace this to change the hero artwork.
+     * The full-bleed hero photograph. Use one strong, dark, cinematic image: a macro crop of a single specimen, or dark water. It is held under a scrim so the headline stays legible, which means a busy or bright image will fight the type. Landscape, at least 2400px wide.
      */
-    fishImage?: (number | null) | Media;
-    /**
-     * Small annotation printed beside the artwork.
-     */
-    annotation?: string | null;
-    scrollHint?: string | null;
+    heroImage?: (number | null) | Media;
   };
   /**
    * The homepage body. Drag to reorder, use "Hide this section" to take one off the page, and click Add to bring in a new section.
@@ -2878,7 +2873,7 @@ export interface SiteSetting {
 export interface Header {
   id: number;
   /**
-   * Drag to reorder. Keep labels short — more than eight items crowds the desktop bar.
+   * Drag to reorder. Keep labels short, more than eight items crowds the desktop bar.
    */
   navItems?:
     | {
@@ -2901,7 +2896,7 @@ export interface Header {
     label?: string | null;
     type?: ('internal' | 'external' | 'whatsapp') | null;
     /**
-     * Path starting with "/" — for example /source-a-fish
+     * Path starting with "/", for example /source-a-fish
      */
     href?: string | null;
     /**
@@ -2995,9 +2990,7 @@ export interface HomepageSelect<T extends boolean = true> {
               url?: T;
               whatsappMessage?: T;
             };
-        fishImage?: T;
-        annotation?: T;
-        scrollHint?: T;
+        heroImage?: T;
       };
   sections?:
     | T

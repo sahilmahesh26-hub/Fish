@@ -28,7 +28,7 @@ export const SiteHeader = async () => {
           <Link
             href="/"
             className={styles.brand}
-            aria-label={`${settings.brandName ?? 'Finquiry'} — home`}
+            aria-label={`${settings.brandName ?? 'Finquiry'}, home`}
           >
             <span className={styles.brandMark} aria-hidden="true" />
             <span className={styles.brandName}>{settings.brandName ?? 'Finquiry'}</span>

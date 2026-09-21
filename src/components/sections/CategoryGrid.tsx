@@ -47,9 +47,13 @@ export const CategoryGrid = async ({
           <li
             key={category.id}
             className={styles.card}
-            /* A four-step rhythm keeps the grid varied however many categories
-               the editor publishes. */
-            data-size={['lg', 'sm', 'sm', 'md'][index % 4]}
+            /*
+             * Only the first card is featured. The previous version cycled
+             * four sizes and nudged every third card down, which produced a
+             * masonry with holes in it rather than a composition. One feature
+             * and a uniform run reads as edited; a varied run reads as random.
+             */
+            data-feature={index === 0 ? '' : undefined}
             id={category.slug}
           >
             <Link href={`/source-a-fish?category=${category.slug}`} className={styles.cardLink}>
@@ -57,7 +61,7 @@ export const CategoryGrid = async ({
                 <CmsImage
                   media={category.coverMedia}
                   sizes="(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 420px"
-                  placeholderLabel="Image to be added"
+                  fallbackLabel="Category image"
                 />
               </div>
               <div className={styles.cardBody}>

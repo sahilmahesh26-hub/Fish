@@ -1,6 +1,6 @@
 import { Section } from './Section'
 import { SectionHeading } from './SectionHeading'
-import { CurrentLine } from '@/components/art/Shapes'
+
 import type { SectionIntroBlock as SectionIntroBlockType } from '@/payload-types'
 import styles from './SectionIntro.module.css'
 
@@ -16,7 +16,6 @@ export const SectionIntro = ({ block }: { block: SectionIntroBlockType }) => {
         align={block.alignment === 'center' ? 'center' : 'start'}
         className={styles.heading}
       />
-      <CurrentLine className={styles.current} />
     </Section>
   )
 }

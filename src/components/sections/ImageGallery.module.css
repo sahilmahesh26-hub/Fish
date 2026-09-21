@@ -20,14 +20,14 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-md);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 /* A repeating rhythm of crop shapes keeps a long gallery from reading as a
    uniform contact sheet. */
 .item:nth-child(4n + 1) .media {
   aspect-ratio: 1;
-  border-radius: var(--radius-pool);
+  border-radius: var(--radius-md);
 }
 
 .item:nth-child(4n + 3) .media {
@@ -41,5 +41,5 @@
 }
 
 [data-on-dark] .caption {
-  color: var(--on-dark-wash);
+  color: var(--ink-800);
 }

@@ -11,7 +11,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
  * Kept entirely separate from `media` so a customer's reference photo can
  * never surface in the public media library or be listed by the public API.
  * Files are written outside `public/`, and reads require an authenticated
- * staff session — see `src/app/(frontend)/api/private-media/[id]/route.ts`.
+ * staff session, see `src/app/(frontend)/api/private-media/[id]/route.ts`.
  */
 export const PrivateMedia: CollectionConfig = {
   slug: 'private-media',

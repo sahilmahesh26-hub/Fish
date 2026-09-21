@@ -100,7 +100,7 @@ const KnowledgePage = async ({ searchParams }: Props) => {
                     <CmsImage
                       media={post.featuredImage}
                       sizes="(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 380px"
-                      placeholderLabel="Article image"
+                      fallbackLabel="Article image"
                     />
                   </div>
                   <div className={styles.body}>

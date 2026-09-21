@@ -17,7 +17,7 @@ export const Enquiries: CollectionConfig = {
     useAsTitle: 'requestId',
     group: 'Enquiries',
     defaultColumns: ['requestId', 'fullName', 'fishRequired', 'status', 'createdAt'],
-    description: 'Customer sourcing requests. Private — never exposed on the public site.',
+    description: 'Customer sourcing requests. Private, never exposed on the public site.',
     listSearchableFields: ['requestId', 'fullName', 'fishRequired', 'city'],
   },
   access: {
@@ -131,7 +131,7 @@ export const Enquiries: CollectionConfig = {
                 { label: 'Yes', value: 'yes' },
                 { label: 'No', value: 'no' },
                 { label: 'Not sure', value: 'unsure' },
-                { label: 'Not applicable — planning a new system', value: 'new-system' },
+                { label: 'Not applicable, planning a new system', value: 'new-system' },
               ],
             },
             { name: 'systemNotes', type: 'textarea', label: 'Additional system notes' },

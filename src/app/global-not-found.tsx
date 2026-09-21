@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { bricolage, manrope } from '@/lib/fonts'
+import { archivo, manrope } from '@/lib/fonts'
 import '@/styles/global.css'
 import styles from './global-not-found.module.css'
 
 export const metadata: Metadata = {
-  title: 'Page not found — Finquiry',
+  title: 'Page not found, Finquiry',
   description: 'The page you are looking for may have moved, changed or never existed.',
   robots: { index: false, follow: false },
 }
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
  * still render if the database is unreachable.
  */
 const GlobalNotFound = () => (
-  <html lang="en-IN" className={`${bricolage.variable} ${manrope.variable}`}>
+  <html lang="en-IN" className={`${archivo.variable} ${manrope.variable}`}>
     <body>
       <main id="main-content" className={styles.wrapper}>
         <div className={styles.inner}>

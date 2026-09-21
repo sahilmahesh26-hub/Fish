@@ -18,20 +18,20 @@
   padding-inline: var(--space-2);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-pill);
-  color: var(--navy-900);
+  color: var(--bone-100);
   font-size: var(--fs-small);
   font-weight: 600;
   text-decoration: none;
 }
 
 .filter:hover {
-  border-color: var(--scarlet);
+  border-color: var(--red-500);
 }
 
 .filter[aria-current='page'] {
-  background: var(--navy-900);
-  border-color: var(--navy-900);
-  color: var(--text-on-dark);
+  background: var(--ink-700);
+  border-color: var(--bone-100);
+  color: var(--bone-100);
 }
 
 .grid {
@@ -54,7 +54,7 @@
   overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   color: var(--text);
   text-decoration: none;
   transition:
@@ -71,14 +71,14 @@
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .stamp {
   position: absolute;
   inset-block-end: var(--space-1);
   inset-inline-end: var(--space-1);
-  background: var(--on-dark-veil);
+  background: var(--ink-700);
 }
 
 .body {
@@ -100,41 +100,53 @@
   gap: 0.5rem;
   font-size: var(--fs-small);
   font-weight: 600;
-  color: var(--aegean-ink);
+  color: var(--cobalt-400);
 }
 
 .arrow {
   inline-size: 26px;
-  color: var(--scarlet);
+  color: var(--red-500);
   flex: none;
 }
 
 .specimen {
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
+/*
+ * The empty listing.
+ *
+ * A dashed card holding a third of a 1440 row reads as a component that failed
+ * to load. Set instead as a ruled band across the full measure with the copy
+ * at reading width: the page still says plainly that there is nothing here
+ * yet, but it looks like a decision rather than an accident. No dashes, for
+ * the same reason.
+ */
 .empty {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
-  max-inline-size: 60ch;
-  padding: var(--space-5);
-  border: 1px dashed var(--rule-strong);
-  border-radius: var(--radius-md);
-  background: var(--linen-200);
+  padding-block: var(--space-6);
+  border-block: 1px solid var(--rule);
+}
+
+.empty > * {
+  max-inline-size: 52ch;
 }
 
 .emptyHeading {
   font-family: var(--font-display);
-  font-size: var(--fs-card-title);
+  font-size: var(--fs-subsection);
+  font-variation-settings: 'wdth' var(--wdth-display);
+  letter-spacing: -0.02em;
   font-weight: 700;
   line-height: 1.15;
 }
 
 .emptyBody {
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .emptyLink {
@@ -142,7 +154,7 @@
   align-items: center;
   min-block-size: 44px;
   font-weight: 700;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 @media (min-width: 640px) {

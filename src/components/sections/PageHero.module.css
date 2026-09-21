@@ -1,48 +1,27 @@
+/*
+ * The inner-page header.
+ *
+ * Deliberately quieter than the homepage hero: a page below the top level
+ * should establish where you are and then get out of the way. The glow blobs
+ * and the corner starburst are gone; what separates this from the page body is
+ * a hairline and a change of surface, which is the same device every other
+ * section boundary uses.
+ */
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem);
-  background: var(--linen);
+  padding-block: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+  background: var(--ink-800);
   border-block-end: 1px solid var(--rule);
-}
-
-.glow {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-base);
-  pointer-events: none;
-}
-
-.glow span {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  filter: blur(80px);
-}
-
-.glowScarlet {
-  inset-block-start: -30%;
-  inset-inline-end: 4%;
-  inline-size: min(38vw, 460px);
-  aspect-ratio: 1;
-  background: var(--glow-scarlet);
-}
-
-.glowAegean {
-  inset-block-end: -40%;
-  inset-inline-start: -6%;
-  inline-size: min(34vw, 420px);
-  aspect-ratio: 1;
-  background: var(--glow-aegean);
 }
 
 .inner {
   position: relative;
   z-index: var(--z-content);
   display: grid;
-  gap: var(--space-4);
-  align-items: center;
+  gap: var(--space-5);
+  align-items: end;
   inline-size: 100%;
   max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
   margin-inline: auto;
@@ -54,6 +33,8 @@
   flex-direction: column;
   gap: var(--space-2);
 }
+
+/* --- Breadcrumbs --------------------------------------------------------- */
 
 .breadcrumbs ol {
   display: flex;
@@ -74,63 +55,73 @@
 .breadcrumbs li + li::before {
   content: '/';
   margin-inline-end: 0.5rem;
-  color: var(--rule-strong);
+  color: var(--text-faint);
 }
 
 /* A real 44px target rather than an expanded pseudo-element, so the size is
-   what a person — and an audit — actually measures. */
+   what a person, and an audit, actually measures. */
 .breadcrumbs a {
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
   color: var(--text-muted);
+  text-decoration: none;
 }
 
+.breadcrumbs a:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* --- Title --------------------------------------------------------------- */
+
 .heading {
-  max-inline-size: 16ch;
+  max-inline-size: 18ch;
+  font-family: var(--font-display);
   font-size: var(--fs-page-title);
-  font-weight: 800;
+  /* Expanded, like the homepage hero: this is the other place on the site
+     where the display voice is allowed to be monumental. */
+  font-variation-settings: 'wdth' var(--wdth-display);
+  font-weight: 700;
   line-height: var(--lh-display);
   letter-spacing: var(--tracking-display);
+  text-wrap: balance;
 }
 
 .intro {
   max-inline-size: 54ch;
   font-size: var(--fs-lead);
-  color: var(--navy-700);
+  line-height: var(--lh-body);
+  color: var(--text-secondary);
+  text-wrap: pretty;
 }
+
+/* --- Optional media ------------------------------------------------------ */
 
 .media {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: var(--radius-pool);
-  background: var(--linen-400);
+  border-radius: var(--radius-md);
+  background: var(--ink-600);
 }
 
-.starburst {
-  position: absolute;
-  inset-block-start: 6%;
-  inset-inline-end: 8%;
-  inline-size: 14%;
-  color: var(--linen-100);
-}
-
-.bubbles {
-  display: none;
+.media :global(img) {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
 }
 
 @media (min-width: 1024px) {
   .inner {
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
     gap: var(--space-8);
   }
 
-  .bubbles {
-    display: block;
-    inline-size: 56px;
-    justify-self: end;
-    color: var(--aegean-ink);
-    opacity: 0.4;
+  /* Without media the copy keeps the full measure rather than sitting in a
+     column with an empty one beside it. */
+  .inner:not(:has(.media)) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

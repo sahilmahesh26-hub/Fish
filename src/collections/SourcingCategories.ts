@@ -10,7 +10,7 @@ export const SourcingCategories: CollectionConfig = {
     group: 'Sourcing',
     defaultColumns: ['name', 'active', 'order'],
     description:
-      'The kinds of search Finquiry supports. These are never presented as stock — every card carries a "sourced on request" label.',
+      'The kinds of search Finquiry supports. These are never presented as stock, every card carries a "sourced on request" label.',
   },
   access: { read: activeOrStaff, create: isStaff, update: isStaff, delete: isAdmin },
   defaultSort: 'order',

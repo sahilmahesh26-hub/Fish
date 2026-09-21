@@ -4,12 +4,12 @@
   padding: var(--space-3);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   /* Fine ruled paper, as in a specimen journal. */
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0 31px,
-    var(--navy-100) 31px 32px
+    var(--rule-faint) 31px 32px
   );
 }
 
@@ -22,12 +22,12 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .measurement {
   margin-block-start: var(--space-1);
-  color: var(--navy-300);
+  color: var(--rule-strong);
 }
 
 .measurementCaption {
@@ -59,7 +59,7 @@
   margin: 0;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .crop > :global(img) {
@@ -104,10 +104,10 @@
 
 .note {
   padding: var(--space-2);
-  border-inline-start: 3px solid var(--aegean);
-  background: var(--aegean-50);
+  border-inline-start: 3px solid var(--cobalt-500);
+  background: var(--cobalt-tint);
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 @media (min-width: 1024px) {

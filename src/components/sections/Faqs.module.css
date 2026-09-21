@@ -46,7 +46,7 @@
   position: absolute;
   inset-block-start: 50%;
   inset-inline-start: 50%;
-  background: var(--scarlet);
+  background: var(--red-500);
   transform: translate(-50%, -50%);
   transition: transform var(--dur-base) var(--ease-out);
 }
@@ -71,10 +71,10 @@
 
 [data-on-dark] .indicator::before,
 [data-on-dark] .indicator::after {
-  background: var(--linen-100);
+  background: var(--ink-700);
 }
 
 [data-on-dark] .list,
 [data-on-dark] .item {
-  border-color: var(--on-dark-rule-quiet);
+  border-color: var(--rule-faint);
 }

@@ -62,7 +62,7 @@ export const FeaturedArticles = async ({
                 <CmsImage
                   media={lead.featuredImage}
                   sizes="(max-width: 1023px) 92vw, 640px"
-                  placeholderLabel="Article image"
+                  fallbackLabel="Article image"
                 />
               </div>
               <div className={styles.leadBody}>
@@ -84,7 +84,7 @@ export const FeaturedArticles = async ({
                 <li key={post.id}>
                   <Link href={`/knowledge/${post.slug}`} className={styles.supportingLink}>
                     <div className={styles.supportingMedia}>
-                      <CmsImage media={post.featuredImage} sizes="140px" placeholderLabel="Image" />
+                      <CmsImage media={post.featuredImage} sizes="140px" fallbackLabel="Image" />
                     </div>
                     <div className={styles.supportingBody}>
                       <p className={styles.meta}>

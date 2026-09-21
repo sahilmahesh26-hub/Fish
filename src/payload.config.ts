@@ -52,7 +52,7 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
-      titleSuffix: ' — Finquiry',
+      titleSuffix: ', Finquiry',
     },
     components: {},
   },
@@ -137,7 +137,7 @@ export default buildConfig({
       collections: ['pages', 'posts', 'deliveries', 'aquarium-projects', 'sourcing-categories'],
       globals: ['homepage'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }) => `${doc?.title ?? 'Finquiry'} — Finquiry`,
+      generateTitle: ({ doc }) => `${doc?.title ?? 'Finquiry'}, Finquiry`,
       generateDescription: ({ doc }) =>
         doc?.excerpt ?? doc?.shortDescription ?? doc?.summary ?? doc?.requirement ?? '',
       generateURL: ({ doc, collectionSlug }) =>

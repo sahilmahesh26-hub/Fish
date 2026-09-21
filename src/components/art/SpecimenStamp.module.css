@@ -3,11 +3,11 @@
   flex-direction: column;
   gap: 2px;
   padding: 0.5rem 0.9rem;
-  border: 2px solid var(--scarlet);
-  border-radius: var(--radius-xs);
-  color: var(--scarlet-ink);
+  border: 2px solid var(--red-500);
+  border-radius: var(--radius-sm);
+  color: var(--red-400);
   transform: rotate(-2.5deg);
-  background: rgb(217 26 42 / 4%);
+  background: var(--red-tint);
 }
 
 .label {
@@ -27,8 +27,8 @@
 }
 
 [data-on-dark] .stamp,
-[data-on-scarlet] .stamp {
-  border-color: var(--linen-100);
-  color: var(--linen-100);
-  background: var(--on-dark-tint);
+[data-on-red] .stamp {
+  border-color: var(--bone-100);
+  color: var(--bone-100);
+  background: var(--rule-faint);
 }

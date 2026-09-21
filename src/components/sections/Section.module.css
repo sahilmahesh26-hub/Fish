@@ -14,22 +14,40 @@
   padding-inline: var(--gutter);
 }
 
+/*
+ * Four surfaces, three of them dark.
+ *
+ * The separation between them is deliberately small. On a near-black page the
+ * eye reads a two-percent lift as a real edge, and anything louder turns the
+ * page into stripes. Where a band needs to announce itself it does so with a
+ * hairline, not with more contrast.
+ */
+
+/* The page itself. */
 .linen {
-  background: var(--linen);
+  background: var(--ink-900);
   color: var(--text);
 }
 
+/* One step up: cards and grouped content sit on this. */
 .linenRaised {
-  background: var(--linen-200);
+  background: var(--ink-800);
   color: var(--text);
 }
 
+/*
+ * The deep band. Same value as the page, separated by hairlines rather than by
+ * a fill, which is what lets a full-bleed image inside it read as the section
+ * rather than as a picture pasted onto a panel.
+ */
 .navy {
-  background: var(--navy-900);
-  color: var(--text-on-dark);
+  background: var(--ink-900);
+  color: var(--text);
+  border-block: 1px solid var(--rule-faint);
 }
 
+/* The plate. Reserved for a decision, never for decoration. */
 .scarlet {
-  background: var(--scarlet);
-  color: var(--text-on-scarlet);
+  background: var(--red-500);
+  color: var(--text-on-red);
 }

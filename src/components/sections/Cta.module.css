@@ -2,32 +2,19 @@
   overflow: hidden;
 }
 
-.starburst {
-  position: absolute;
-  inset-block-start: 8%;
-  inset-inline-end: 6%;
-  inline-size: clamp(48px, 7vw, 108px);
-  color: var(--linen-100);
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.bubbles {
-  position: absolute;
-  inset-block-end: -6%;
-  inset-inline-start: 4%;
-  inline-size: clamp(44px, 6vw, 84px);
-  color: var(--linen-100);
-  opacity: 0.35;
-  pointer-events: none;
-}
-
+/*
+ * The closing block, set as a two-part statement.
+ *
+ * It ran as a single left column, which on a 1440 plate left the right half of
+ * the strongest colour on the site completely empty. Splitting the ask from
+ * the explanation gives the band the tension it was missing and puts the
+ * buttons where the eye lands after reading the headline.
+ */
 .inner {
   position: relative;
   z-index: var(--z-content);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  display: grid;
+  gap: var(--space-3);
 }
 
 .heading {
@@ -41,9 +28,9 @@
 .body {
   max-inline-size: 46ch;
   font-size: var(--fs-lead);
-  /* Fully opaque: this block is Scarlet by default, where a translucent linen
+  /* Fully opaque: this block is red by default, where a translucent bone
      would fall below the AA contrast threshold. */
-  color: var(--text-on-scarlet);
+  color: var(--text-on-red);
 }
 
 .actions {
@@ -53,28 +40,71 @@
   margin-block-start: var(--space-3);
 }
 
+/*
+ * The secondary action on the red plate.
+ *
+ * Bone on this red is 3.7:1 and fails AA at label size, so the outline and the
+ * type both take the plate's ink colour. On hover the button fills with that
+ * ink and the label flips to bone, which is the strongest pairing available
+ * without leaving the palette.
+ */
 .secondaryOnScarlet {
-  --button-fg: var(--linen-100);
-  --button-border: var(--linen-100);
+  --button-fg: var(--text-on-red);
+  --button-border: var(--text-on-red);
 }
 
 .secondaryOnScarlet:hover {
-  --button-bg: var(--linen-100);
-  --button-fg: var(--scarlet-ink);
+  --button-bg: var(--text-on-red);
+  --button-fg: var(--bone-100);
 }
 
-.section:not([data-on-scarlet]):not([data-on-dark]) .body {
-  color: var(--navy-700);
-}
-
-.section:not([data-on-scarlet]):not([data-on-dark]) .starburst,
-.section:not([data-on-scarlet]):not([data-on-dark]) .bubbles {
-  color: var(--aegean);
-  opacity: 0.3;
+.section:not([data-on-red]):not([data-on-dark]) .body {
+  color: var(--bone-300);
 }
 
 @media (min-width: 768px) {
   .heading {
     max-inline-size: 16ch;
+  }
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--space-8);
+  }
+
+  /* The eyebrow, when there is one, belongs above the headline rather than in
+     its own column. */
+  .inner > :global(.u-eyebrow) {
+    grid-column: 1;
+  }
+
+  .heading {
+    grid-column: 1;
+    /* The headline is the tallest thing here; let it use its own column fully
+       rather than being held to the measure the narrow layout needs. */
+    max-inline-size: 13ch;
+  }
+
+  .copy {
+    /*
+     * An explicit cell, not auto-placement.
+     *
+     * Auto-flow moves down a row before it moves across a column, so naming
+     * only the column would drop the copy below the headline instead of
+     * beside it. Placing it first in row 1 leaves the eyebrow and headline to
+     * fill column 1 underneath it.
+     */
+    grid-column: 2;
+    grid-row: 1;
+    /* Optically aligned with the headline's first line rather than its box:
+       display type at 0.98 leading sits higher than body text does. */
+    padding-block-start: 0.5rem;
+  }
+
+  .copy .actions {
+    margin-block-start: var(--space-4);
   }
 }

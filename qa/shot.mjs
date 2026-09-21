@@ -41,6 +41,31 @@ if (full === 'true') {
 
 await page.evaluate(() => document.fonts.ready)
 await page.waitForTimeout(500)
+
+if (full === 'true') {
+  /*
+   * Resize the viewport to the document instead of using `fullPage`.
+   *
+   * Chromium's full-page capture stitches the page from several paints, and
+   * images that finished decoding between those paints can come back as their
+   * container's background colour. On this site that turned a rendered
+   * specimen plate into a flat grey rectangle in the screenshot while the
+   * element itself was painting correctly, which is a capture artefact that
+   * looks exactly like a real defect. Making the viewport as tall as the page
+   * means one paint, which is what the visitor sees.
+   */
+  const height = await page.evaluate(() => document.documentElement.scrollHeight)
+  // Chromium refuses a surface taller than 16384px; fall back to stitching.
+  if (height <= 16000) {
+    await page.setViewportSize({ width: Number(width), height })
+    await page.waitForTimeout(700)
+    await page.screenshot({ path: out })
+    await browser.close()
+    console.log('saved', out)
+    process.exit(0)
+  }
+}
+
 await page.screenshot({ path: out, fullPage: full === 'true' })
 await browser.close()
 console.log('saved', out)

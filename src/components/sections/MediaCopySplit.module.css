@@ -6,12 +6,12 @@
 
 .media {
   overflow: hidden;
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .pool {
   aspect-ratio: 4 / 3;
-  border-radius: var(--radius-pool);
+  border-radius: var(--radius-md);
 }
 
 .oval {

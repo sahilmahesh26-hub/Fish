@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Suspense, type ReactNode } from 'react'
-import { bricolage, manrope } from '@/lib/fonts'
+import { archivo, manrope } from '@/lib/fonts'
 import { SiteHeader } from '@/components/layout/Header'
 import { SiteFooter } from '@/components/layout/Footer'
 import { JsonLd } from '@/components/ui/JsonLd'
@@ -46,7 +46,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
     alternates: {
       types: {
         'application/rss+xml': [
-          { url: '/rss.xml', title: `${settings.brandName ?? 'Finquiry'} — Knowledge Hub` },
+          { url: '/rss.xml', title: `${settings.brandName ?? 'Finquiry'}, Knowledge Hub` },
         ],
       },
     },
@@ -57,14 +57,14 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#F5F0E8',
+  themeColor: '#050607',
 }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
   const settings = await getSiteSettings()
 
   return (
-    <html lang="en-IN" className={`${bricolage.variable} ${manrope.variable}`}>
+    <html lang="en-IN" className={`${archivo.variable} ${manrope.variable}`}>
       <body>
         {/* Sets html[data-motion="on"] only when animation is actually wanted,
             so reveal animations never hide content from a visitor without JS. */}

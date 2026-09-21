@@ -72,7 +72,7 @@ export const buildMetadata = ({
 
   /*
    * An editor writing a title in Payload writes the whole title — the seeded
-   * ones already end in "| Finquiry". Letting the layout's `%s — Finquiry`
+   * ones already end in "| Finquiry". Letting the layout's `%s, Finquiry`
    * template wrap that would print the brand twice, so an explicit override is
    * marked absolute. A title falling back to the document's own heading is a
    * fragment, and does want the template.
@@ -136,8 +136,8 @@ export const titleTemplateFor = (settings: SiteSetting) => {
   const brand = settings.brandName ?? 'Finquiry'
   const template = settings.defaultSeo?.titleTemplate
   return {
-    default: settings.defaultSeo?.defaultTitle || `${brand} — ${settings.tagline ?? ''}`.trim(),
-    template: template?.includes('%s') ? template : `%s — ${brand}`,
+    default: settings.defaultSeo?.defaultTitle || `${brand}, ${settings.tagline ?? ''}`.trim(),
+    template: template?.includes('%s') ? template : `%s, ${brand}`,
   }
 }
 
@@ -156,7 +156,7 @@ type IndexablePage = {
  * report as an error.
  *
  * A policy page awaiting legal review is excluded from both. It stays reachable
- * — the footer and the enquiry form's consent checkbox link to it — but draft
+ *, the footer and the enquiry form's consent checkbox link to it — but draft
  * wording is not offered as settled terms. Unticking "requires legal review" in
  * Payload makes the page indexable and adds it to the sitemap in one step.
  */

@@ -11,19 +11,19 @@
   gap: 0.5rem;
   max-inline-size: var(--measure);
   padding: var(--space-3);
-  border: 2px solid var(--scarlet);
+  border: 2px solid var(--red-500);
   border-radius: var(--radius-md);
-  background: var(--scarlet-50);
+  background: var(--red-tint);
 }
 
 .title {
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .body {
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }

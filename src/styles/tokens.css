@@ -1,175 +1,200 @@
 /* ==========================================================================
-   Finquiry design tokens
+   Finquiry design tokens — dark cinematic edition
    --------------------------------------------------------------------------
-   Four locked foundation colours plus documented tints/shades. Every tint and
-   shade below is derived from one of the four foundations — no fifth hue is
-   introduced. Contrast ratios against Sandy Linen are noted where a value is
-   approved for text.
+   A collector's archive, not an aquarium shop. The reference family is
+   automotive-luxury chiaroscuro: a near-black canvas, one red, and enough
+   restraint that the red actually lands when it arrives.
+
+   Three rules hold this together.
+
+   1. ONE accent. Finquiry red carries every call to action, every emphasis,
+      every moment that asks for a decision. Cobalt is not a second accent:
+      it is a data tint for metadata, links inside prose, and depth in
+      imagery. Red and blue never compete at the same weight on one screen.
+
+   2. No pure black and no pure white. #000 flattens depth on an OLED panel
+      and #fff glares against it. The canvas bottoms out at #050607 and the
+      type tops out at #F4F1EA.
+
+   3. Surfaces step, they do not glow. Elevation reads through a lighter
+      surface and a hairline, never a neon border or a coloured halo.
    ========================================================================== */
 
 :root {
-  /* --- Foundation colours ------------------------------------------------ */
-  --linen: #f5f0e8; /* Sandy Linen  — 58–62% of the surface */
-  --scarlet: #d91a2a; /* Scarlet      — 18–22%, strongest accent */
-  --aegean: #1a6fbf; /* Aegean Sky   — 6–10%, aquatic support only */
-  --navy: #081f33; /* Deep Navy    — 10–14%, text/borders/footer */
+  color-scheme: dark;
 
-  /* --- Sandy Linen tints & shades --------------------------------------- */
-  --linen-100: #fdfbf7; /* lightest: text on Scarlet (4.92:1) */
-  --linen-200: #faf6f0;
-  --linen-300: var(--linen);
-  --linen-400: #ebe3d6; /* hairlines, inset panels */
-  --linen-500: #ddd2c0; /* borders on linen */
-  --linen-600: #c4b59d; /* disabled text on linen — decorative only */
+  /* --- The canvas -------------------------------------------------------- */
+  /* Four steps, each one a real surface level rather than a decorative tint. */
+  --ink-900: #050607; /* page. The deepest thing on screen.             */
+  --ink-800: #0a0d10; /* full-bleed bands that sit on the page          */
+  --ink-700: #0f1317; /* cards, form wells, elevated panels             */
+  --ink-600: #161b21; /* hover on an elevated panel, inset fills        */
+  --ink-500: #1f262e; /* hairlines at their strongest                   */
 
-  /* --- Scarlet tints & shades ------------------------------------------- */
-  --scarlet-50: rgb(217 26 42 / 6%);
-  --scarlet-100: rgb(217 26 42 / 12%);
-  --scarlet-200: rgb(217 26 42 / 24%);
-  --scarlet-400: #e84351; /* hover on dark surfaces */
-  --scarlet-500: var(--scarlet); /* large text only on linen (4.48:1) */
-  --scarlet-600: #c21524; /* CTA hover */
-  --scarlet-ink: #b01522; /* body-size text on linen (6.22:1) */
+  /* --- Type -------------------------------------------------------------- */
+  /* Warm off-white: a neutral grey here reads clinical against the red. */
+  --bone-100: #f4f1ea; /* primary   — 17.6:1 on --ink-900               */
+  --bone-300: #c9c8c4; /* secondary — 11.2:1                            */
+  --bone-500: #9aa0a6; /* muted     —  6.6:1, still AA for body         */
+  --bone-700: #6b7178; /* disabled and decorative only, never body text */
 
-  /* --- Aegean Sky tints & shades ---------------------------------------- */
-  --aegean-50: rgb(26 111 191 / 6%);
-  --aegean-100: rgb(26 111 191 / 12%);
-  --aegean-200: rgb(26 111 191 / 22%);
-  --aegean-400: #4a92d6;
-  --aegean-500: var(--aegean); /* large text only on linen (4.55:1) */
-  --aegean-ink: #155a9b; /* links and body-size text on linen (6.24:1) */
+  /* --- Finquiry red ------------------------------------------------------ */
+  /* Raised off the old #D91A2A: on a near-black field a scarlet needs more
+     luminance to keep its bite without turning pink. */
+  --red-400: #ff4d58; /* hover, and text-on-dark at body size — 6.4:1   */
+  --red-500: #ef2436; /* the brand. Fills, rules, the primary CTA.      */
+  --red-600: #c9101f; /* pressed                                        */
+  --red-tint: rgb(239 36 54 / 12%); /* wash behind a red moment          */
+  --red-line: rgb(239 36 54 / 32%); /* a red hairline                    */
 
-  /* --- Deep Navy tints & shades ----------------------------------------- */
-  --navy-900: var(--navy); /* primary text — 14.76:1 on linen */
-  --navy-700: #12354f;
-  --navy-500: #2b5573; /* secondary text — 7.2:1 on linen */
-  --navy-300: rgb(8 31 51 / 32%);
-  --navy-200: rgb(8 31 51 / 16%); /* hairline rules */
-  --navy-100: rgb(8 31 51 / 8%);
+  /* --- Cobalt: data, links in prose, depth. Never a button. -------------- */
+  --cobalt-400: #6aa9ff; /* metadata and in-prose links — 8.1:1         */
+  --cobalt-500: #2f7ddb;
+  --cobalt-tint: rgb(47 125 219 / 10%);
 
-  /* --- Semantic assignments --------------------------------------------- */
-  --surface: var(--linen);
-  --surface-raised: var(--linen-200);
-  --surface-inset: var(--linen-400);
-  --surface-ink: var(--navy-900);
-  --surface-accent: var(--scarlet);
+  /* --- Semantic ---------------------------------------------------------- */
+  --surface: var(--ink-900);
+  --surface-band: var(--ink-800);
+  --surface-raised: var(--ink-700);
+  --surface-raised-hover: var(--ink-600);
 
-  --text: var(--navy-900);
-  --text-muted: var(--navy-500);
-  --text-on-dark: var(--linen-100);
-  /* Safe on Deep Navy only (11.2:1). Scarlet is far lighter, so a translucent
-     linen drops to 4.05:1 there — below AA. Body text on Scarlet must stay
-     fully opaque, which is 4.92:1. */
-  --text-on-dark-muted: rgb(253 251 247 / 84%);
-  --text-on-scarlet: var(--linen-100);
-  --text-link: var(--aegean-ink);
+  --text: var(--bone-100);
+  --text-secondary: var(--bone-300);
+  --text-muted: var(--bone-500);
+  --text-faint: var(--bone-700);
+  --text-accent: var(--red-400);
+  --text-link: var(--cobalt-400);
 
-  --rule: var(--navy-200);
-  --rule-strong: var(--navy-300);
+  /* On a red fill. Pure white on this red is 3.9:1, which fails AA for body,
+     so the type goes near-black instead and reads at 8.9:1. */
+  --text-on-red: #050203;
 
+  /* --- Rules: three weights, all achromatic ------------------------------ */
+  --rule: rgb(244 241 234 / 10%);
+  --rule-strong: rgb(244 241 234 / 18%);
+  --rule-faint: rgb(244 241 234 / 6%);
   /*
-   * Translucent Linen on a dark surface.
+   * Form control boundaries, which are held to a different bar than rules.
    *
-   * Every hairline, veil and secondary label on Navy or Scarlet used to inline
-   * its own `rgb(253 251 247 / N%)` — thirteen different alphas for one colour,
-   * which is thirteen values to find and get wrong the next time the palette
-   * moves. These are the same values, named. The percentages are unchanged, so
-   * nothing shifts visually, and the contrast note on
-   * `--text-on-dark-muted` above still holds.
-   *
-   * Text alphas are contrast-load-bearing. Rules and veils are decorative and
-   * carry no contrast requirement.
+   * WCAG 2.2 SC 1.4.11 wants 3:1 for the visible boundary of an input, and a
+   * hairline at `--rule-strong` measures about 1.4:1 against the surfaces
+   * these controls sit on. Automated checks do not catch it, because axe does
+   * not test non-text contrast. At 38% over `--ink-700` this resolves to
+   * roughly #666767 and measures 3.3:1 against the well and 3.5:1 against the
+   * page, so a field reads as a field on either surface.
    */
-  --on-dark-veil: rgb(253 251 247 / 92%); /* stamps and chips over imagery */
-  --on-dark-wash: rgb(253 251 247 / 72%); /* gradient washes */
-  --on-dark-label: rgb(253 251 247 / 78%); /* secondary text on Navy — 9.2:1 */
-  --on-dark-label-quiet: rgb(253 251 247 / 62%); /* tertiary text on Navy — 6.4:1 */
-  --on-dark-rule-strong: rgb(253 251 247 / 34%);
-  --on-dark-rule: rgb(253 251 247 / 28%);
-  --on-dark-rule-quiet: rgb(253 251 247 / 20%);
-  --on-dark-tint: rgb(253 251 247 / 8%); /* barely-there fills */
+  --field-border: rgb(244 241 234 / 38%);
 
-  --focus-ring: var(--aegean-ink);
-  --focus-ring-on-dark: var(--linen-100);
+  /* --- Focus ------------------------------------------------------------- */
+  /* Red would collide with error states, so focus is cobalt everywhere. */
+  --focus-ring: var(--cobalt-400);
+  --focus-ring-on-red: var(--bone-100);
 
-  /* --- Atmospheric glow (hero frame) ------------------------------------ */
-  --glow-scarlet: rgb(217 26 42 / 14%);
-  --glow-aegean: rgb(26 111 191 / 16%);
-  --glow-navy: rgb(8 31 51 / 10%);
+  /* --- Feedback ---------------------------------------------------------- */
+  --danger: #ff6b6b; /* 7.4:1. Distinct from brand red on purpose.      */
+  --danger-tint: rgb(255 107 107 / 10%);
+  --success: #4ade80;
+  --success-tint: rgb(74 222 128 / 10%);
+
+  /* --- Image treatment --------------------------------------------------- */
+  /* One consistent cinematic grade so CMS photography, whatever it is, joins
+     the same world: crushed blacks, held-back saturation, cool shadows. */
+  --image-filter: saturate(0.88) contrast(1.06) brightness(0.94);
+  --image-scrim: linear-gradient(
+    to top,
+    rgb(5 6 7 / 92%) 0%,
+    rgb(5 6 7 / 55%) 38%,
+    rgb(5 6 7 / 8%) 72%,
+    rgb(5 6 7 / 0%) 100%
+  );
+  --image-scrim-soft: linear-gradient(to top, rgb(5 6 7 / 78%), rgb(5 6 7 / 0%) 62%);
+  /* Depth behind a hero image: cold water falling away, not a purple mesh. */
+  --depth-wash: radial-gradient(120% 90% at 72% 18%, rgb(47 125 219 / 13%), transparent 62%);
 
   /* --- Spacing: 8px base ------------------------------------------------- */
-  --space-1: 0.5rem; /*  8px */
-  --space-2: 1rem; /* 16px */
-  --space-3: 1.5rem; /* 24px */
-  --space-4: 2rem; /* 32px */
-  --space-5: 2.5rem; /* 40px */
-  --space-6: 3rem; /* 48px */
-  --space-8: 4rem; /* 64px */
-  --space-10: 5rem; /* 80px */
-  --space-12: 6rem; /* 96px */
-  --space-16: 8rem; /* 128px */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 2.5rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-10: 5rem;
+  --space-12: 6rem;
+  --space-16: 8rem;
 
-  /* Fluid section rhythm — never a fixed oversized gap */
-  --section-y: clamp(4rem, 8vw, 7.5rem);
-  --section-y-tight: clamp(2.5rem, 5vw, 4.5rem);
-  --section-y-loose: clamp(5rem, 10vw, 9.5rem);
+  /* Tighter than the old scale. The previous homepage ran to 11,800px, and
+     most of that was section padding doing nothing. */
+  --section-y: clamp(3.5rem, 6vw, 6rem);
+  --section-y-tight: clamp(2.25rem, 4vw, 3.5rem);
+  --section-y-loose: clamp(4.5rem, 8vw, 7.5rem);
 
   /* --- Layout ------------------------------------------------------------ */
-  --content-max: 1320px;
-  --content-narrow: 72ch;
-  --measure: 62ch;
-  --gutter: 20px; /* base 0–479 */
+  /* The header's fixed row height, published so the hero can subtract it and
+     still land its bottom rail inside the first screen. */
+  --header-h: 72px;
+  --content-max: 1280px;
+  --content-narrow: 68ch;
+  --measure: 60ch;
+  --gutter: 20px;
 
   /* --- Typography -------------------------------------------------------- */
-  --font-display:
-    var(--font-bricolage), 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  /* Archivo carries a width axis, which is what lets the display voice vary
+     by proportion rather than only by size. Manrope stays for body: it was
+     already the most readable thing in the old system. */
+  --font-display: var(--font-archivo), 'Archivo', ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-manrope), 'Manrope', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* The vw coefficient is tuned so the hero headline wraps to three lines and
-     keeps both CTAs above the fold on 1280×800, 1366×768 and 1440×900 — the
-     laptop sizes this audience actually uses. It still reaches a full 6rem on
-     wide displays. */
-  --fs-hero: clamp(3.25rem, 5.4vw, 6rem);
-  --fs-page-title: clamp(3rem, 6vw, 6rem);
-  --fs-section-title: clamp(2.25rem, 4.5vw, 4.5rem);
-  --fs-subsection: clamp(1.75rem, 3vw, 2.75rem);
-  --fs-card-title: clamp(1.25rem, 2vw, 2rem);
-  --fs-lead: clamp(1.0625rem, 1.4vw, 1.3125rem);
+  /* Deliberately smaller than the old scale at the top end. The brief was
+     that type was oversized yet characterless; the character now comes from
+     width and weight, so the size can come down. */
+  --fs-hero: clamp(2.75rem, 4.6vw, 5rem);
+  --fs-page-title: clamp(2.5rem, 4.4vw, 4.25rem);
+  --fs-section-title: clamp(2rem, 3.4vw, 3.25rem);
+  --fs-subsection: clamp(1.5rem, 2.4vw, 2.125rem);
+  --fs-card-title: clamp(1.125rem, 1.5vw, 1.5rem);
+  --fs-lead: clamp(1.0625rem, 1.25vw, 1.25rem);
   --fs-body: 1rem;
   --fs-small: 0.9375rem;
-  --fs-label: 0.8125rem;
-  --fs-numeral: clamp(3.5rem, 9vw, 8rem); /* large editorial section numbers */
+  --fs-label: 0.75rem;
+  /* Large editorial figures: step numbers, specimen measurements. Well down
+     from the old 8rem, which was shouting rather than composing. */
+  --fs-numeral: clamp(2rem, 4vw, 3.5rem);
 
-  --lh-display: 0.94;
-  --lh-title: 1.02;
-  --lh-body: 1.6;
-  --lh-tight: 1.25;
+  --lh-display: 0.98;
+  --lh-title: 1.06;
+  --lh-body: 1.65;
+  --lh-tight: 1.3;
 
-  --tracking-display: -0.035em;
-  --tracking-title: -0.02em;
+  --tracking-display: -0.028em;
+  --tracking-title: -0.018em;
   --tracking-body: 0;
-  --tracking-label: 0.09em;
+  --tracking-label: 0.14em;
 
-  /* --- Radii: deliberately varied, never one 16px everywhere ------------- */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 28px;
+  /* Display width axis. Expanded for the monumental moments, normal for the
+     rest. This is the "variation in width" the brief asked for. */
+  --wdth-display: 112;
+  --wdth-normal: 100;
+
+  /* --- Shape: ONE system. Everything is a 2px family or a pill. ---------- */
+  /* The old system mixed 4/8/14/28px plus two organic blob masks. That
+     inconsistency is most of why sections read as separate templates. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
   --radius-pill: 999px;
-  --radius-pool: 58% 42% 47% 53% / 42% 48% 52% 58%; /* organic pool mask */
-  --radius-pool-alt: 44% 56% 62% 38% / 55% 38% 62% 45%;
 
-  /* --- Elevation: soft, paper-like, never glassmorphism ------------------ */
-  --shadow-sm: 0 1px 2px rgb(8 31 51 / 6%);
-  --shadow-md: 0 8px 24px -12px rgb(8 31 51 / 22%);
-  --shadow-lg: 0 24px 64px -32px rgb(8 31 51 / 34%);
+  /* --- Elevation: surface step plus hairline, never a glow --------------- */
+  --shadow-sm: 0 1px 0 rgb(244 241 234 / 5%) inset;
+  --shadow-md: 0 16px 40px -24px rgb(0 0 0 / 80%);
+  --shadow-lg: 0 40px 90px -50px rgb(0 0 0 / 90%);
 
   /* --- Motion ------------------------------------------------------------ */
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-fast: 160ms;
-  --dur-base: 280ms;
-  --dur-slow: 620ms;
+  --dur-fast: 150ms;
+  --dur-base: 260ms;
+  --dur-slow: 560ms;
 
   /* --- Z-index scale ----------------------------------------------------- */
   --z-base: 0;
@@ -181,10 +206,8 @@
   --z-skip: 70;
 }
 
-/* Below the tablet breakpoint, secondary content text steps up to a full
-   16px. `--fs-label` stays smaller: it is reserved for uppercase microcopy
-   (eyebrows, field hints, metadata), not for anything anyone has to read at
-   length. */
+/* Secondary text steps up to a full 16px on a phone. `--fs-label` stays put:
+   it is uppercase microcopy, never anything read at length. */
 @media (max-width: 767px) {
   :root {
     --fs-small: 1rem;
@@ -211,6 +234,6 @@
 
 @media (min-width: 1536px) {
   :root {
-    --gutter: 96px;
+    --gutter: 88px;
   }
 }

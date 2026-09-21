@@ -15,7 +15,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .leadMedia :global(img) {
@@ -48,7 +48,7 @@
 
 .excerpt {
   max-inline-size: 52ch;
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .meta {
@@ -64,7 +64,7 @@
 }
 
 .category {
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .supporting {
@@ -91,7 +91,7 @@
   overflow: hidden;
   /* Varied crop shapes across the shelf. */
   border-radius: var(--radius-md);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .supportingBody {
@@ -117,11 +117,11 @@
 }
 
 [data-on-dark] .excerpt {
-  color: var(--text-on-dark-muted);
+  color: var(--bone-300);
 }
 
-[data-on-scarlet] .excerpt {
-  color: var(--text-on-scarlet);
+[data-on-red] .excerpt {
+  color: var(--text-on-red);
 }
 
 @media (min-width: 1024px) {
@@ -132,21 +132,25 @@
   }
 
   .supportingMedia:first-child {
-    border-radius: var(--radius-pool);
+    border-radius: var(--radius-md);
   }
 }
 
 /* Empty state: shown while every article is still a draft, so the section
    stays on the page and explains itself instead of silently disappearing. */
+/* A ruled band across the measure, matching the empty listings on
+   /deliveries and /knowledge. A dashed card reads as a component that failed
+   to load; a rule reads as an editor's decision. */
 .empty {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  max-inline-size: 56ch;
-  padding: var(--space-5);
-  border: 1px dashed var(--rule-strong);
-  border-radius: var(--radius-md);
-  background: var(--linen-100);
+  padding-block: var(--space-5);
+  border-block: 1px solid var(--rule);
+}
+
+.empty > * {
+  max-inline-size: 52ch;
 }
 
 .emptyHeading {
@@ -157,5 +161,5 @@
 }
 
 .emptyBody {
-  color: var(--navy-700);
+  color: var(--bone-300);
 }

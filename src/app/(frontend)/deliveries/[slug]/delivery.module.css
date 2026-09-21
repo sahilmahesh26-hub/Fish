@@ -16,12 +16,12 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .measure {
   margin-block-start: var(--space-1);
-  color: var(--navy-300);
+  color: var(--rule-strong);
 }
 
 .gallery {
@@ -47,7 +47,7 @@
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .record {
@@ -58,11 +58,11 @@
   padding: var(--space-3);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0 31px,
-    var(--navy-100) 31px 32px
+    var(--rule-faint) 31px 32px
   );
 }
 
@@ -77,12 +77,12 @@
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--aegean-ink);
+  color: var(--cobalt-400);
 }
 
 .arrow {
   inline-size: 30px;
-  color: var(--scarlet);
+  color: var(--red-500);
   flex: none;
 }
 
@@ -148,7 +148,7 @@
   margin-block-start: var(--space-2);
   font-size: var(--fs-small);
   font-weight: 600;
-  color: var(--on-dark-label);
+  color: var(--bone-300);
 }
 
 @media (min-width: 1024px) {

@@ -15,7 +15,7 @@
   padding: var(--space-4);
   border: 1px solid var(--rule);
   border-radius: var(--radius-md);
-  background: var(--linen-200);
+  background: var(--ink-700);
 }
 
 .asideHeading {
@@ -26,7 +26,7 @@
 
 .asideBody {
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .asideRule {
@@ -52,11 +52,11 @@
   margin: 0;
   padding-inline-start: 1.2rem;
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .asideList li::marker {
-  color: var(--scarlet-ink);
+  color: var(--red-400);
   font-weight: 700;
 }
 

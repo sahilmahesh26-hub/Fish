@@ -5,7 +5,7 @@ import { PageHero } from '@/components/sections/PageHero'
 import { Section } from '@/components/sections/Section'
 import { Button } from '@/components/ui/Button'
 import { SpecimenStamp } from '@/components/art/SpecimenStamp'
-import { RippleRings } from '@/components/art/Shapes'
+
 import { whatsappLink, enquiryWhatsappMessage } from '@/lib/whatsapp'
 import { TrackView } from '@/components/layout/TrackView'
 import { ANALYTICS_EVENTS } from '@/lib/analytics'
@@ -54,13 +54,11 @@ const ThankYouPage = async ({ searchParams }: Props) => {
         intro={
           hasRequest
             ? 'We have recorded your requirement. Continue on WhatsApp to confirm the details with our sourcing team.'
-            : 'We could not find a request reference. If you have just submitted a requirement, check your WhatsApp — otherwise start a new search.'
+            : 'We could not find a request reference. If you have just submitted a requirement, check your WhatsApp, otherwise start a new search.'
         }
       />
 
       <Section background="linen" className={styles.section}>
-        <RippleRings className={styles.ripples} />
-
         <div className={styles.card}>
           {hasRequest ? (
             <>

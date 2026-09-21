@@ -45,6 +45,17 @@ for (const viewport of VIEWPORTS) {
   for (const route of ROUTES) {
     await page.goto(base + route, { waitUntil: 'load', timeout: 60000 })
     await page.evaluate(() => document.fonts.ready)
+    /*
+     * Let entrance animations finish before auditing.
+     *
+     * axe samples computed colour at the instant it runs. Catching a button
+     * halfway through an opacity fade reports the blend of the button and
+     * whatever is behind it, which is a contrast failure that does not exist
+     * once the page has settled.
+     */
+    await page.evaluate(() =>
+      Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))),
+    )
     await page.waitForTimeout(300)
 
     const results = await new AxeBuilder({ page })

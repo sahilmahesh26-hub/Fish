@@ -96,7 +96,7 @@ export const enquirySchema = z.object({
    * An unticked checkbox is absent from FormData entirely, so the union below
    * fails on the missing value and never reaches a `.refine`. The message has
    * to sit on the union itself, or the most important field on the form
-   * reports Zod's default "Invalid input" — which tells the customer nothing.
+   * reports Zod's default "Invalid input", which tells the customer nothing.
    */
   consent: z.union([z.literal('on'), z.literal('true'), z.literal(true)], {
     message: 'Please confirm you are happy for us to contact you.',
@@ -114,8 +114,8 @@ export const enquirySchema = z.object({
    * rejected rather than trusted.
    *
    * An empty value is accepted and treated as absent. The token is a
-   * convenience — it turns a duplicate into a repeat of the original
-   * confirmation — so a browser that somehow submits without one must still be
+   * convenience, it turns a duplicate into a repeat of the original
+   * confirmation, so a browser that somehow submits without one must still be
    * able to send its enquiry. Failing the whole form over a missing idempotency
    * key would be a worse outcome than the duplicate it prevents.
    */
@@ -192,7 +192,7 @@ export const UPLOAD_LIMITS = {
   acceptLabel: 'JPG, PNG or WebP',
 }
 
-/** Fields never written to localStorage — see the autosave note in EnquiryForm. */
+/** Fields never written to localStorage, see the autosave note in EnquiryForm. */
 export const NEVER_AUTOSAVED: readonly string[] = ['fullName', 'whatsapp', 'email', 'consent']
 
 /**

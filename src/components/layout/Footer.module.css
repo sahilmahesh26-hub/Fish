@@ -1,7 +1,7 @@
 .footer {
   margin-block-start: var(--section-y);
-  background: var(--navy-900);
-  color: var(--text-on-dark);
+  background: var(--ink-700);
+  color: var(--bone-100);
 }
 
 .inner {
@@ -33,13 +33,13 @@
 .brandMark {
   inline-size: 28px;
   block-size: 28px;
-  border-radius: var(--radius-pool);
-  background: var(--scarlet);
+  border-radius: var(--radius-md);
+  background: var(--red-500);
   flex: none;
 }
 
 .statement {
-  color: var(--on-dark-label);
+  color: var(--bone-300);
   font-size: var(--fs-small);
 }
 
@@ -60,7 +60,7 @@
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--on-dark-label-quiet);
+  color: var(--bone-500);
 }
 
 .columnList {
@@ -83,7 +83,7 @@
   background: none;
   font-family: inherit;
   text-align: start;
-  color: var(--linen-100);
+  color: var(--bone-100);
   font-size: var(--fs-small);
   text-decoration: none;
 }
@@ -102,11 +102,11 @@
   font-style: normal;
   font-size: var(--fs-small);
   line-height: 1.7;
-  color: var(--on-dark-label);
+  color: var(--bone-300);
 }
 
 .smallPrint {
-  border-block-start: 1px solid var(--on-dark-rule-quiet);
+  border-block-start: 1px solid var(--rule-faint);
 }
 
 .smallPrintInner {
@@ -125,7 +125,7 @@
   /* `--fs-small`, not `--fs-label`: the label size is for uppercase microcopy,
      and this is a sentence. It reaches a full 16px on phones. */
   font-size: var(--fs-small);
-  color: var(--on-dark-wash);
+  color: var(--text-muted);
 }
 
 .policyList {
@@ -139,7 +139,7 @@
 
 .policyList .link {
   font-size: var(--fs-small);
-  color: var(--on-dark-label);
+  color: var(--bone-300);
 }
 
 @media (min-width: 640px) {

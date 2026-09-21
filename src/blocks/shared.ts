@@ -8,7 +8,7 @@ export const backgroundField = (defaultValue = 'linen'): Field => ({
   defaultValue,
   options: [
     { label: 'Sandy Linen (default)', value: 'linen' },
-    { label: 'Sandy Linen — raised', value: 'linen-raised' },
+    { label: 'Sandy Linen, raised', value: 'linen-raised' },
     { label: 'Deep Navy', value: 'navy' },
     { label: 'Scarlet', value: 'scarlet' },
   ],
@@ -45,7 +45,7 @@ export const linkField = (name = 'link', label = 'Link'): Field => ({
       type: 'text',
       admin: {
         condition: (_data, siblingData) => siblingData?.type === 'internal',
-        description: 'Path starting with "/" — for example /source-a-fish',
+        description: 'Path starting with "/", for example /source-a-fish',
       },
       validate: (value: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
         // An untouched link group is simply not rendered, so it must not block

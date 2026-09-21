@@ -18,22 +18,22 @@
   padding-inline: var(--space-2);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-pill);
-  color: var(--navy-900);
+  color: var(--bone-100);
   font-size: var(--fs-small);
   font-weight: 600;
   text-decoration: none;
 }
 
 .filter:hover {
-  border-color: var(--scarlet);
+  border-color: var(--red-500);
 }
 
 /* The active filter is marked by fill and weight as well as colour, so it does
    not rely on colour alone. */
 .filter[aria-current='page'] {
-  background: var(--navy-900);
-  border-color: var(--navy-900);
-  color: var(--text-on-dark);
+  background: var(--ink-700);
+  border-color: var(--bone-100);
+  color: var(--bone-100);
 }
 
 .grid {
@@ -61,11 +61,11 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: var(--radius-md);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .card:nth-child(3n + 1) .media {
-  border-radius: var(--radius-pool);
+  border-radius: var(--radius-md);
 }
 
 .media :global(img) {
@@ -95,7 +95,7 @@
 }
 
 .category {
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .title {
@@ -111,17 +111,20 @@
 }
 
 .excerpt {
-  color: var(--navy-700);
+  color: var(--bone-300);
   font-size: var(--fs-small);
 }
 
+/* Same treatment as the empty delivery listing: a ruled band across the
+   measure, not a dashed card that reads as a failed component. */
 .empty {
-  max-inline-size: var(--measure);
-  padding: var(--space-5);
-  border: 1px dashed var(--rule-strong);
-  border-radius: var(--radius-md);
-  background: var(--linen-200);
-  color: var(--navy-700);
+  padding-block: var(--space-6);
+  border-block: 1px solid var(--rule);
+  color: var(--bone-300);
+}
+
+.empty > * {
+  max-inline-size: 52ch;
 }
 
 @media (min-width: 640px) {

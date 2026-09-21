@@ -1,6 +1,6 @@
 .button {
-  --button-bg: var(--scarlet);
-  --button-fg: var(--text-on-scarlet);
+  --button-bg: var(--red-500);
+  --button-fg: var(--text-on-red);
   --button-border: transparent;
 
   display: inline-flex;
@@ -53,28 +53,28 @@
 }
 
 .primary {
-  --button-bg: var(--scarlet);
-  --button-fg: var(--text-on-scarlet);
+  --button-bg: var(--red-500);
+  --button-fg: var(--text-on-red);
 }
 
 .primary:hover {
-  --button-bg: var(--scarlet-600);
+  --button-bg: var(--red-600);
 }
 
 .secondary {
   --button-bg: transparent;
-  --button-fg: var(--navy-900);
-  --button-border: var(--navy-900);
+  --button-fg: var(--bone-100);
+  --button-border: var(--bone-100);
 }
 
 .secondary:hover {
-  --button-bg: var(--navy-900);
-  --button-fg: var(--text-on-dark);
+  --button-bg: var(--bone-100);
+  --button-fg: var(--ink-900);
 }
 
 .ghost {
   --button-bg: transparent;
-  --button-fg: var(--scarlet-ink);
+  --button-fg: var(--red-400);
   --button-border: transparent;
   min-block-size: 44px;
   padding-inline: var(--space-1);
@@ -84,13 +84,14 @@
 }
 
 .onDark {
-  --button-bg: var(--linen-100);
-  --button-fg: var(--navy-900);
+  --button-bg: var(--ink-700);
+  --button-fg: var(--bone-100);
 }
 
 .onDark:hover {
   /* Pure white, not Linen: this is the one place the palette lifts past its
      lightest tone, so a button on a dark band reads as pressed rather than
-     merely present. Deliberate, and the only use of #fff outside print. */
-  --button-bg: #fff;
+     merely present. On a near-black page the lift comes from the bone tone
+     going fully opaque, not from pure white, which glares. */
+  --button-bg: var(--bone-100);
 }

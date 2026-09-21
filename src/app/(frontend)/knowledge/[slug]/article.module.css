@@ -15,7 +15,7 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  background: var(--linen-400);
+  background: var(--ink-600);
 }
 
 .prose {
@@ -34,7 +34,7 @@
   padding: var(--space-3);
   border: 1px solid var(--rule);
   border-radius: var(--radius-md);
-  background: var(--linen-200);
+  background: var(--ink-700);
 }
 
 .metaList > div + div {
@@ -89,14 +89,14 @@
   padding: var(--space-3);
   border: 1px solid var(--rule);
   border-radius: var(--radius-md);
-  background: var(--linen-100);
+  background: var(--ink-700);
   color: var(--text);
   text-decoration: none;
   transition: border-color var(--dur-fast) var(--ease-out);
 }
 
 .relatedLink:hover {
-  border-color: var(--scarlet);
+  border-color: var(--red-500);
 }
 
 .relatedTitle {
@@ -108,7 +108,7 @@
 
 .relatedExcerpt {
   font-size: var(--fs-small);
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 @media (min-width: 1024px) {

@@ -38,17 +38,17 @@
   gap: 0.5rem;
   min-block-size: 44px;
   padding: 0.35rem 0.75rem;
-  border: 1.5px solid var(--rule-strong);
+  border: 1.5px solid var(--field-border);
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--navy-700);
+  color: var(--bone-300);
   font-size: var(--fs-label);
   font-weight: 600;
   text-align: start;
 }
 
 .progressStep:hover {
-  border-color: var(--navy-900);
+  border-color: var(--bone-100);
 }
 
 .progressNumber {
@@ -57,26 +57,26 @@
   inline-size: 22px;
   block-size: 22px;
   border-radius: 50%;
-  background: var(--linen-400);
+  background: var(--ink-600);
   font-variant-numeric: tabular-nums;
   flex: none;
 }
 
 /* State is carried by fill, border and the number glyph, not colour alone. */
 .progressStep[data-state='current'] {
-  border-color: var(--navy-900);
-  background: var(--navy-900);
-  color: var(--text-on-dark);
+  border-color: var(--bone-100);
+  background: var(--ink-700);
+  color: var(--bone-100);
 }
 
 .progressStep[data-state='current'] .progressNumber {
-  background: var(--linen-100);
-  color: var(--navy-900);
+  background: var(--ink-700);
+  color: var(--bone-100);
 }
 
 .progressStep[data-state='done'] .progressNumber {
-  background: var(--aegean-ink);
-  color: var(--linen-100);
+  background: var(--cobalt-400);
+  color: var(--bone-100);
 }
 
 .progressStep[data-state='done'] .progressNumber::after {
@@ -91,14 +91,14 @@
 }
 
 .progressStep[data-state='error'] {
-  border-color: var(--scarlet-ink);
+  border-color: var(--red-400);
   border-width: 2.5px;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .progressStep[data-state='error'] .progressNumber {
-  background: var(--scarlet-ink);
-  color: var(--linen-100);
+  background: var(--red-400);
+  color: var(--bone-100);
 }
 
 /*
@@ -125,14 +125,14 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: var(--space-3);
-  border: 2.5px solid var(--scarlet-ink);
+  border: 2.5px solid var(--red-400);
   border-radius: var(--radius-md);
-  background: var(--scarlet-50);
+  background: var(--red-tint);
 }
 
 .summaryTitle {
   font-weight: 700;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .summaryList {
@@ -142,7 +142,7 @@
 }
 
 .summaryList a {
-  color: var(--scarlet-ink);
+  color: var(--red-400);
   font-weight: 600;
 }
 
@@ -186,13 +186,13 @@
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 .stepDescription {
   margin-block-start: 0.5rem;
   max-inline-size: 52ch;
-  color: var(--navy-700);
+  color: var(--bone-300);
 }
 
 .grid {
@@ -215,9 +215,9 @@
   inline-size: 100%;
   min-block-size: 48px;
   padding: 0.6rem;
-  border: 1.5px dashed var(--rule-strong);
+  border: 1.5px dashed var(--field-border);
   border-radius: var(--radius-sm);
-  background: var(--linen-200);
+  background: var(--ink-700);
   font-size: var(--fs-small);
 }
 
@@ -227,8 +227,8 @@
   padding-inline: var(--space-2);
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--navy-900);
-  color: var(--text-on-dark);
+  background: var(--ink-700);
+  color: var(--bone-100);
   font-weight: 700;
   cursor: pointer;
 }
@@ -246,16 +246,16 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: var(--space-2);
-  border: 1.5px solid var(--rule-strong);
+  border: 1.5px solid var(--field-border);
   border-radius: var(--radius-sm);
-  background: var(--linen-200);
+  background: var(--ink-700);
 }
 
 .checkbox {
   inline-size: 24px;
   block-size: 24px;
   margin-block-start: 2px;
-  accent-color: var(--scarlet);
+  accent-color: var(--red-500);
   flex: none;
 }
 
@@ -271,7 +271,7 @@
   padding-block-start: 0.4rem;
   font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--scarlet-ink);
+  color: var(--red-400);
 }
 
 /* --- Actions ------------------------------------------------------------- */
@@ -294,15 +294,15 @@
    "Next" remains the obvious action. */
 .quietSubmit {
   --button-bg: transparent;
-  --button-fg: var(--navy-500);
-  --button-border: var(--rule-strong);
+  --button-fg: var(--bone-500);
+  --button-border: var(--field-border);
   order: 10;
 }
 
 .quietSubmit:hover {
-  --button-bg: var(--navy-900);
-  --button-fg: var(--text-on-dark);
-  --button-border: var(--navy-900);
+  --button-bg: var(--bone-100);
+  --button-fg: var(--bone-100);
+  --button-border: var(--bone-100);
 }
 
 .reassurance {

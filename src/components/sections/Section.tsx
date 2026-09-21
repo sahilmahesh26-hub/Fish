@@ -24,10 +24,17 @@ const backgroundClass: Record<string, string> = {
 /**
  * Section shell.
  *
- * Owns the four approved surfaces and sets `data-on-dark` / `data-on-scarlet`,
- * which every child component reads to flip its text, focus ring and eyebrow
- * colour. That keeps contrast correct without each component knowing where it
- * has been placed.
+ * Owns the four approved surfaces. The stored keys are unchanged so no CMS
+ * content has to migrate, but what they render is now:
+ *
+ *   linen        the page itself
+ *   linen-raised a band lifted one step off the page
+ *   navy         the deep band, used where imagery or atmosphere carries
+ *   red          the plate, reserved for a decision
+ *
+ * Every surface except the red plate is dark, so `data-on-dark` is set on all
+ * of them. Child components read it to keep their text, focus ring and labels
+ * legible without knowing where they were placed.
  */
 export const Section = ({
   children,
@@ -38,8 +45,9 @@ export const Section = ({
   flush = false,
 }: Props) => {
   const key = background ?? 'linen'
-  const onDark = key === 'navy'
-  const onScarlet = key === 'scarlet'
+  const onRed = key === 'scarlet'
+  // Everything that is not the red plate is a dark surface now.
+  const onDark = !onRed
 
   return (
     <section
@@ -47,7 +55,7 @@ export const Section = ({
       aria-labelledby={labelledBy}
       className={cn(styles.section, backgroundClass[key], flush && styles.flush, className)}
       {...(onDark ? { 'data-on-dark': '' } : {})}
-      {...(onScarlet ? { 'data-on-scarlet': '' } : {})}
+      {...(onRed ? { 'data-on-red': '' } : {})}
     >
       <div className={styles.inner}>{children}</div>
     </section>
