@@ -28,7 +28,21 @@ export const Faqs = async ({ block }: { block: FaqsBlockType }) => {
 
       <div className={styles.list}>
         {faqs.map((faq) => (
-          <details key={faq.id} className={styles.item} name={`faq-${block.id ?? 'block'}`}>
+          <details
+            key={faq.id}
+            className={styles.item}
+            name={`faq-${block.id ?? 'block'}`}
+            /*
+             * A lone question opens by default.
+             *
+             * An accordion earns its collapse by letting somebody scan several
+             * headings and choose. With one item there is nothing to scan, so
+             * a closed `<details>` under a heading that says "Common
+             * questions" is just an answer the visitor has to go and find.
+             * `name` still makes it exclusive if more are added later.
+             */
+            open={faqs.length === 1 || undefined}
+          >
             <summary className={styles.summary}>
               <span className={styles.question}>{faq.question}</span>
               <span className={styles.indicator} aria-hidden="true" />

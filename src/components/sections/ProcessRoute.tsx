@@ -24,14 +24,31 @@ import styles from './ProcessRoute.module.css'
  * here can be read as a claim.
  */
 
-/** The dive plan. One entry per step, deepening, with a zone name. */
-const ZONES = [
-  { depth: '0m', zone: 'Surface' },
-  { depth: '20m', zone: 'Sunlight' },
-  { depth: '60m', zone: 'Twilight' },
-  { depth: '120m', zone: 'Midnight' },
-  { depth: '200m', zone: 'The floor' },
-] as const
+/**
+ * The dive plan, computed rather than tabulated.
+ *
+ * This was a five-entry array clamped with `Math.min`, which was fine on the
+ * homepage's five steps and broke on the How It Works page's eight: the last
+ * four all read "200m, The floor". Four identical gauges in a row is exactly
+ * the repetition the rest of the artwork works to avoid, and it reads as a
+ * bug rather than a style.
+ *
+ * The curve is quadratic-ish, so the steps spread the way a real dive profile
+ * does: close together near the surface, further apart as it goes down.
+ * Rounded to the nearest ten so the numbers look like instrument readings
+ * rather than arithmetic.
+ */
+const depthFor = (index: number): number => Math.round((index ** 1.85 * 21) / 10) * 10
+
+/** Zone names follow the real oceanic bands, which do span ranges, so two
+ *  neighbouring steps sharing a zone is correct rather than repetitive. */
+const zoneFor = (depth: number): string => {
+  if (depth < 10) return 'Surface'
+  if (depth < 60) return 'Sunlight'
+  if (depth < 200) return 'Twilight'
+  if (depth < 600) return 'Midnight'
+  return 'The abyss'
+}
 
 export const ProcessRoute = ({
   block,
@@ -61,15 +78,15 @@ export const ProcessRoute = ({
 
         <ol className={styles.steps}>
           {steps.map((step, index) => {
-            const zone = ZONES[Math.min(index, ZONES.length - 1)]
+            const depth = depthFor(index)
             return (
               <Reveal as="li" key={step.id ?? index} className={styles.step} delay={index * 90}>
                 {/* The gauge. Decorative: the depth is a label for the stage,
                     so it is hidden from assistive technology, which gets the
                     step number from the heading instead. */}
                 <div className={styles.gauge} aria-hidden="true">
-                  <span className={styles.depth}>{zone.depth}</span>
-                  <span className={styles.zone}>{zone.zone}</span>
+                  <span className={styles.depth}>{depth}m</span>
+                  <span className={styles.zone}>{zoneFor(depth)}</span>
                 </div>
 
                 <span className={styles.marker} aria-hidden="true">
