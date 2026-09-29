@@ -44,8 +44,12 @@ export const Cta = ({ block, settings }: { block: CtaBlockType; settings: SiteSe
                 href={secondary.href}
                 external={secondary.external}
                 size="lg"
-                variant="secondary"
-                className={onScarlet ? styles.secondaryOnScarlet : undefined}
+                /* This reached for `styles.secondaryOnScarlet`, which was
+                   never defined in the stylesheet, so the class resolved to
+                   `undefined` and the button fell back to the plain bone
+                   outline — invisible on the accent band. A variant carries
+                   it now, so the same mistake cannot be made silently. */
+                variant={onScarlet ? 'secondaryOnAccent' : 'secondary'}
                 event="final_cta_whatsapp"
               >
                 {secondary.label}

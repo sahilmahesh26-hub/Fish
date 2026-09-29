@@ -221,6 +221,16 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
       ],
     },
     {
+      /*
+       * Contact had a hero and nothing under it.
+       *
+       * The hero told a visitor to submit a requirement or speak to us on
+       * WhatsApp, and then the page ended, so the one page on the site whose
+       * entire job is to say how to reach us said nothing about how to reach
+       * us. It now answers the question it raises: which route suits which
+       * visitor, what happens after each, and what we will not do with what
+       * they send.
+       */
       slug: 'contact',
       title: 'Contact',
       pageType: 'standard',
@@ -231,6 +241,55 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
         intro:
           'If you already know what you are looking for, submit a structured requirement. If you need help defining the variety, size or aquarium requirements, speak to us on WhatsApp.',
       },
+      layout: [
+        {
+          blockType: 'sectionIntro',
+          background: 'linen',
+          eyebrow: 'Two ways in',
+          heading: 'Pick the route that matches how settled your requirement is.',
+          body: 'Both reach the same sourcing team. The form is faster for us to act on because it captures the variety, size, grade and timing in one go. A conversation is better when those are still open questions.',
+        },
+        {
+          blockType: 'trustStatements',
+          background: 'navy',
+          eyebrow: 'What to expect',
+          heading: 'What happens once you get in touch.',
+          statements: [
+            {
+              heading: 'A structured requirement',
+              copy: 'The sourcing form asks for the variety, size, grade, budget range and when you need it. It takes a few minutes and it is the version of your requirement we can actually search against.',
+            },
+            {
+              heading: 'A conversation first',
+              copy: 'If the variety, size or the aquarium it is going into are still undecided, message us before filling anything in. Working that out is part of the service, not a step you have to complete alone.',
+            },
+            {
+              heading: 'An honest answer',
+              copy: 'We will tell you what our network can realistically find, and when it cannot. Submitting a requirement does not confirm an order, and nothing is prepared or dispatched until you approve a specific fish.',
+            },
+          ],
+          proofPoints: [
+            { label: 'No stock held' },
+            { label: 'Specimen-specific photographs' },
+            { label: 'Nothing moves without your approval' },
+          ],
+        },
+        {
+          blockType: 'faqs',
+          background: 'linen',
+          eyebrow: 'Before you write',
+          heading: 'Questions that come up at this point.',
+          mode: 'category',
+          category: 'sourcing',
+        },
+        {
+          blockType: 'cta',
+          background: 'scarlet',
+          heading: 'Tell us what you are searching for.',
+          primaryCta: { label: 'Start Your Search', type: 'internal', href: '/source-a-fish' },
+          secondaryCta: { label: 'Talk to Us on WhatsApp', type: 'whatsapp' },
+        },
+      ],
     },
     {
       slug: 'thank-you',
@@ -247,13 +306,45 @@ export const seedPages = async (payload: Payload, { media }: SeedContext) => {
   ]
 
   for (const page of pages) {
-    await upsertBySlug(payload, 'pages', page.slug, {
+    const id = await upsertBySlug(payload, 'pages', page.slug, {
       title: page.title,
       pageType: page.pageType,
       hero: page.hero,
       layout: page.layout,
       showInNavigation: page.showInNavigation ?? false,
       _status: page.status,
+    })
+
+    /*
+     * Fill a page that has no blocks at all.
+     *
+     * The seed is create-only so an editor's work is never overwritten, but
+     * that also meant a page seeded before its layout existed stayed empty
+     * on every later run. Contact sat that way: a hero, then the footer. An
+     * empty `layout` is not editorial work to protect, it is a page that has
+     * never been filled, so this tops it up and still refuses to touch a
+     * page that has even one block on it.
+     */
+    if (!page.layout?.length) continue
+
+    const current = await payload.findByID({
+      collection: 'pages',
+      id,
+      draft: true,
+      overrideAccess: true,
+      depth: 0,
+    })
+
+    if ((current.layout ?? []).length > 0) continue
+
+    await payload.update({
+      collection: 'pages',
+      id,
+      /* Pages have drafts enabled, so an update without `_status` writes a
+         draft and the live page keeps its empty layout. */
+      data: { layout: page.layout, _status: page.status } as never,
+      overrideAccess: true,
+      context: { skipRevalidate: true },
     })
   }
 

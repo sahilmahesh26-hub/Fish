@@ -49,7 +49,17 @@ const ThankYouPage = async ({ searchParams }: Props) => {
       {hasRequest ? <TrackView event={ANALYTICS_EVENTS.requestConfirmationViewed} /> : null}
 
       <PageHero
-        eyebrow="Request received"
+        /*
+         * The eyebrow states what is actually true of this visit.
+         *
+         * It read "Request received" in both states, so a visitor who
+         * arrived without a reference was told their request had been
+         * received directly above a line saying we could not find it. On a
+         * confirmation page that is not a wording problem, it is the page
+         * telling someone their enquiry is safe when we cannot show that it
+         * is.
+         */
+        eyebrow={hasRequest ? 'Request received' : 'No reference found'}
         heading={hasRequest ? 'Your search has started.' : 'Start your search'}
         /*
          * The copy follows the channel that actually exists.
@@ -100,7 +110,29 @@ const ThankYouPage = async ({ searchParams }: Props) => {
               </p>
             </>
           ) : (
-            <p className={styles.note}>No request reference was supplied with this page.</p>
+            /*
+             * The no-reference state.
+             *
+             * This was a single grey sentence in a large empty card, which
+             * told a visitor that something was missing and nothing about
+             * what it meant for them. It now answers the question they
+             * actually have — is my enquiry lost? — before offering the
+             * action.
+             */
+            <>
+              <p className={styles.label}>Nothing to confirm here</p>
+              <h2 className={styles.heading}>This page arrived without a reference.</h2>
+              <p className={styles.note}>
+                A reference is added to this page automatically when a requirement is submitted, so
+                you will usually see one here. Opening the page directly, reloading it later or
+                following an old bookmark drops it.
+              </p>
+              <p className={styles.caveat}>
+                If you submitted a requirement already, it is recorded and nothing further is needed
+                from you — a missing reference here does not undo it. If you have not, the search
+                starts with the form.
+              </p>
+            </>
           )}
 
           {/*

@@ -92,6 +92,32 @@
   /* Pure white, not Linen: this is the one place the palette lifts past its
      lightest tone, so a button on a dark band reads as pressed rather than
      merely present. On a near-black page the lift comes from the bone tone
-     going fully opaque, not from pure white, which glares. */
+     going fully opaque, not from pure white, which glares.
+
+     The foreground has to invert with it. It did not, so the label stayed
+     bone while the plate went bone and the button read as empty for as long
+     as the pointer was on it — on the closing call to action of every page
+     that has one. */
   --button-bg: var(--bone-100);
+  --button-fg: var(--deep-900);
+}
+
+/*
+ * A secondary sitting on the accent band.
+ *
+ * The plain `.secondary` is bone-on-transparent, which is correct over deep
+ * water and unreadable over amber: 1.6:1. That was fallout from moving the
+ * accent from the old red to the logo's amber — bone survived the red and
+ * does not survive this. On the band it inverts to the same ink the primary
+ * uses, which keeps the two buttons in one family and reaches 9.6:1.
+ */
+.secondaryOnAccent {
+  --button-bg: transparent;
+  --button-fg: var(--text-on-accent);
+  --button-border: var(--text-on-accent);
+}
+
+.secondaryOnAccent:hover {
+  --button-bg: var(--text-on-accent);
+  --button-fg: var(--accent-400);
 }

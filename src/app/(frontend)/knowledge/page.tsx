@@ -5,6 +5,7 @@ import { buildMetadata } from '@/lib/seo'
 import { breadcrumbSchema } from '@/lib/schema'
 import { PageHero } from '@/components/sections/PageHero'
 import { Section } from '@/components/sections/Section'
+import { Button } from '@/components/ui/Button'
 import { CmsImage } from '@/components/ui/CmsImage'
 import { JsonLd } from '@/components/ui/JsonLd'
 import { RenderBlocks } from '@/components/blocks/RenderBlocks'
@@ -60,37 +61,70 @@ const KnowledgePage = async ({ searchParams }: Props) => {
       />
 
       <Section background="linen">
-        <nav aria-label="Article categories" className={styles.filters}>
-          <ul role="list" className={styles.filterList}>
-            <li>
-              <Link
-                href="/knowledge"
-                className={styles.filter}
-                aria-current={!category ? 'page' : undefined}
-              >
-                All
-              </Link>
-            </li>
-            {categories.map((item) => (
-              <li key={item.id}>
+        {/* Filters are only controls when there is something to filter. An
+            archive with nothing in it showed six chips over one sentence,
+            which is six dead buttons. */}
+        {categories.length > 0 && (posts.length > 0 || category) ? (
+          <nav aria-label="Article categories" className={styles.filters}>
+            <ul role="list" className={styles.filterList}>
+              <li>
                 <Link
-                  href={`/knowledge?category=${item.slug}`}
+                  href="/knowledge"
                   className={styles.filter}
-                  aria-current={category === item.slug ? 'page' : undefined}
+                  aria-current={!category ? 'page' : undefined}
                 >
-                  {item.name}
+                  All
                 </Link>
               </li>
-            ))}
-          </ul>
-        </nav>
+              {categories.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={`/knowledge?category=${item.slug}`}
+                    className={styles.filter}
+                    aria-current={category === item.slug ? 'page' : undefined}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
 
         {posts.length === 0 ? (
-          <p className={styles.empty}>
-            {category
-              ? 'No published article matches this category yet. Try another category.'
-              : 'The first guides are being written. Check back shortly, or start a sourcing request and ask us directly.'}
-          </p>
+          /*
+           * The archive before it has anything in it.
+           *
+           * This was one line of grey body copy followed by four hundred
+           * pixels of nothing, which read as a page that had failed to
+           * load. It is now a field card in the same register as the
+           * specimen record: registration ticks at the corners, the state
+           * stated plainly, and the two things a visitor who came here for
+           * an answer can actually do instead.
+           */
+          <div className={styles.empty}>
+            <p className={styles.emptyLabel}>
+              {category ? 'No entries in this category' : 'Archive in preparation'}
+            </p>
+            <h2 className={styles.emptyHeading}>
+              {category
+                ? 'Nothing filed under this heading yet.'
+                : 'The guides are still being written.'}
+            </h2>
+            <p className={styles.emptyCopy}>
+              {category
+                ? 'This category has no published guide so far. The other headings may already have something, and a sourcing request reaches us either way.'
+                : 'Every guide here is written from work we have actually done, so they go up as the work is finished rather than to fill a page. Until then, the fastest route to an answer is to ask us about the specimen you have in mind.'}
+            </p>
+            <div className={styles.emptyActions}>
+              <Button href="/source-a-fish" size="lg" event="knowledge_empty_enquiry">
+                Start a sourcing request
+              </Button>
+              <Button href={category ? '/knowledge' : '/contact'} variant="secondary" size="lg">
+                {category ? 'See all categories' : 'Ask a question'}
+              </Button>
+            </div>
+          </div>
         ) : (
           <ul className={styles.grid} role="list">
             {posts.map((post) => (

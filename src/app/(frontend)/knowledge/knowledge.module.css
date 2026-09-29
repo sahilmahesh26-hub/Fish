@@ -117,14 +117,82 @@
 
 /* Same treatment as the empty delivery listing: a ruled band across the
    measure, not a dashed card that reads as a failed component. */
+/*
+ * The empty archive, as a field card.
+ *
+ * Borrowed from the specimen record deliberately: the corner registration
+ * ticks say "this is a record that exists and is currently blank", which is
+ * the truth, rather than "this page is broken", which is what a lone grey
+ * sentence in a large white gap said.
+ */
 .empty {
-  padding-block: var(--space-6);
-  border-block: 1px solid var(--rule);
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  max-inline-size: 62ch;
+  margin-block-start: var(--space-5);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 140% at 8% 0%, rgb(231 174 61 / 6%) 0%, transparent 58%),
+    var(--surface-raised, rgb(255 255 255 / 3%));
+}
+
+/* Registration ticks. Two elements, four corners: each draws an L and the
+   second is rotated, which is cheaper than four pseudo-elements and keeps
+   the corners identical by construction. */
+.empty::before,
+.empty::after {
+  content: '';
+  position: absolute;
+  inline-size: 14px;
+  block-size: 14px;
+  border: 1px solid var(--accent-line);
+  pointer-events: none;
+}
+
+.empty::before {
+  inset-block-start: 10px;
+  inset-inline-start: 10px;
+  border-width: 1px 0 0 1px;
+}
+
+.empty::after {
+  inset-block-end: 10px;
+  inset-inline-end: 10px;
+  border-width: 0 1px 1px 0;
+}
+
+.emptyLabel {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--aqua-300);
+}
+
+.emptyHeading {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.15;
+  color: var(--bone-100);
+}
+
+.emptyCopy {
+  margin: 0;
+  max-inline-size: 54ch;
   color: var(--bone-300);
 }
 
-.empty > * {
-  max-inline-size: 52ch;
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-2);
 }
 
 @media (min-width: 640px) {

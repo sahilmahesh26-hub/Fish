@@ -299,9 +299,13 @@
   order: 10;
 }
 
+/* The label has to invert with the plate. It did not: hovering the recessed
+   submit button turned it bone and left the text bone, so the button read as
+   a blank pill for as long as the pointer was on it — on the one control that
+   sends the enquiry. */
 .quietSubmit:hover {
   --button-bg: var(--bone-100);
-  --button-fg: var(--bone-100);
+  --button-fg: var(--deep-900);
   --button-border: var(--bone-100);
 }
 

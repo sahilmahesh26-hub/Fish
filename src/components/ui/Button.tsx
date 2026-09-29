@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 import styles from './Button.module.css'
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'onDark'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'onDark' | 'secondaryOnAccent'
 type Size = 'md' | 'lg'
 
 type CommonProps = {

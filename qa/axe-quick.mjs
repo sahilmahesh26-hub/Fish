@@ -1,39 +1,122 @@
 /**
- * A fast axe pass over the routes most likely to regress.
+ * A fast axe pass over the routes that carry section components.
  *
- * `qa/a11y.mjs` crawls fifteen routes at two viewports and takes the better
- * part of ten minutes, which is right before a release and too slow to run
- * after every visual change. This covers the six routes that carry the
- * section components, at both viewports, in about a fifth of the time.
+ * Two things this deliberately avoids, both of which hang forever on this
+ * site:
  *
- * It waits for `document.getAnimations()` to settle before analysing:
- * sampling mid-fade reports a blended colour, which produces contrast
- * failures that do not exist once the page is at rest.
+ *   - `waitUntil: 'networkidle'`. The pages hold open connections, so idle
+ *     never arrives.
+ *   - awaiting `document.getAnimations()`. The reef surge and the water
+ *     motes are infinite animations, and an infinite animation's `finished`
+ *     promise never settles.
  *
- *   pnpm qa:axe
+ * Instead the page is frozen with a stylesheet that turns motion off before
+ * axe reads it, which is also what makes the result reproducible: axe sees
+ * one fixed frame rather than whatever the water happened to be doing.
+ *
+ * Each route prints as it completes, so a run that is interrupted still
+ * tells you how far it got.
  */
 import { chromium, devices } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
-const B = process.env.BASE_URL || 'http://127.0.0.1:3320'
-const ROUTES = ['/', '/how-it-works', '/source-a-fish', '/deliveries', '/about', '/no-such-page']
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' })
-let total = 0
-for (const [name, dev] of [['desktop', { viewport: { width: 1440, height: 900 } }], ['mobile', { ...devices['Pixel 5'] }]]) {
-  for (const route of ROUTES) {
-    const ctx = await b.newContext(dev)
-    const p = await ctx.newPage()
-    await p.goto(B + route, { waitUntil: 'networkidle' })
-    await p.evaluate(() => document.fonts.ready)
-    await p.waitForTimeout(700)
-    await p.evaluate(() => Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))).catch(() => {}))
-    const r = await new AxeBuilder({ page: p }).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']).analyze()
-    const bad = r.violations.filter(v => ['moderate','serious','critical'].includes(v.impact))
-    total += bad.length
-    console.log(`${bad.length ? 'FAIL' : 'OK  '} ${name.padEnd(8)} ${route}`)
-    for (const v of bad) console.log(`        ${v.impact} ${v.id}: ${v.nodes.length} node(s) — ${v.help}`)
-    await ctx.close()
+
+const BASE = process.env.BASE_URL || 'http://127.0.0.1:3320'
+
+const ROUTES = [
+  '/',
+  '/how-it-works',
+  '/source-a-fish',
+  '/deliveries',
+  '/about',
+  '/custom-aquariums',
+  '/knowledge',
+  '/contact',
+  '/thank-you',
+  '/policies/privacy',
+  '/no-such-page',
+]
+
+const FREEZE = `
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
   }
+`
+
+const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
+const IMPACTS = new Set(['moderate', 'serious', 'critical'])
+
+const browser = await chromium.launch({
+  executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+})
+
+let total = 0
+
+for (const [label, device] of [
+  ['desktop', { viewport: { width: 1440, height: 900 } }],
+  ['mobile', { ...devices['Pixel 5'] }],
+]) {
+  const context = await browser.newContext(device)
+  // The consent banner is a focus trap by design; dismissing it up front is
+  // what a returning visitor sees, and it lets axe reach the page beneath.
+  await context.addCookies([
+    {
+      name: 'finquiry_consent',
+      value: encodeURIComponent(JSON.stringify({ analytics: false, ts: Date.now() })),
+      url: BASE,
+    },
+  ])
+
+  for (const route of ROUTES) {
+    const page = await context.newPage()
+    let line
+    try {
+      await page.goto(BASE + route, { waitUntil: 'domcontentloaded', timeout: 20_000 })
+      await page.addStyleTag({ content: FREEZE })
+      await page.waitForTimeout(400)
+
+      const result = await new AxeBuilder({ page }).withTags(TAGS).analyze()
+      const bad = result.violations.filter((v) => IMPACTS.has(v.impact))
+      total += bad.length
+
+      line = `${bad.length ? 'FAIL' : 'OK  '} ${label.padEnd(7)} ${route}`
+      for (const v of bad) {
+        line += `\n        ${v.impact} ${v.id} (${v.nodes.length}) — ${v.help}`
+        for (const node of v.nodes.slice(0, 3)) {
+          line += `\n          ${node.target.join(' ')}`
+        }
+      }
+    } catch (error) {
+      total += 1
+      line = `ERR  ${label.padEnd(7)} ${route} — ${error.message.split('\n')[0]}`
+    }
+    console.log(line)
+    await page.close()
+  }
+
+  await context.close()
 }
-console.log(`\n${total} violation(s) at moderate or above`)
-await b.close()
+
+/* The consent banner only renders for a visitor with no stored choice, so
+   it needs its own pass with a clean jar or it is never audited. */
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  const page = await context.newPage()
+  await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 20_000 })
+  await page.addStyleTag({ content: FREEZE })
+  await page.waitForTimeout(600)
+  const result = await new AxeBuilder({ page }).withTags(TAGS).analyze()
+  const bad = result.violations.filter((v) => IMPACTS.has(v.impact))
+  total += bad.length
+  let line = `${bad.length ? 'FAIL' : 'OK  '} banner  / (consent banner shown)`
+  for (const v of bad) line += `\n        ${v.impact} ${v.id} (${v.nodes.length}) — ${v.help}`
+  console.log(line)
+  await context.close()
+}
+
+console.log(`\n${total} violation(s) at moderate impact or above`)
+await browser.close()
 process.exit(total === 0 ? 0 : 1)

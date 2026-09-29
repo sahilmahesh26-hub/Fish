@@ -39,7 +39,8 @@
     "qa:resilience": "tsx qa/resilience.ts",
     "qa:media": "tsx qa/media-integrity.ts",
     "qa:seed-idempotency": "tsx qa/seed-idempotency.ts",
-    "qa:axe": "node qa/axe-quick.mjs"
+    "qa:axe": "node qa/axe-quick.mjs",
+    "qa:contrast": "node qa/contrast.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.89.0",
