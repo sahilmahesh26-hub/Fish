@@ -36,7 +36,7 @@
 
 .cardLink:hover {
   transform: translateY(-4px);
-  border-color: var(--red-500);
+  border-color: var(--accent-500);
   box-shadow: var(--shadow-md);
 }
 
@@ -109,7 +109,7 @@
 .cardAction {
   margin-block-start: auto;
   padding-block-start: var(--space-2);
-  color: var(--red-400);
+  color: var(--accent-400);
   font-size: var(--fs-small);
   font-weight: 700;
 }
@@ -161,4 +161,38 @@
   .card[data-feature] .cardBody {
     padding: var(--space-4);
   }
+}
+
+/* --- Shelf ---------------------------------------------------------------- */
+
+/*
+ * Card widths for the carousel.
+ *
+ * Fixed rather than fractional, because a scroll-snap track needs each item to
+ * have a real width to snap to. The values are chosen so roughly two and a
+ * half cards show at desktop and one and a bit on a phone: the part-visible
+ * card at the trailing edge is what tells somebody there is more to swipe to,
+ * and it does that better than any arrow.
+ */
+.shelf .card {
+  inline-size: clamp(230px, 27vw, 330px);
+  /* Cancels the grid-era rules: in a shelf every card is its own column. */
+  grid-column: auto;
+  margin-block-start: 0;
+}
+
+.shelf .card[data-feature] {
+  inline-size: clamp(280px, 38vw, 480px);
+}
+
+/* In a shelf the cards sit side by side, so they need a consistent height
+   rather than the aspect ratios the mosaic used. */
+.shelf .card,
+.shelf .card[data-feature] {
+  aspect-ratio: auto;
+  block-size: clamp(300px, 34vw, 400px);
+}
+
+.shelf .cardLink {
+  block-size: 100%;
 }

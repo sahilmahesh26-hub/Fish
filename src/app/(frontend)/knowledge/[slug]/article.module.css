@@ -96,7 +96,7 @@
 }
 
 .relatedLink:hover {
-  border-color: var(--red-500);
+  border-color: var(--accent-500);
 }
 
 .relatedTitle {

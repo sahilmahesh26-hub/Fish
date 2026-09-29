@@ -64,7 +64,7 @@
 }
 
 .category {
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .supporting {
@@ -120,8 +120,8 @@
   color: var(--bone-300);
 }
 
-[data-on-red] .excerpt {
-  color: var(--text-on-red);
+[data-on-accent] .excerpt {
+  color: var(--text-on-accent);
 }
 
 @media (min-width: 1024px) {

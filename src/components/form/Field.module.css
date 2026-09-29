@@ -14,7 +14,7 @@
 }
 
 .required {
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .optional {
@@ -103,5 +103,5 @@
   gap: 0.4rem;
   font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--red-400);
+  color: var(--accent-400);
 }

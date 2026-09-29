@@ -35,7 +35,7 @@ export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) =>
   const details2 = block.detailImages ?? []
 
   return (
-    <Section background={block.background} labelledBy={headingId}>
+    <Section art="arowana" background={block.background} labelledBy={headingId}>
       <SectionHeading
         eyebrow={block.eyebrow}
         heading={block.heading}

@@ -30,7 +30,7 @@
   font-size: var(--fs-lead);
   /* Fully opaque: this block is red by default, where a translucent bone
      would fall below the AA contrast threshold. */
-  color: var(--text-on-red);
+  color: var(--text-on-accent);
 }
 
 .actions {
@@ -48,17 +48,17 @@
  * ink and the label flips to bone, which is the strongest pairing available
  * without leaving the palette.
  */
-.secondaryOnScarlet {
-  --button-fg: var(--text-on-red);
-  --button-border: var(--text-on-red);
+.secondaryOnAccent {
+  --button-fg: var(--text-on-accent);
+  --button-border: var(--text-on-accent);
 }
 
-.secondaryOnScarlet:hover {
-  --button-bg: var(--text-on-red);
+.secondaryOnAccent:hover {
+  --button-bg: var(--text-on-accent);
   --button-fg: var(--bone-100);
 }
 
-.section:not([data-on-red]):not([data-on-dark]) .body {
+.section:not([data-on-accent]):not([data-on-dark]) .body {
   color: var(--bone-300);
 }
 

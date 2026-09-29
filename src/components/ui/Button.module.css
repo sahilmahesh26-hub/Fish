@@ -1,6 +1,6 @@
 .button {
-  --button-bg: var(--red-500);
-  --button-fg: var(--text-on-red);
+  --button-bg: var(--accent-500);
+  --button-fg: var(--text-on-accent);
   --button-border: transparent;
 
   display: inline-flex;
@@ -53,12 +53,12 @@
 }
 
 .primary {
-  --button-bg: var(--red-500);
-  --button-fg: var(--text-on-red);
+  --button-bg: var(--accent-500);
+  --button-fg: var(--text-on-accent);
 }
 
 .primary:hover {
-  --button-bg: var(--red-600);
+  --button-bg: var(--accent-600);
 }
 
 .secondary {
@@ -74,7 +74,7 @@
 
 .ghost {
   --button-bg: transparent;
-  --button-fg: var(--red-400);
+  --button-fg: var(--accent-400);
   --button-border: transparent;
   min-block-size: 44px;
   padding-inline: var(--space-1);

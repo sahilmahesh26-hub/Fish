@@ -1,0 +1,62 @@
+.reef {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  pointer-events: none;
+}
+
+/*
+ * Depth by rank.
+ *
+ * Distance underwater does three things at once: it dims, it desaturates
+ * toward the water's own hue, and it softens. Applying all three per rank is
+ * what separates the layers; dimming alone just makes grey coral.
+ */
+.rankBack {
+  opacity: 0.4;
+  filter: blur(5px) saturate(0.5);
+}
+
+.rankMid {
+  opacity: 0.82;
+  filter: blur(1.4px) saturate(0.88);
+}
+
+.rankFront {
+  opacity: 1;
+}
+
+/*
+ * Sway.
+ *
+ * Soft coral moves with the surge, and it is the one motion that makes a
+ * still reef read as alive. The ranks are offset and slowed with distance, so
+ * the back drifts while the front leads, which is also a depth cue.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .rankFront {
+    animation: surge 11s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+
+  .rankMid {
+    animation: surge 15s ease-in-out infinite reverse;
+    transform-origin: 50% 100%;
+  }
+
+  .rankBack {
+    animation: surge 22s ease-in-out infinite;
+    transform-origin: 50% 100%;
+  }
+}
+
+@keyframes surge {
+  0%,
+  100% {
+    transform: skewX(0deg);
+  }
+
+  50% {
+    transform: skewX(1.1deg);
+  }
+}

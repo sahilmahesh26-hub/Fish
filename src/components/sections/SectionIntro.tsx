@@ -7,7 +7,12 @@ import styles from './SectionIntro.module.css'
 export const SectionIntro = ({ block }: { block: SectionIntroBlockType }) => {
   const headingId = `intro-${block.id ?? 'block'}`
   return (
-    <Section background={block.background} labelledBy={headingId} className={styles.section}>
+    <Section
+      art="jellyfish"
+      background={block.background}
+      labelledBy={headingId}
+      className={styles.section}
+    >
       <SectionHeading
         eyebrow={block.eyebrow}
         heading={block.heading}

@@ -61,13 +61,13 @@
 }
 
 .prose :global(li)::marker {
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .prose :global(blockquote) {
   margin-inline: 0;
   padding-inline-start: var(--space-3);
-  border-inline-start: 3px solid var(--red-500);
+  border-inline-start: 3px solid var(--accent-500);
   font-family: var(--font-display);
   font-size: var(--fs-lead);
   line-height: 1.35;
@@ -103,11 +103,11 @@
 }
 
 [data-on-dark] .prose,
-[data-on-red] .prose {
+[data-on-accent] .prose {
   color: var(--bone-100);
 }
 
 [data-on-dark] .prose :global(a),
-[data-on-red] .prose :global(a) {
+[data-on-accent] .prose :global(a) {
   color: var(--bone-100);
 }

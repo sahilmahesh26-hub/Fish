@@ -44,7 +44,7 @@ export const AquariumFeature = ({
           ) : null}
         </div>
 
-        <div className={styles.panel} data-on-red>
+        <div className={styles.panel} data-on-accent>
           {block.eyebrow ? <p className="u-eyebrow">{block.eyebrow}</p> : null}
           <h2 id={headingId} className={styles.heading}>
             {block.heading}

@@ -25,7 +25,7 @@
 }
 
 .filter:hover {
-  border-color: var(--red-500);
+  border-color: var(--accent-500);
 }
 
 .filter[aria-current='page'] {
@@ -105,7 +105,7 @@
 
 .arrow {
   inline-size: 26px;
-  color: var(--red-500);
+  color: var(--accent-500);
   flex: none;
 }
 
@@ -154,7 +154,7 @@
   align-items: center;
   min-block-size: 44px;
   font-weight: 700;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 @media (min-width: 640px) {

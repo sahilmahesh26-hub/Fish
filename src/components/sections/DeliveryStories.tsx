@@ -38,7 +38,7 @@ export const DeliveryStories = async ({
   const headingId = `deliveries-${block.id ?? 'stories'}`
 
   return (
-    <Section background={block.background} labelledBy={headingId}>
+    <Section art="coral" background={block.background} labelledBy={headingId}>
       <SectionHeading
         eyebrow={block.eyebrow}
         heading={block.heading}

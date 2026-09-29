@@ -76,7 +76,7 @@
   inline-size: 24px;
   block-size: 24px;
   border-radius: var(--radius-md);
-  background: var(--red-500);
+  background: var(--accent-500);
 }
 
 .close {

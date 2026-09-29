@@ -1,0 +1,127 @@
+.water {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Behind content, above the section's own background. */
+  z-index: var(--z-art);
+  /* Its own stacking and paint context: without this the blurred caustics
+     layer forces the whole section to repaint on scroll. */
+  contain: strict;
+}
+
+/* --- Light shafts --------------------------------------------------------- */
+
+.shafts {
+  position: absolute;
+  inset: -20% 0 0;
+}
+
+.shafts span {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--x);
+  inline-size: var(--w);
+  background: var(--light-shaft);
+  opacity: var(--o);
+  transform: rotate(var(--t));
+  transform-origin: top center;
+  /* A hard-edged gradient column reads as a rectangle. The blur is what
+     turns it into light. */
+  filter: blur(14px);
+}
+
+.water[data-variant='deep'] .shafts {
+  opacity: 0.55;
+}
+
+/* --- Caustics ------------------------------------------------------------- */
+
+/*
+ * The net of light a moving surface throws downward.
+ *
+ * Built from three overlapping repeating gradients at different angles and
+ * periods. Where the crests coincide you get a bright cell, where they cancel
+ * you get a dark one, which is the same interference that makes the real
+ * pattern. One gradient alone just looks like corduroy.
+ */
+.caustics {
+  position: absolute;
+  inset: -30%;
+  background-image:
+    repeating-linear-gradient(74deg, rgb(127 212 232 / 7%) 0 2px, transparent 2px 26px),
+    repeating-linear-gradient(-66deg, rgb(127 212 232 / 6%) 0 2px, transparent 2px 34px),
+    repeating-linear-gradient(14deg, rgb(63 169 201 / 5%) 0 3px, transparent 3px 52px);
+  filter: blur(2px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(120% 80% at 50% 0%, #000 0%, transparent 70%);
+}
+
+.water[data-variant='surface'] .caustics {
+  opacity: 0.9;
+}
+
+.water[data-variant='abyss'] .caustics {
+  opacity: 0.22;
+}
+
+/* --- Suspended particles -------------------------------------------------- */
+
+.motes span {
+  position: absolute;
+  inset-block-start: var(--y);
+  inset-inline-start: var(--x);
+  inline-size: var(--s);
+  block-size: var(--s);
+  border-radius: 50%;
+  background: var(--bone-100);
+  opacity: var(--o);
+  box-shadow: 0 0 6px rgb(127 212 232 / 40%);
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+/*
+ * Only the caustics and the motes move, and both move slowly enough that the
+ * page is never asking to be watched. The shafts stay still: light from a
+ * surface far overhead does not visibly shift, and animating it was the thing
+ * that made an early version feel like a screensaver.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .caustics {
+    animation: caustic-drift 28s linear infinite;
+  }
+
+  .motes span {
+    animation: mote-rise var(--d) linear infinite;
+    animation-delay: var(--delay);
+  }
+}
+
+@keyframes caustic-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    /* Translated by one full period of the widest gradient, so the loop has
+       no visible seam. */
+    transform: translate3d(52px, 34px, 0);
+  }
+}
+
+@keyframes mote-rise {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(14px, -50%, 0);
+  }
+
+  to {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0;
+  }
+}

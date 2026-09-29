@@ -14,8 +14,14 @@
   /* The header sits above this in flow, so its height comes off the viewport
      measure. Without that subtraction the trust rail lands a few pixels below
      the fold on a 900px laptop, which is the one place it has to be visible. */
-  min-block-size: min(calc(100dvh - var(--header-h)), 780px);
-  background: var(--ink-900);
+  min-block-size: min(calc(100dvh - var(--header-h)), 860px);
+  /*
+   * The page's own light gradient, not a flat fill. The hero is the closest
+   * thing on the site to the surface, so it is the brightest water, falling
+   * away to the abyss at the bottom edge where the next section takes over.
+   */
+  background:
+    var(--depth-wash), linear-gradient(to bottom, #0a2138 0%, #061426 46%, var(--deep-900) 100%);
   overflow: hidden;
 }
 
@@ -27,19 +33,41 @@
   z-index: var(--z-base);
 }
 
+/*
+ * The CMS image is atmosphere here, not the background.
+ *
+ * At full strength a dark plate sat on top of the lit gradient and flattened
+ * the whole hero to near-black, which is exactly what made the first pass
+ * look like a template with the lights off. Holding it back lets the water
+ * behind it show through, and a real photograph dropped in later joins the
+ * palette instead of replacing it.
+ */
 .mediaImage {
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
+  opacity: 0.42;
   /* The house grade. Every image on the site passes through the same one, so
      CMS photography from different sources still reads as one set. */
 }
 
-/* Vertical: lifts the base so the trust rail has something to sit on. */
+/*
+ * Vertical: lifts the base so the trust rail has something to sit on.
+ *
+ * Tinted deep blue rather than the site-wide near-black scrim. A neutral
+ * black wash over lit water is what turned this hero brown in the first two
+ * passes: the scrim was removing exactly the blue the composition depends on.
+ */
 .scrim {
   position: absolute;
   inset: 0;
-  background: var(--image-scrim);
+  background: linear-gradient(
+    to top,
+    rgb(4 16 29 / 88%) 0%,
+    rgb(5 24 43 / 42%) 40%,
+    rgb(8 40 68 / 6%) 74%,
+    transparent 100%
+  );
 }
 
 /*
@@ -52,10 +80,10 @@
   inset: 0;
   background: linear-gradient(
     to right,
-    rgb(5 6 7 / 94%) 0%,
-    rgb(5 6 7 / 76%) 32%,
-    rgb(5 6 7 / 18%) 70%,
-    rgb(5 6 7 / 0%) 100%
+    rgb(4 18 32 / 88%) 0%,
+    rgb(5 24 43 / 58%) 34%,
+    rgb(8 40 68 / 10%) 72%,
+    transparent 100%
   );
 }
 
@@ -120,7 +148,7 @@
  * the tight display leading.
  */
 .emphasis {
-  color: var(--red-500);
+  color: var(--accent-500);
   font-style: italic;
   line-height: 1.1;
   padding-block-end: 0.06em;
@@ -166,13 +194,25 @@
   list-style: none;
   font-size: var(--fs-small);
   color: var(--text-muted);
+  /*
+   * A dark plate behind the rail.
+   *
+   * The reef bed is the brightest, busiest thing in the hero and it finishes
+   * exactly where this rail starts, so without a ground the claims were being
+   * read against magenta coral. The plate is the abyss colour at high opacity
+   * with a soft blur behind it, which keeps the reef visible through the gap
+   * between items while giving every word a consistent field.
+   */
+  background: linear-gradient(to top, rgb(3 16 29 / 96%), rgb(3 16 29 / 78%));
+  backdrop-filter: blur(6px);
+  border-block-start: 1px solid var(--rule);
 }
 
 .trustItem {
   /* Not a bullet and not a dot: a short red tick of rule. One accent, used
      structurally. */
   padding-inline-start: var(--space-3);
-  border-inline-start: 2px solid var(--red-500);
+  border-inline-start: 2px solid var(--accent-500);
   line-height: var(--lh-tight);
 }
 
@@ -223,5 +263,160 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* --- The scene ------------------------------------------------------------ */
+
+/*
+ * Five planes at four depths. The rules that keep it a scene rather than a
+ * pile of stickers:
+ *
+ *   further back  =  smaller apparent contrast, cooler, slower, more blur
+ *   nearer        =  larger, crisper, faster, and cropped by the frame
+ *
+ * Everything is `pointer-events: none` and sits below the copy's stacking
+ * level, so none of it can ever intercept a click on the call to action.
+ */
+.reef,
+.ray,
+.jellyNear,
+.jellyFar,
+.arowana,
+.water {
+  position: absolute;
+  pointer-events: none;
+  z-index: var(--z-art);
+}
+
+/*
+ * The reef bed.
+ *
+ * Anchored to the bottom edge and allowed to be the brightest, hottest thing
+ * in the frame. It sits under the trust rail rather than behind the headline,
+ * so the type never has to fight it.
+ */
+.reef {
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: clamp(120px, 20vw, 290px);
+}
+
+/*
+ * Mid-water.
+ *
+ * Pushed low and well to the trailing edge. The first arrangement put the ray
+ * directly behind the jellyfish at a similar size, and two large soft
+ * silhouettes overlapping at the same depth read as one unidentifiable mass
+ * rather than as two animals at different distances.
+ */
+.ray {
+  inset-block-start: 46%;
+  inset-inline-end: -6%;
+  inline-size: clamp(200px, 26vw, 400px);
+  filter: blur(2.5px);
+}
+
+.water {
+  inset: 0;
+}
+
+/* Foreground. Both jellyfish are cropped by an edge. */
+.jellyNear {
+  inset-block-start: -14%;
+  inset-inline-end: 8%;
+  inline-size: clamp(150px, 19vw, 300px);
+}
+
+.jellyFar {
+  inset-block-start: 8%;
+  inset-inline-end: 34%;
+  inline-size: clamp(60px, 7vw, 115px);
+  filter: blur(1.5px);
+}
+
+/* The arowana is the brand's own fish, so it gets the front plane and the
+   largest size, crossing out of frame at the trailing edge. */
+.arowana {
+  inset-block-end: 20%;
+  inset-inline-start: 46%;
+  inline-size: clamp(260px, 34vw, 560px);
+}
+
+/*
+ * Below the desktop breakpoint the creatures would sit on top of the
+ * headline, so the composition thins out rather than shrinking: the ray and
+ * the far jellyfish go, and the arowana drops behind the copy at low opacity
+ * where it reads as texture instead of as a subject.
+ */
+@media (max-width: 1023px) {
+  .ray,
+  .jellyFar {
+    display: none;
+  }
+
+  .reef {
+    block-size: 110px;
+    opacity: 0.85;
+  }
+
+  .arowana {
+    inset-block-end: 6%;
+    inset-inline-end: -22%;
+    inline-size: 130%;
+    opacity: 0.32;
+  }
+
+  .jellyNear {
+    inset-inline-end: -6%;
+    inline-size: 140px;
+    opacity: 0.5;
+  }
+}
+
+/*
+ * Drift.
+ *
+ * Long, offset, and tiny in amplitude: a few pixels over half a minute. The
+ * point is that the scene is never quite still, not that anything is seen to
+ * move. Anything faster turns a hero into an animated GIF.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .jellyNear {
+    animation: drift-y 26s ease-in-out infinite;
+  }
+
+  .jellyFar {
+    animation: drift-y 34s ease-in-out infinite reverse;
+  }
+
+  .arowana {
+    animation: swim 48s ease-in-out infinite;
+  }
+
+  .ray {
+    animation: drift-y 42s ease-in-out infinite;
+  }
+}
+
+@keyframes drift-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-8px, 22px, 0);
+  }
+}
+
+@keyframes swim {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-26px, -12px, 0);
   }
 }

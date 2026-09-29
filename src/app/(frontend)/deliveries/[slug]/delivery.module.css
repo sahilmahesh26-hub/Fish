@@ -82,7 +82,7 @@
 
 .arrow {
   inline-size: 30px;
-  color: var(--red-500);
+  color: var(--accent-500);
   flex: none;
 }
 

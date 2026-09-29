@@ -65,7 +65,7 @@
 }
 
 .steps li::marker {
-  color: var(--red-400);
+  color: var(--accent-400);
   font-weight: 700;
 }
 

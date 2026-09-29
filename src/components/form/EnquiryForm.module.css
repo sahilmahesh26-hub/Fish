@@ -91,13 +91,13 @@
 }
 
 .progressStep[data-state='error'] {
-  border-color: var(--red-400);
+  border-color: var(--accent-400);
   border-width: 2.5px;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .progressStep[data-state='error'] .progressNumber {
-  background: var(--red-400);
+  background: var(--accent-400);
   color: var(--bone-100);
 }
 
@@ -125,14 +125,14 @@
   flex-direction: column;
   gap: 0.5rem;
   padding: var(--space-3);
-  border: 2.5px solid var(--red-400);
+  border: 2.5px solid var(--accent-400);
   border-radius: var(--radius-md);
-  background: var(--red-tint);
+  background: var(--accent-tint);
 }
 
 .summaryTitle {
   font-weight: 700;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .summaryList {
@@ -142,7 +142,7 @@
 }
 
 .summaryList a {
-  color: var(--red-400);
+  color: var(--accent-400);
   font-weight: 600;
 }
 
@@ -186,7 +186,7 @@
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .stepDescription {
@@ -255,7 +255,7 @@
   inline-size: 24px;
   block-size: 24px;
   margin-block-start: 2px;
-  accent-color: var(--red-500);
+  accent-color: var(--accent-500);
   flex: none;
 }
 
@@ -271,7 +271,7 @@
   padding-block-start: 0.4rem;
   font-size: var(--fs-label);
   font-weight: 600;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 /* --- Actions ------------------------------------------------------------- */

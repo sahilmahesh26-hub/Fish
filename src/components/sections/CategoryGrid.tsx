@@ -3,17 +3,23 @@ import { Section } from './Section'
 import { SectionHeading } from './SectionHeading'
 import { Button } from '@/components/ui/Button'
 import { CmsImage } from '@/components/ui/CmsImage'
+import { Carousel } from '@/components/ui/Carousel'
 import { resolveLink } from '@/lib/links'
 import { getSourcingCategories, getSourcingCategoriesByIds } from '@/lib/queries'
 import type { CategoryGridBlock as CategoryGridBlockType, SiteSetting } from '@/payload-types'
 import styles from './CategoryGrid.module.css'
 
 /**
- * Editorial grid of sourcing categories.
+ * Sourcing categories, as a swipeable shelf.
  *
- * Card sizes vary on a repeating rhythm and two cards deliberately overlap the
- * grid lines at desktop width. Every card carries its availability label, so
- * nothing here can be mistaken for stock on hand.
+ * This was a static bento grid. Seven categories in a fixed mosaic reads as a
+ * page of thumbnails, and on a phone it became a column seven screens long
+ * that nobody scrolls to the end of. A shelf with arrows and dots is the
+ * control the reference boards all use for exactly this content, and it makes
+ * the section something you operate rather than something you scroll past.
+ *
+ * Every card still carries its availability label, so nothing here can be
+ * mistaken for stock on hand.
  */
 export const CategoryGrid = async ({
   block,
@@ -34,7 +40,12 @@ export const CategoryGrid = async ({
   const headingId = `categories-${block.id ?? 'grid'}`
 
   return (
-    <Section background={block.background} labelledBy={headingId} id="what-we-source">
+    <Section
+      art="jellyfish-left"
+      background={block.background}
+      labelledBy={headingId}
+      id="what-we-source"
+    >
       <SectionHeading
         eyebrow={block.eyebrow}
         heading={block.heading}
@@ -42,16 +53,16 @@ export const CategoryGrid = async ({
         id={headingId}
       />
 
-      <ul className={styles.grid} role="list">
+      <Carousel label="Sourcing categories" className={styles.shelf}>
         {categories.map((category, index) => (
           <li
             key={category.id}
             className={styles.card}
             /*
-             * Only the first card is featured. The previous version cycled
-             * four sizes and nudged every third card down, which produced a
-             * masonry with holes in it rather than a composition. One feature
-             * and a uniform run reads as edited; a varied run reads as random.
+             * The first card is wider. In a shelf a single oversized leading
+             * item reads as an editor's pick and gives the row somewhere to
+             * start, where a run of identical tiles reads as a grid that
+             * happens to scroll.
              */
             data-feature={index === 0 ? '' : undefined}
             id={category.slug}
@@ -75,7 +86,7 @@ export const CategoryGrid = async ({
             </Link>
           </li>
         ))}
-      </ul>
+      </Carousel>
 
       {cta ? (
         <div className={styles.cta}>

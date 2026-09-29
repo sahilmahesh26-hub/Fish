@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import type { ResolvedLink } from '@/lib/links'
 import { Button } from '@/components/ui/Button'
 import styles from './MobileMenu.module.css'
+import { BrandMark } from '@/components/art/BrandMark'
 
 type NavItem = { id?: string | null; label: string; href: string; description?: string | null }
 
@@ -135,10 +136,7 @@ export const MobileMenu = ({ navItems, cta, brandName }: Props) => {
         >
           <div className={styles.panel} ref={panelRef}>
             <div className={styles.panelHeader}>
-              <span className={styles.brand}>
-                <span className={styles.brandMark} aria-hidden="true" />
-                {brandName}
-              </span>
+              <BrandMark className={styles.brand} />
               <button type="button" className={styles.close} onClick={close}>
                 <span aria-hidden="true">×</span>
                 <span className="u-visually-hidden">Close menu</span>

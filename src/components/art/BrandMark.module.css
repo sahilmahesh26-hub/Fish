@@ -1,0 +1,34 @@
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--bone-100);
+}
+
+.fish {
+  inline-size: 3.1em;
+  block-size: auto;
+  flex: none;
+  /* The fish sits marginally low against a cap-height word. */
+  transform: translateY(0.06em);
+}
+
+.word {
+  font-family: var(--font-display);
+  /* The logo is set in a very heavy, tightly packed grotesque. Archivo at 800
+     with the width axis pulled in and the tracking closed up is the nearest
+     this project's typeface gets to it, and matching the mark matters more
+     here than the expanded voice the headlines use. */
+  font-weight: 800;
+  font-variation-settings: 'wdth' 96;
+  font-size: 1.28em;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+/* `Fin` and `quiry` are one word in the logo, split only by the fish. Setting
+   the second half a shade back keeps that reading without a second colour. */
+.quiry {
+  color: var(--bone-300);
+}

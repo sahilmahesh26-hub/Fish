@@ -24,7 +24,7 @@ export const ProcessRoute = ({
   const headingId = `process-${block.id ?? 'route'}`
 
   return (
-    <Section background={block.background} labelledBy={headingId}>
+    <Section art="kelp" background={block.background} labelledBy={headingId}>
       <SectionHeading
         eyebrow={block.eyebrow}
         heading={block.heading}

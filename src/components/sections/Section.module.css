@@ -8,6 +8,9 @@
 }
 
 .inner {
+  /* Above the water and the creatures, both of which are at `--z-art`. */
+  position: relative;
+  z-index: var(--z-content);
   inline-size: 100%;
   max-inline-size: calc(var(--content-max) + var(--gutter) * 2);
   margin-inline: auto;
@@ -48,6 +51,123 @@
 
 /* The plate. Reserved for a decision, never for decoration. */
 .scarlet {
-  background: var(--red-500);
-  color: var(--text-on-red);
+  background: var(--accent-500);
+  color: var(--text-on-accent);
+}
+
+/* --- Section art ---------------------------------------------------------- */
+
+/*
+ * Creatures drifting in the margins.
+ *
+ * All of them sit behind the content and outside the reading column, and all
+ * of them are cropped by the section's own edge so they read as something
+ * passing through rather than as an illustration placed on the page.
+ *
+ * `overflow: hidden` on the section is what does the cropping, and it is why
+ * these can be sized generously without ever widening the document.
+ */
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.artJellyRight,
+.artJellyLeft,
+.artArowana,
+.artCoral,
+.artKelp {
+  position: absolute;
+  z-index: var(--z-art);
+  pointer-events: none;
+}
+
+.artJellyRight {
+  inset-block-start: -10%;
+  inset-inline-end: -4%;
+  inline-size: clamp(130px, 17vw, 280px);
+}
+
+.artJellyLeft {
+  inset-block-end: -18%;
+  inset-inline-start: -5%;
+  inline-size: clamp(120px, 15vw, 240px);
+}
+
+.artArowana {
+  inset-block-end: 8%;
+  inset-inline-end: -12%;
+  inline-size: clamp(240px, 32vw, 520px);
+}
+
+/* Coral and kelp are scenery, so they sit on the floor and the wall rather
+   than floating: both are anchored to an edge and bleed off it. */
+.artCoral {
+  inset-block-end: -2%;
+  inset-inline: 0;
+  block-size: clamp(90px, 12vw, 180px);
+}
+
+.artKelp {
+  inset-block: -6%;
+  inset-inline-start: 2%;
+  inline-size: clamp(60px, 7vw, 110px);
+}
+
+/*
+ * Below the desktop breakpoint the reading column takes the full width, so a
+ * creature in the margin would sit under the text instead of beside it. They
+ * step back rather than disappearing: still present, no longer competing.
+ */
+@media (max-width: 1023px) {
+  .artJellyRight,
+  .artJellyLeft {
+    opacity: 0.45;
+    inline-size: 120px;
+  }
+
+  .artArowana {
+    opacity: 0.3;
+  }
+
+  .artKelp {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .artJellyRight {
+    animation: section-drift 38s ease-in-out infinite;
+  }
+
+  .artJellyLeft {
+    animation: section-drift 46s ease-in-out infinite reverse;
+  }
+
+  .artArowana {
+    animation: section-swim 56s ease-in-out infinite;
+  }
+}
+
+@keyframes section-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-10px, 26px, 0);
+  }
+}
+
+@keyframes section-swim {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(-32px, -14px, 0);
+  }
 }

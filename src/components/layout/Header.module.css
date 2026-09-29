@@ -71,7 +71,7 @@
   inline-size: 26px;
   block-size: 26px;
   border-radius: var(--radius-md);
-  background: var(--red-500);
+  background: var(--accent-500);
   flex: none;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .navLink:hover {
-  border-block-end-color: var(--red-500);
+  border-block-end-color: var(--accent-500);
 }
 
 .actions {

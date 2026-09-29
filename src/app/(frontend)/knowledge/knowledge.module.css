@@ -25,7 +25,7 @@
 }
 
 .filter:hover {
-  border-color: var(--red-500);
+  border-color: var(--accent-500);
 }
 
 /* The active filter is marked by fill and weight as well as colour, so it does
@@ -95,7 +95,7 @@
 }
 
 .category {
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .title {

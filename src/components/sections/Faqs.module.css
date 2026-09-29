@@ -46,7 +46,7 @@
   position: absolute;
   inset-block-start: 50%;
   inset-inline-start: 50%;
-  background: var(--red-500);
+  background: var(--accent-500);
   transform: translate(-50%, -50%);
   transition: transform var(--dur-base) var(--ease-out);
 }

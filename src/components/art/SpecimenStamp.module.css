@@ -3,11 +3,11 @@
   flex-direction: column;
   gap: 2px;
   padding: 0.5rem 0.9rem;
-  border: 2px solid var(--red-500);
+  border: 2px solid var(--accent-500);
   border-radius: var(--radius-sm);
-  color: var(--red-400);
+  color: var(--accent-400);
   transform: rotate(-2.5deg);
-  background: var(--red-tint);
+  background: var(--accent-tint);
 }
 
 .label {
@@ -27,7 +27,7 @@
 }
 
 [data-on-dark] .stamp,
-[data-on-red] .stamp {
+[data-on-accent] .stamp {
   border-color: var(--bone-100);
   color: var(--bone-100);
   background: var(--rule-faint);

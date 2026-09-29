@@ -3,6 +3,7 @@ import { getHeader, getSiteSettings } from '@/lib/queries'
 import { resolveLink } from '@/lib/links'
 import { MobileMenu } from './MobileMenu'
 import { Button } from '@/components/ui/Button'
+import { BrandMark } from '@/components/art/BrandMark'
 import styles from './Header.module.css'
 
 export const SiteHeader = async () => {
@@ -30,8 +31,7 @@ export const SiteHeader = async () => {
             className={styles.brand}
             aria-label={`${settings.brandName ?? 'Finquiry'}, home`}
           >
-            <span className={styles.brandMark} aria-hidden="true" />
-            <span className={styles.brandName}>{settings.brandName ?? 'Finquiry'}</span>
+            <BrandMark />
           </Link>
 
           <nav className={styles.nav} aria-label="Primary">

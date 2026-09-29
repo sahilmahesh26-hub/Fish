@@ -66,12 +66,12 @@
 /* Near-black on the red, not bone: bone on this red is 3.7:1 and fails AA for
    a 16px label. The token exists precisely so this is decided once. */
 .primary {
-  background: var(--red-500);
-  color: var(--text-on-red);
+  background: var(--accent-500);
+  color: var(--text-on-accent);
 }
 
 .primary:hover {
-  background: var(--red-600);
+  background: var(--accent-600);
 }
 
 .secondary {
@@ -126,7 +126,7 @@
   font-weight: 600;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .eyebrow::before {

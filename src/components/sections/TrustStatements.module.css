@@ -55,7 +55,7 @@
   line-height: 0.85;
   letter-spacing: -0.05em;
   font-variant-numeric: tabular-nums;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .statementHeading {
@@ -69,8 +69,8 @@
   color: var(--bone-300);
 }
 
-[data-on-red] .statementCopy {
-  color: var(--text-on-red);
+[data-on-accent] .statementCopy {
+  color: var(--text-on-accent);
 }
 
 .proofPoints {
@@ -94,19 +94,19 @@
 }
 
 /* On a Sandy Linen background the statements need the darker text colours. */
-.section:not([data-on-dark]):not([data-on-red]) .statementCopy {
+.section:not([data-on-dark]):not([data-on-accent]) .statementCopy {
   color: var(--bone-300);
 }
 
-.section:not([data-on-dark]):not([data-on-red]) .numeral {
-  color: var(--red-400);
+.section:not([data-on-dark]):not([data-on-accent]) .numeral {
+  color: var(--accent-400);
 }
 
-.section:not([data-on-dark]):not([data-on-red]) .proofPoints {
+.section:not([data-on-dark]):not([data-on-accent]) .proofPoints {
   border-block-start-color: var(--rule);
 }
 
-.section:not([data-on-dark]):not([data-on-red]) .proofPoint {
+.section:not([data-on-dark]):not([data-on-accent]) .proofPoint {
   border-color: var(--rule-strong);
 }
 

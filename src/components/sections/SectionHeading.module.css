@@ -43,6 +43,6 @@
   color: var(--bone-300);
 }
 
-[data-on-red] .body {
-  color: var(--text-on-red);
+[data-on-accent] .body {
+  color: var(--text-on-accent);
 }

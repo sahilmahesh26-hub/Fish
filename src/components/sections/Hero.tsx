@@ -1,5 +1,8 @@
 import { CmsImage } from '@/components/ui/CmsImage'
 import { Button } from '@/components/ui/Button'
+import { Water } from '@/components/art/Water'
+import { Arowana, Jellyfish, Stingray } from '@/components/art/Creatures'
+import { Reef } from '@/components/art/Reef'
 import { renderEmphasis } from '@/lib/emphasis'
 import { resolveLink } from '@/lib/links'
 import type { SiteSetting, Homepage } from '@/payload-types'
@@ -13,14 +16,20 @@ type Props = {
 /**
  * The homepage hero.
  *
- * One image, held under a deep scrim, with the proposition set over it. The
- * previous version stacked a cartoon fish, three tinted shapes, ripples,
- * bubbles, a starburst, an annotation and a scroll cue over a cream field; all
- * of that is gone. What is left is the thing a collector actually needs in the
- * first three seconds: what this is, and where to start.
+ * Built as a water column rather than a banner.
+ *
+ * There are five planes, back to front: the CMS image if one exists, kelp at
+ * the back wall, a stingray in the mid-water, the light and particles of the
+ * `Water` layer, and finally a near arowana crossing the front at a size that
+ * crops off the edge. Each plane is dimmer, cooler and slower than the one in
+ * front of it, which is the only thing that produces depth: a single
+ * photograph behind a scrim cannot, no matter how good the photograph is.
+ *
+ * The creatures are drawn, not photographed. Nothing here depicts a specimen
+ * Finquiry holds, and none of it is presented as one.
  *
  * Rendered entirely on the server. The composition is complete before any
- * JavaScript runs, which also means the largest paint is the image itself.
+ * JavaScript runs.
  */
 export const Hero = ({ hero, settings }: Props) => {
   const primary = resolveLink(hero?.primaryCta, settings)
@@ -55,6 +64,23 @@ export const Hero = ({ hero, settings }: Props) => {
         <div className={styles.scrim} />
         <div className={styles.scrimSide} />
       </div>
+
+      {/* --- The scene ---------------------------------------------------- */}
+      {/* Mid-water. Large, slow, and well behind the type. */}
+      <Stingray className={styles.ray} depth={0.5} />
+
+      <Water variant="surface" className={styles.water} />
+
+      {/* The floor. Saturated, dense, and the one place on the page where hot
+          colour is allowed, because it is the thing the cold water is cold
+          against. */}
+      <Reef className={styles.reef} />
+
+      {/* Foreground. Cropped by the viewport on purpose, so the frame reads
+          as a window onto something larger than itself. */}
+      <Jellyfish className={styles.jellyNear} depth={0.85} />
+      <Jellyfish className={styles.jellyFar} depth={0.5} />
+      <Arowana className={styles.arowana} depth={1} />
 
       <div className={styles.inner}>
         <div className={styles.copy}>

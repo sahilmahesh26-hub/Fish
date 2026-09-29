@@ -16,10 +16,19 @@ import sharp from 'sharp'
  * real photography exists.
  */
 
-const INK = '#050607'
-const INK_800 = '#0a0d10'
-const BONE = '#F4F1EA'
-const RED = '#EF2436'
+/*
+ * Sampled from `tokens.css`, not invented here.
+ *
+ * These plates used to be generated in the old near-black palette, so when
+ * the site moved to lit water every card was a hole: a dark rectangle in a
+ * blue page. Artwork and interface have to be mixed from the same paint.
+ */
+const ABYSS = '#03101d'
+const DEEP = '#06192c'
+const MID = '#0e2a45'
+const BONE = '#ECE8DA'
+const AQUA = '#7FD4E8'
+const AMBER = '#E7AE3D'
 
 /** Deterministic noise, so a re-run produces byte-identical artwork. */
 const mulberry = (seed: number) => () => {
@@ -50,7 +59,7 @@ const caustics = (width: number, height: number, seed: number, count = 9) => {
     // A floor on the opacity as well as a ceiling. The old range bottomed out
     // at 0.05, which on a near-black plate is invisible, so roughly a third of
     // the bands were not doing anything.
-    const opacity = (0.1 + rand() * 0.1).toFixed(3)
+    const opacity = (0.13 + rand() * 0.13).toFixed(3)
     return `<ellipse cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" rx="${rx.toFixed(0)}" ry="${ry.toFixed(0)}"
       fill="url(#caustic)" opacity="${opacity}"
       transform="rotate(${angle.toFixed(1)} ${cx.toFixed(0)} ${cy.toFixed(0)})" />`
@@ -80,17 +89,18 @@ export const waterPlate = async (
    * every crop of every plate contains the light.
    */
   const lightX = (34 + rand() * 32).toFixed(0)
-  const accent = tint === 'warm' ? RED : '#2F7DDB'
+  const accent = tint === 'warm' ? AMBER : AQUA
   // Matched strengths. Red at 0.10 against cold at 0.16 made every warm-tinted
   // plate read as the dim one in the set.
-  const accentOpacity = tint === 'neutral' ? 0.06 : tint === 'warm' ? 0.15 : 0.16
+  const accentOpacity = tint === 'neutral' ? 0.1 : tint === 'warm' ? 0.16 : 0.22
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
     <defs>
       <radialGradient id="depth" cx="${lightX}%" cy="8%" r="95%">
-        <stop offset="0%" stop-color="#1c2836"/>
-        <stop offset="45%" stop-color="${INK_800}"/>
-        <stop offset="100%" stop-color="${INK}"/>
+        <stop offset="0%" stop-color="#1d4f70"/>
+        <stop offset="40%" stop-color="#0f3a5c"/>
+        <stop offset="72%" stop-color="${MID}"/>
+        <stop offset="100%" stop-color="${DEEP}"/>
       </radialGradient>
       <radialGradient id="accent" cx="${lightX}%" cy="0%" r="70%">
         <stop offset="0%" stop-color="${accent}" stop-opacity="${accentOpacity}"/>
@@ -108,9 +118,9 @@ export const waterPlate = async (
           it; starting the floor at 0% meant the two stacked and the bottom
           half of every card went dead flat.
         -->
-        <stop offset="0%" stop-color="${INK}" stop-opacity="0"/>
-        <stop offset="50%" stop-color="${INK}" stop-opacity="0.08"/>
-        <stop offset="100%" stop-color="${INK}" stop-opacity="0.82"/>
+        <stop offset="0%" stop-color="${ABYSS}" stop-opacity="0"/>
+        <stop offset="50%" stop-color="${ABYSS}" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="${ABYSS}" stop-opacity="0.66"/>
       </linearGradient>
     </defs>
     <rect width="${width}" height="${height}" fill="url(#depth)"/>
@@ -152,9 +162,9 @@ export const categoryPlate = async (name: string, width = 1200, height = 1500): 
 export const placeholderLogo = async (size = 512): Promise<Buffer> => {
   const r = Math.round(size * 0.22)
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-    <rect width="${size}" height="${size}" rx="${r}" fill="${RED}"/>
+    <rect width="${size}" height="${size}" rx="${r}" fill="${AMBER}"/>
     <path d="M${size * 0.34} ${size * 0.26}h${size * 0.34}v${size * 0.1}H${size * 0.46}v${size * 0.12}h${size * 0.18}v${size * 0.1}H${size * 0.46}v${size * 0.18}h-${size * 0.12}z"
-      fill="${INK}"/>
+      fill="${ABYSS}"/>
   </svg>`
   return sharp(Buffer.from(svg)).png().toBuffer()
 }

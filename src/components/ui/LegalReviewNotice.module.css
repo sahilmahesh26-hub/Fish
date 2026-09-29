@@ -11,16 +11,16 @@
   gap: 0.5rem;
   max-inline-size: var(--measure);
   padding: var(--space-3);
-  border: 2px solid var(--red-500);
+  border: 2px solid var(--accent-500);
   border-radius: var(--radius-md);
-  background: var(--red-tint);
+  background: var(--accent-tint);
 }
 
 .title {
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--red-400);
+  color: var(--accent-400);
 }
 
 .body {

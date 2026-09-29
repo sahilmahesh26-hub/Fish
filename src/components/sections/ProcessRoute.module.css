@@ -76,9 +76,9 @@
 
 /* The first step is the one the visitor acts on, so it carries the accent. */
 .step:first-child .marker {
-  border-color: var(--red-500);
-  background: var(--red-500);
-  color: var(--text-on-red);
+  border-color: var(--accent-500);
+  background: var(--accent-500);
+  color: var(--text-on-accent);
 }
 
 /* --- Copy ---------------------------------------------------------------- */

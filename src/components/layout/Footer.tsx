@@ -3,6 +3,7 @@ import { getFooter, getSiteSettings } from '@/lib/queries'
 import { whatsappLink } from '@/lib/whatsapp'
 import { CookiePreferencesLink } from '@/components/consent/CookiePreferencesLink'
 import styles from './Footer.module.css'
+import { BrandMark } from '@/components/art/BrandMark'
 
 export const SiteFooter = async () => {
   const [footer, settings] = await Promise.all([getFooter(), getSiteSettings()])
@@ -18,10 +19,7 @@ export const SiteFooter = async () => {
     <footer className={styles.footer} data-on-dark>
       <div className={styles.inner}>
         <div className={styles.brandColumn}>
-          <span className={styles.brand}>
-            <span className={styles.brandMark} aria-hidden="true" />
-            {brand}
-          </span>
+          <BrandMark className={styles.brand} />
           {footer.brandStatement ? (
             <p className={styles.statement}>{footer.brandStatement}</p>
           ) : null}
