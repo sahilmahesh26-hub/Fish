@@ -1,131 +1,222 @@
 /*
- * The sourcing process, as a vertical progression.
+ * The dive.
  *
- * Five steps across five columns gives each one about 230px on a 1280px page,
- * which is not enough width for a sentence and is why the old version squeezed
- * its copy into four-word lines and then staggered the columns to disguise it.
- * Running the steps down the page instead gives every one a full reading
- * measure, and the rail on the left does the work the connecting arrows were
- * trying to do.
+ * The section is its own water column: it darkens top to bottom, independently
+ * of the page behind it, so scrolling through the steps actually feels like
+ * descending. That gradient is the whole idea, and everything else here exists
+ * to sit correctly inside it.
  */
+.section {
+  background-image:
+    linear-gradient(to bottom, rgb(18 69 110 / 34%) 0%, transparent 34%),
+    linear-gradient(to bottom, transparent 55%, rgb(3 16 29 / 72%) 100%);
+}
 
-.route {
+.dive {
   position: relative;
+  margin-block-start: var(--space-6);
+}
+
+/*
+ * The shaft.
+ *
+ * Sits under the markers, offset to align with their centre. It fades at both
+ * ends: a line that means "deeper" should not stop at a hard edge, and one
+ * that means "from the surface" should not start at one either.
+ */
+.shaft {
+  position: absolute;
+  inset-block: -1rem -2rem;
+  /* Half the marker width, measured from the gauge column's trailing edge. */
+  inset-inline-start: calc(var(--gauge-w) + var(--space-4) + 22px);
+  inline-size: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--aqua-500) 12%,
+    var(--aqua-500) 55%,
+    rgb(28 74 109 / 40%) 88%,
+    transparent
+  );
+  opacity: 0.55;
 }
 
 .steps {
-  display: grid;
-  gap: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
   margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: step;
 }
 
 .step {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-3);
-  padding-block: var(--space-4);
-  border-block-start: 1px solid var(--rule-faint);
+  /* gauge | marker | copy */
+  grid-template-columns: var(--gauge-w) 44px minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--space-4);
 }
 
-.step:first-child {
-  border-block-start: 0;
+/* --- The gauge ------------------------------------------------------------ */
+
+/*
+ * Depth and zone, set as instrument type: right-aligned, tabular, tracked out.
+ * Right-aligned so the numbers stack against the shaft rather than drifting
+ * away from it as their width changes.
+ */
+.gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  padding-block-start: 0.55rem;
+  text-align: end;
 }
 
-/* --- The rail ------------------------------------------------------------ */
+.depth {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-card-title);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--bone-100);
+}
+
+.zone {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--aqua-300);
+  opacity: 0.8;
+}
+
+/* --- The marker ----------------------------------------------------------- */
 
 .marker {
   position: relative;
+  z-index: var(--z-content);
   display: grid;
   place-items: center;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
-  flex: none;
-  border: 1px solid var(--rule-strong);
-  border-radius: var(--radius-pill);
-  background: var(--ink-900);
-  color: var(--text-muted);
-}
-
-/*
- * The line joining one step to the next. Drawn from the marker rather than
- * behind the whole list, so it stops cleanly at the last step instead of
- * trailing into the call to action.
- */
-.step:not(:last-child) .marker::after {
-  content: '';
-  position: absolute;
-  inset-block-start: 100%;
-  inset-inline-start: 50%;
-  inline-size: 1px;
-  block-size: calc(100% + var(--space-4) * 2);
-  background: linear-gradient(to bottom, var(--rule-strong), var(--rule-faint));
-  transform: translateX(-50%);
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--aqua-500);
+  /* Opaque, so the shaft passes behind rather than through. */
+  background: var(--deep-900);
+  color: var(--bone-300);
+  transition:
+    border-color var(--dur-base) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
 }
 
 .number {
-  font-family: var(--font-body);
-  font-size: var(--fs-label);
-  font-weight: 700;
+  font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
-/* The first step is the one the visitor acts on, so it carries the accent. */
-.step:first-child .marker {
+/*
+ * The lamp.
+ *
+ * The step you have reached lights amber. Driven by `:hover` on the row and by
+ * focus anywhere inside it, so it responds to a pointer and to the keyboard
+ * without needing a scroll listener running on every frame.
+ */
+.step:hover .marker,
+.step:focus-within .marker {
   border-color: var(--accent-500);
   background: var(--accent-500);
   color: var(--text-on-accent);
+  box-shadow: 0 0 0 6px var(--accent-tint);
 }
 
-/* --- Copy ---------------------------------------------------------------- */
+/* --- Copy ----------------------------------------------------------------- */
 
 .stepBody {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
   padding-block-start: 0.35rem;
 }
 
 .stepTitle {
   font-family: var(--font-display);
   font-size: var(--fs-card-title);
-  font-variation-settings: 'wdth' var(--wdth-normal);
   font-weight: 700;
-  line-height: var(--lh-tight);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .stepCopy {
-  max-inline-size: 56ch;
-  color: var(--text-secondary);
-  font-size: var(--fs-small);
-  line-height: var(--lh-body);
+  margin-block-start: 0.4rem;
+  max-inline-size: 52ch;
+  color: var(--bone-300);
 }
 
 .cta {
-  margin-block-start: var(--space-6);
+  margin-block-start: var(--space-8);
 }
 
-@media (min-width: 900px) {
-  /*
-   * At width the title moves alongside the copy rather than above it, so the
-   * list reads as a table of steps and the eye can scan titles down one
-   * column without reading every description.
-   */
+/* --- Widths --------------------------------------------------------------- */
+
+.dive {
+  --gauge-w: 84px;
+}
+
+@media (min-width: 768px) {
+  .dive {
+    --gauge-w: 108px;
+  }
+
+  .steps {
+    gap: var(--space-8);
+  }
+
+  .stepTitle {
+    font-size: var(--fs-subsection);
+  }
+}
+
+/*
+ * Below 560px the three columns cannot all fit without the copy dropping to
+ * about twenty characters a line. The gauge moves above the title instead,
+ * inline, so the depth is still stated and the copy gets the full measure.
+ */
+@media (max-width: 559px) {
   .step {
-    grid-template-columns: auto minmax(11rem, 15rem) minmax(0, 1fr);
-    gap: var(--space-4);
-    align-items: start;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: var(--space-2);
+  }
+
+  .shaft {
+    inset-inline-start: 21px;
+  }
+
+  .gauge {
+    grid-column: 2;
+    grid-row: 1;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding-block-start: 0;
+    text-align: start;
+  }
+
+  .marker {
+    grid-row: 1 / span 2;
   }
 
   .stepBody {
-    display: contents;
+    grid-column: 2;
+    padding-block-start: 0.25rem;
   }
 
-  .stepCopy {
-    padding-block-start: 0.35rem;
+  .depth {
+    font-size: 1rem;
   }
 }

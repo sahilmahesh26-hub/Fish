@@ -1,10 +1,55 @@
+/*
+ * The closing frame.
+ *
+ * This was a flat panel of links on a lighter surface, which read as the
+ * place the design stopped. It is now the bottom of the water column: the
+ * page sinks into it rather than changing to it, and it carries the same reef
+ * the hero opens on, seen from two hundred metres down.
+ */
 .footer {
-  margin-block-start: var(--section-y);
-  background: var(--ink-700);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* No top margin: the band above runs straight into it, which is what makes
+     the gradient read as continuous water rather than as a new block. */
+  margin-block-start: 0;
+  padding-block: clamp(4rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem);
+  background: linear-gradient(to bottom, var(--deep-900) 0%, var(--abyss) 45%, #020a13 100%);
   color: var(--bone-100);
 }
 
+.water,
+.reef {
+  position: absolute;
+  z-index: var(--z-art);
+  pointer-events: none;
+}
+
+.water {
+  inset: 0;
+}
+
+/*
+ * The floor of the page.
+ *
+ * Upright, at the very bottom, under the small print. An earlier version hung
+ * it inverted from the top edge and it read as growths on a ceiling.
+ *
+ * Heavily dimmed and desaturated, because this is the hero's reef seen at
+ * depth and almost none of the magenta survives that far down. Faint is the
+ * point here, not a compromise.
+ */
+.reef {
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: clamp(60px, 8vw, 116px);
+  opacity: 0.3;
+  filter: saturate(0.35) blur(1.4px);
+}
+
 .inner {
+  position: relative;
+  z-index: var(--z-content);
   display: grid;
   gap: var(--space-6);
   inline-size: 100%;
@@ -21,13 +66,7 @@
 }
 
 .brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
 }
 
 .brandMark {
@@ -88,10 +127,47 @@
   text-decoration: none;
 }
 
+/*
+ * Hover moves the link rather than underlining it.
+ *
+ * A column of links that all gain an underline reads as a sitemap. A small
+ * shift toward the reading direction with a marker fading in reads as a
+ * control, and it costs no layout because both properties are composited.
+ */
+.link {
+  position: relative;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -0.7rem;
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  inline-size: 3px;
+  block-size: 3px;
+  border-radius: 50%;
+  background: var(--accent-500);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
 .link:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.2em;
+  color: var(--accent-400);
+  transform: translateX(3px);
+}
+
+.link:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link:hover {
+    transform: none;
+  }
 }
 
 .address {
@@ -106,6 +182,8 @@
 }
 
 .smallPrint {
+  position: relative;
+  z-index: var(--z-content);
   border-block-start: 1px solid var(--rule-faint);
 }
 

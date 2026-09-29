@@ -32,14 +32,33 @@
 
 @media (min-width: 1024px) {
   /*
-   * A measured indent, not a push to the far edge.
+   * Two columns, not an indent.
    *
-   * Sending the paragraph all the way right opened a hole under the headline
-   * and broke the two apart. A third of the measure keeps the diagonal while
-   * the block still reads as one thing.
+   * The paragraph used to sit below the headline at a 33% indent, which left
+   * an L-shaped hole across the lower left of the section: the single largest
+   * dead zone on the page. Setting the headline and the paragraph side by
+   * side, with the paragraph dropped to the headline's last baseline, fills
+   * the block and turns the offset into a deliberate diagonal instead of an
+   * accident.
    */
+  .heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: end;
+    column-gap: var(--space-8);
+  }
+
+  .heading :global(h2) {
+    grid-column: 1;
+    max-inline-size: 15ch;
+  }
+
   .heading :global(p) {
-    margin-inline-start: 33%;
-    max-inline-size: 46ch;
+    grid-column: 2;
+    margin-inline-start: 0;
+    max-inline-size: 44ch;
+    /* Sits on the headline's baseline rather than its box, which display type
+       at 1.02 leading sits well above. */
+    padding-block-end: 0.35em;
   }
 }

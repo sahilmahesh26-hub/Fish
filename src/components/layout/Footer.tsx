@@ -4,6 +4,8 @@ import { whatsappLink } from '@/lib/whatsapp'
 import { CookiePreferencesLink } from '@/components/consent/CookiePreferencesLink'
 import styles from './Footer.module.css'
 import { BrandMark } from '@/components/art/BrandMark'
+import { Reef } from '@/components/art/Reef'
+import { Water } from '@/components/art/Water'
 
 export const SiteFooter = async () => {
   const [footer, settings] = await Promise.all([getFooter(), getSiteSettings()])
@@ -15,8 +17,21 @@ export const SiteFooter = async () => {
     .replace('{year}', String(new Date().getFullYear()))
     .replace('{brand}', brand)
 
+  const hasContactDetails = Boolean(settings.contactEmail || wa || address?.city)
+
   return (
     <footer className={styles.footer} data-on-dark>
+      {/*
+        The floor of the page.
+        
+        The hero opens on a reef at the surface and the footer closes on one at
+        depth: same bed, darker water, no light shafts. It is the device that
+        makes the whole page read as a single column of water rather than as a
+        stack of sections that happen to share a palette.
+      */}
+      <Water variant="abyss" className={styles.water} />
+      <Reef className={styles.reef} size="low" />
+
       <div className={styles.inner}>
         <div className={styles.brandColumn}>
           <BrandMark className={styles.brand} />
@@ -26,22 +41,34 @@ export const SiteFooter = async () => {
         </div>
 
         <div className={styles.columns}>
-          {(footer.navGroups ?? []).map((group) => (
-            <nav key={group.id ?? group.title} aria-label={group.title}>
-              <h2 className={styles.columnTitle}>{group.title}</h2>
-              <ul className={styles.columnList} role="list">
-                {(group.links ?? []).map((link) => (
-                  <li key={link.id ?? link.href}>
-                    <Link href={link.href} className={styles.link}>
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          {(footer.navGroups ?? [])
+            .filter((group) => (group.links ?? []).length > 0)
+            .map((group) => (
+              <nav key={group.id ?? group.title} aria-label={group.title}>
+                <h2 className={styles.columnTitle}>{group.title}</h2>
+                <ul className={styles.columnList} role="list">
+                  {(group.links ?? []).map((link) => (
+                    <li key={link.id ?? link.href}>
+                      <Link href={link.href} className={styles.link}>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
 
-          {footer.showContactDetails ? (
+          {/*
+           * The contact column only renders when it has something in it.
+           *
+           * Its three entries are all conditional: the email, the WhatsApp
+           * link (hidden whenever no valid number is configured) and the
+           * address. With none of them set the column still printed its
+           * "Contact" heading over an empty list, which is the kind of
+           * detail that makes a footer look unfinished. A heading is a
+           * promise that something follows it.
+           */}
+          {footer.showContactDetails && hasContactDetails ? (
             <div>
               <h2 className={styles.columnTitle}>Contact</h2>
               <ul className={styles.columnList} role="list">

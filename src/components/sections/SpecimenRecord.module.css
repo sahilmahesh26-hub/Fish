@@ -1,19 +1,66 @@
+/*
+ * The specimen sheet.
+ *
+ * Set as a field record rather than a web panel: a ruled page, a measurement
+ * frame around the photograph, a stamp, and a data list set as a register.
+ * The reference for this is a museum accession card, which is the object a
+ * collector already associates with provenance, and it is the section that
+ * most needs to feel like evidence rather than marketing.
+ */
 .sheet {
+  position: relative;
   display: grid;
   gap: var(--space-4);
   padding: var(--space-3);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-md);
-  background: var(--ink-700);
+  background: var(--deep-700);
   /* Fine ruled paper, as in a specimen journal. */
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0 31px,
     var(--rule-faint) 31px 32px
   );
+  box-shadow: var(--shadow-lg);
 }
 
+/*
+ * Corner ticks.
+ *
+ * Four L-shaped marks at the corners of the sheet, the way a registration
+ * card is printed. Drawn with two gradients on a pseudo-element rather than
+ * four elements, and inset so they read as printing on the card rather than
+ * as a second border.
+ */
+.sheet::before,
+.sheet::after {
+  content: '';
+  position: absolute;
+  inline-size: 18px;
+  block-size: 18px;
+  border-color: var(--accent-500);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.sheet::before {
+  inset-block-start: 10px;
+  inset-inline-start: 10px;
+  border-block-start: 2px solid;
+  border-inline-start: 2px solid;
+}
+
+.sheet::after {
+  inset-block-end: 10px;
+  inset-inline-end: 10px;
+  border-block-end: 2px solid;
+  border-inline-end: 2px solid;
+}
+
+/* --- The plate ------------------------------------------------------------ */
+
 .mainFigure {
+  position: relative;
   margin: 0;
 }
 
@@ -22,15 +69,30 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: var(--ink-600);
+  background: var(--deep-600);
 }
 
-.measurement {
-  margin-block-start: var(--space-1);
-  color: var(--rule-strong);
+/*
+ * Measurement frame.
+ *
+ * Ticks along the lower edge of the plate, like the scale bar on a specimen
+ * photograph. Decorative and unnumbered on purpose: a numbered scale would be
+ * a measurement claim about an illustrative image.
+ */
+.mainImage::after {
+  content: '';
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 14px;
+  background:
+    repeating-linear-gradient(to right, var(--bone-100) 0 1px, transparent 1px 16px),
+    linear-gradient(to top, rgb(3 16 29 / 75%), transparent);
+  opacity: 0.55;
 }
 
 .measurementCaption {
+  padding-block-start: 0.5rem;
   font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: var(--tracking-label);
@@ -59,7 +121,7 @@
   margin: 0;
   overflow: hidden;
   border-radius: var(--radius-sm);
-  background: var(--ink-600);
+  background: var(--deep-600);
 }
 
 .crop > :global(img) {
@@ -73,6 +135,14 @@
   color: var(--text-muted);
 }
 
+/* --- The register --------------------------------------------------------- */
+
+/*
+ * Set as a register, not a table: label tracked out in small caps on the left,
+ * value ranged right against a leader rule. It is the layout of an accession
+ * book, and it makes a short list of fields feel catalogued rather than
+ * sparse.
+ */
 .record {
   display: flex;
   flex-direction: column;
@@ -85,8 +155,15 @@
   display: grid;
   grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
   gap: var(--space-2);
-  padding-block: 0.65rem;
+  padding-block: 0.7rem;
   border-block-end: 1px solid var(--rule);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+/* A row lifts on hover, which makes the register feel like something you can
+   read down rather than a static block. */
+.recordRow:hover {
+  background: rgb(127 212 232 / 5%);
 }
 
 .recordLabel {
@@ -94,7 +171,8 @@
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--aqua-300);
+  opacity: 0.85;
 }
 
 .recordValue {
@@ -104,8 +182,8 @@
 
 .note {
   padding: var(--space-2);
-  border-inline-start: 3px solid var(--cobalt-500);
-  background: var(--cobalt-tint);
+  border-inline-start: 3px solid var(--accent-500);
+  background: var(--accent-tint);
   font-size: var(--fs-small);
   color: var(--bone-300);
 }

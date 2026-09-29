@@ -76,10 +76,12 @@ export const CategoryGrid = async ({
                 />
               </div>
               <div className={styles.cardBody}>
-                <p className={styles.availability}>{category.availabilityLabel}</p>
+                <p className={`${styles.availability} ${styles.cardEyebrow}`}>
+                  {category.availabilityLabel}
+                </p>
                 <h3 className={styles.cardTitle}>{category.name}</h3>
                 <p className={styles.cardCopy}>{category.shortDescription}</p>
-                <span className={styles.cardAction} aria-hidden="true">
+                <span className={`${styles.cardAction} ${styles.cardCta}`} aria-hidden="true">
                   Start a search
                 </span>
               </div>

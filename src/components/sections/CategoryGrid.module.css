@@ -196,3 +196,84 @@
 .shelf .cardLink {
   block-size: 100%;
 }
+
+/* --- Card polish ---------------------------------------------------------- */
+
+/*
+ * A card should feel lit when you reach it, not just outlined.
+ *
+ * Three things happen together, and they are chosen so no two of them cost
+ * layout: the image pushes in slightly, a warm wash rises from the base, and
+ * the read-more line shifts. Together they read as the card coming forward;
+ * a border colour change alone reads as a focus ring.
+ */
+.cardLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, var(--accent-tint), transparent 55%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.cardLink:hover::after,
+.cardLink:focus-visible::after {
+  opacity: 1;
+}
+
+/* The arrow slides out from the label. A separate element so the label's own
+   position never moves, which would reflow the text under it. */
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: gap var(--dur-fast) var(--ease-out);
+}
+
+.cardLink:hover .cardCta,
+.cardLink:focus-visible .cardCta {
+  gap: 0.75rem;
+}
+
+/*
+ * The availability label gets a lamp.
+ *
+ * A small amber dot beside "Sourced on request" that lights on hover. It is
+ * the same amber as the logo's eye, used at the smallest scale on the site,
+ * which ties the card back to the mark without adding another colour.
+ */
+.cardEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardEyebrow::before {
+  content: '';
+  inline-size: 5px;
+  block-size: 5px;
+  border-radius: 50%;
+  background: var(--accent-500);
+  opacity: 0.45;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.cardLink:hover .cardEyebrow::before,
+.cardLink:focus-visible .cardEyebrow::before {
+  opacity: 1;
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardLink:hover {
+    transform: none;
+  }
+
+  .cardLink:hover .media :global(img) {
+    transform: none;
+  }
+}

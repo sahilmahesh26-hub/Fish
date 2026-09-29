@@ -113,6 +113,32 @@
   border-block-end-color: var(--accent-500);
 }
 
+/*
+ * The current page.
+ *
+ * Marked with a filled amber rule rather than a colour change, so it stays
+ * distinguishable from the hover state and survives a greyscale reading. The
+ * underline was already a permanent transparent border, so turning it on adds
+ * no layout shift.
+ */
+.navLink[data-current] {
+  color: var(--bone-100);
+  border-block-end-color: var(--accent-500);
+}
+
+.navLink[data-current]::after {
+  content: '';
+  position: absolute;
+  inset-block-end: -2px;
+  inset-inline: 0;
+  block-size: 2px;
+  background: var(--accent-500);
+}
+
+.navLink {
+  position: relative;
+}
+
 .actions {
   display: flex;
   align-items: center;

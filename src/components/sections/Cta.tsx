@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { resolveLink } from '@/lib/links'
 import type { CtaBlock as CtaBlockType, SiteSetting } from '@/payload-types'
 import styles from './Cta.module.css'
+import { Reveal } from '@/components/ui/Reveal'
 
 /** Closing call to action: a confident red editorial block. */
 export const Cta = ({ block, settings }: { block: CtaBlockType; settings: SiteSetting }) => {
@@ -18,7 +19,7 @@ export const Cta = ({ block, settings }: { block: CtaBlockType; settings: SiteSe
       labelledBy={headingId}
       className={styles.section}
     >
-      <div className={styles.inner}>
+      <Reveal className={styles.inner}>
         {block.eyebrow ? <p className="u-eyebrow">{block.eyebrow}</p> : null}
         <h2 id={headingId} className={styles.heading}>
           {block.heading}
@@ -52,7 +53,7 @@ export const Cta = ({ block, settings }: { block: CtaBlockType; settings: SiteSe
             ) : null}
           </div>
         </div>
-      </div>
+      </Reveal>
     </Section>
   )
 }

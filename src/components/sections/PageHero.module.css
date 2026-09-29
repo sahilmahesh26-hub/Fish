@@ -7,16 +7,39 @@
  * a hairline and a change of surface, which is the same device every other
  * section boundary uses.
  */
+.water,
+.reef {
+  position: absolute;
+  z-index: var(--z-art);
+  pointer-events: none;
+}
+
+.water {
+  inset: 0;
+}
+
+/* Shorter and dimmer than the homepage bed: an inner page opens on content,
+   not on a view, so the reef is a base line rather than a subject. */
+.reef {
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: clamp(56px, 7vw, 104px);
+  opacity: 0.55;
+  filter: saturate(0.7);
+}
+
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   padding-block: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
-  background: var(--ink-800);
+  background: linear-gradient(to bottom, #0c3252 0%, var(--deep-800) 55%, var(--deep-900) 100%);
   border-block-end: 1px solid var(--rule);
 }
 
 .inner {
+  position: relative;
+  z-index: var(--z-content);
   position: relative;
   z-index: var(--z-content);
   display: grid;

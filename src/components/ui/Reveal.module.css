@@ -1,0 +1,27 @@
+/*
+ * `idle` is the server-rendered state and is fully visible. Only once the
+ * observer has armed does anything hide, so a visitor without JavaScript sees
+ * the finished page rather than an empty one.
+ */
+.reveal[data-state='armed'] {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+.reveal[data-state='shown'] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 620ms var(--ease-out),
+    transform 620ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-state='armed'],
+  .reveal[data-state='shown'] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

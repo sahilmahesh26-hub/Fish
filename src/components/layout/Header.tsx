@@ -4,6 +4,7 @@ import { resolveLink } from '@/lib/links'
 import { MobileMenu } from './MobileMenu'
 import { Button } from '@/components/ui/Button'
 import { BrandMark } from '@/components/art/BrandMark'
+import { NavLink } from './NavLink'
 import styles from './Header.module.css'
 
 export const SiteHeader = async () => {
@@ -38,9 +39,7 @@ export const SiteHeader = async () => {
             <ul className={styles.navList} role="list">
               {navItems.map((item) => (
                 <li key={item.id ?? item.href}>
-                  <Link href={item.href} className={styles.navLink}>
-                    {item.label}
-                  </Link>
+                  <NavLink href={item.href}>{item.label}</NavLink>
                 </li>
               ))}
             </ul>

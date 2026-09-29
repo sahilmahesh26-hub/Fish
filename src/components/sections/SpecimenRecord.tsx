@@ -5,6 +5,7 @@ import { SpecimenStamp } from '@/components/art/SpecimenStamp'
 
 import type { SpecimenRecordBlock as SpecimenRecordBlockType } from '@/payload-types'
 import styles from './SpecimenRecord.module.css'
+import { Reveal } from '@/components/ui/Reveal'
 
 const MEDIA_STATUS_LABEL: Record<string, string> = {
   confirmed: 'Photos and video confirmed',
@@ -43,7 +44,7 @@ export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) =>
         id={headingId}
       />
 
-      <div className={styles.sheet}>
+      <Reveal className={styles.sheet}>
         <figure className={styles.mainFigure}>
           <div className={styles.mainImage}>
             <CmsImage
@@ -98,7 +99,7 @@ export const SpecimenRecord = ({ block }: { block: SpecimenRecordBlockType }) =>
 
           {block.note ? <p className={styles.note}>{block.note}</p> : null}
         </div>
-      </div>
+      </Reveal>
     </Section>
   )
 }

@@ -95,10 +95,16 @@
 
 .dot {
   display: block;
-  /* The dot is 8px but the button is 24px: the target has to be reachable
-     even though the mark is small. */
-  inline-size: 24px;
-  block-size: 24px;
+  /*
+   * The mark is 8px; the target is 44px tall.
+   *
+   * 24x24 would clear WCAG 2.2 AA (SC 2.5.8), but this project holds every
+   * control to the 44px AAA figure, and a row of dots is exactly the case
+   * that argues for it: they are small, adjacent, and usually reached with a
+   * thumb. The width stays narrow so seven of them still fit a 320px screen.
+   */
+  inline-size: 28px;
+  block-size: 44px;
   padding: 0;
   border: 0;
   background: none;
