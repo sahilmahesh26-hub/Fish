@@ -16,7 +16,10 @@ const BASE = process.env.BASE_URL || 'http://127.0.0.1:3320'
 const ROUTES = [
   '/', '/how-it-works', '/source-a-fish', '/deliveries', '/about',
   '/custom-aquariums', '/knowledge', '/contact', '/thank-you',
-  '/policies/privacy', '/no-such-page',
+  // Real policy slugs — `/policies/privacy` does not exist, and pointing at it
+  // meant these runs were measuring the 404 page instead.
+  '/privacy-policy', '/terms-and-conditions', '/cookie-policy',
+  '/no-such-page',
 ]
 
 const PROBE = () => {

@@ -32,7 +32,12 @@ const ROUTES = [
   '/knowledge',
   '/contact',
   '/thank-you',
-  '/policies/privacy',
+  // The real policy slugs. An earlier version of this list used
+  // `/policies/privacy`, which does not exist, so every run quietly audited
+  // the 404 page twice and reported the policy pages as passing.
+  '/privacy-policy',
+  '/terms-and-conditions',
+  '/cookie-policy',
   '/no-such-page',
 ]
 

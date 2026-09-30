@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { archivo, manrope } from '@/lib/fonts'
+import { Water } from '@/components/art/Water'
+import { Reef } from '@/components/art/Reef'
+import { Arowana } from '@/components/art/Creatures'
 import '@/styles/global.css'
 import styles from './global-not-found.module.css'
 
@@ -17,11 +20,21 @@ export const metadata: Metadata = {
  * document — including `lang`, a `<main>` landmark and the single H1 that the
  * rest of the site guarantees. It deliberately avoids CMS queries: a 404 must
  * still render if the database is unreachable.
+ *
+ * The water, the reef and the fish are the only parts of the site's visual
+ * language that carry no data dependency at all — they are drawn from a fixed
+ * seed — so the page can belong to the site without giving up that guarantee.
+ * Without them this was a flat navy panel, which is the one place a visitor is
+ * most likely to conclude the site is broken rather than that the URL was.
  */
 const GlobalNotFound = () => (
   <html lang="en-IN" className={`${archivo.variable} ${manrope.variable}`}>
     <body>
       <main id="main-content" className={styles.wrapper}>
+        <Water variant="deep" className={styles.water} />
+        <Reef size="low" className={styles.reef} />
+        <Arowana className={styles.fish} depth={0.5} />
+
         <div className={styles.inner}>
           <p className="u-eyebrow">Error 404</p>
           <p className={styles.code} aria-hidden="true">
